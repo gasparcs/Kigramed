@@ -1,3 +1,6 @@
+using Backend.K02.INFRA.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+string conexao= builder.Configuration.GetConnectionString("ConexaoLocal")!;
+builder.Services.AddDbContext<KigramedDbContext>(options => options.UseNpgsql(conexao));
 
 var app = builder.Build();
 

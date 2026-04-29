@@ -8,11 +8,22 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="K01.CONTROLLERS\" />
-    <Folder Include="K02.INFRA\" />
+    <Folder Include="K02.INFRA\Data\" />
+    <Folder Include="K02.INFRA\Repository\Cliente\" />
+    <Folder Include="K02.INFRA\Repository\Consulta\" />
+    <Folder Include="K02.INFRA\Repository\Especialidade\" />
+    <Folder Include="K02.INFRA\Repository\EstadoConsulta\" />
+    <Folder Include="K02.INFRA\Repository\Paciente\" />
+    <Folder Include="K02.INFRA\Repository\Pagamento\" />
+    <Folder Include="K02.INFRA\Repository\Perfil\" />
+    <Folder Include="K02.INFRA\Repository\Servicos\" />
+    <Folder Include="K02.INFRA\Repository\SMS\" />
     <Folder Include="K03.APPLICATION\" />
     <Folder Include="K04.DOMAIN\D11.ClientePaciente\" />
     <Folder Include="K04.DOMAIN\D01.Perfil\" />

@@ -14,8 +14,6 @@
     <Folder Include="K01.CONTROLLERS\" />
     <Folder Include="K02.INFRA\" />
     <Folder Include="K03.APPLICATION\" />
-    <Folder Include="K03.APPLICATION\D05.Auth\" />
-    <Folder Include="K03.APPLICATION\D07.MedicoEspecialidade\" />
     <Folder Include="K04.DOMAIN\D11.ClientePaciente\" />
     <Folder Include="K04.DOMAIN\D01.Perfil\" />
     <Folder Include="K04.DOMAIN\D02.Funcionario\" />

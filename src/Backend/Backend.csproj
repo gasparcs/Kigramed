@@ -14,7 +14,27 @@
     <Folder Include="K01.CONTROLLERS\" />
     <Folder Include="K02.INFRA\" />
     <Folder Include="K03.APPLICATION\" />
-    <Folder Include="K04.DOMAIN\" />
+    <Folder Include="K03.APPLICATION\D05.Auth\" />
+    <Folder Include="K03.APPLICATION\D07.MedicoEspecialidade\" />
+    <Folder Include="K04.DOMAIN\D11.ClientePaciente\" />
+    <Folder Include="K04.DOMAIN\D01.Perfil\" />
+    <Folder Include="K04.DOMAIN\D02.Funcionario\" />
+    <Folder Include="K04.DOMAIN\D03.TipoContacto\" />
+    <Folder Include="K04.DOMAIN\D04.Contacto\" />
+    <Folder Include="K04.DOMAIN\D05.Auth\" />
+    <Folder Include="K04.DOMAIN\D06.Especialidade\" />
+    <Folder Include="K04.DOMAIN\D07.MedicoEspecialidade\" />
+    <Folder Include="K04.DOMAIN\D08.Servicos\" />
+    <Folder Include="K04.DOMAIN\D09.Cliente\" />
+    <Folder Include="K04.DOMAIN\D12.Paciente\" />
+    <Folder Include="K04.DOMAIN\D13.EstadoConsulta\" />
+    <Folder Include="K04.DOMAIN\D14.Pagamento\" />
+    <Folder Include="K04.DOMAIN\D15.Consulta\" />
+    <Folder Include="K04.DOMAIN\D16.Permissao\" />
+    <Folder Include="K04.DOMAIN\D17.PerfilPermissao\" />
+    <Folder Include="K04.DOMAIN\D18.PagamentoConsulta\" />
+    <Folder Include="K04.DOMAIN\D19.MedicoConsulta\" />
+    <Folder Include="K04.DOMAIN\D20.SMS\" />
   </ItemGroup>
 
 </Project>

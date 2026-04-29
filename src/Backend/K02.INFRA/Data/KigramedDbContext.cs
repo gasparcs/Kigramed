@@ -1,4 +1,24 @@
 using System;
+using Backend.K04.DOMAIN.D01.Perfil;
+using Backend.K04.DOMAIN.D02.Funcionario;
+using Backend.K04.DOMAIN.D03.TipoContacto;
+using Backend.K04.DOMAIN.D04.Contacto;
+using Backend.K04.DOMAIN.D05.Auth;
+using Backend.K04.DOMAIN.D06.Especialidade;
+using Backend.K04.DOMAIN.D07.MedicoEspecialidade;
+using Backend.K04.DOMAIN.D08.Servicos;
+using Backend.K04.DOMAIN.D09.Cliente;
+using Backend.K04.DOMAIN.D09.Genero;
+using Backend.K04.DOMAIN.D11.ClientePaciente;
+using Backend.K04.DOMAIN.D12.Paciente;
+using Backend.K04.DOMAIN.D13.EstadoConsulta;
+using Backend.K04.DOMAIN.D14.Pagamento;
+using Backend.K04.DOMAIN.D15.Consulta;
+using Backend.K04.DOMAIN.D16.Permissao;
+using Backend.K04.DOMAIN.D17.PerfilPermissao;
+using Backend.K04.DOMAIN.D18.PagamentoConsulta;
+using Backend.K04.DOMAIN.D19.MedicoConsulta;
+using Backend.K04.DOMAIN.D20.SMS;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.K02.INFRA.Data;
@@ -128,4 +148,5 @@ public class KigramedDbContext(DbContextOptions<KigramedDbContext> options) : Db
         {
                  entity.HasOne(mc => mc.Consulta).WithOne(c => c.MedicoConsulta).HasForeignKey<MedicoConsultaModel>(fk => fk.Id_consulta);
         });
+    }
 }

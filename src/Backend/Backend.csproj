@@ -24,6 +24,10 @@
     <Folder Include="K02.INFRA\Repository\Servicos\" />
     <Folder Include="K02.INFRA\Repository\SMS\" />
     <Folder Include="K03.APPLICATION\" />
+    <Folder Include="K03.APPLICATION\ClienteUseCase\" />
+    <Folder Include="K03.APPLICATION\ClienteUseCase\comand\" />
+    <Folder Include="K03.APPLICATION\ClienteUseCase\DTO\" />
+    <Folder Include="K03.APPLICATION\ClienteUseCase\Queries\" />
     <Folder Include="K04.DOMAIN\D11.ClientePaciente\" />
     <Folder Include="K04.DOMAIN\D01.Perfil\" />
     <Folder Include="K04.DOMAIN\D02.Funcionario\" />

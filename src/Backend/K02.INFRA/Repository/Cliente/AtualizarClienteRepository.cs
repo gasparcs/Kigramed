@@ -16,6 +16,7 @@ public class AtualizarClienteRepository(KigramedDbContext context) : IAtualizarR
             var cliente = await context.Tabelatb09_cliente.FirstOrDefaultAsync(f=> f.Nif_cliente == model.Nif_cliente); 
             if(cliente is null) return "Cliente não encontrado";
             cliente.Nome = model.Nome;
+            cliente.Contactos = model.Contactos;
             return await context.SaveChangesAsync() > 0 ?
             "Cliente Atualizado com sucesso." :
             "Não foi possível efectuar a atualização.";   

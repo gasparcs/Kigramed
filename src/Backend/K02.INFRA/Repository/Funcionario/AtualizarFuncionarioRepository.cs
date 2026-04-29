@@ -19,6 +19,8 @@ public class AtualizarFuncionarioRepository(KigramedDbContext context) : IAtuali
             funcionario.Id_Perfil = model.Id_Perfil;
             funcionario.Contactos = model.Contactos;
             funcionario.Estado = model.Estado;
+              funcionario.Auth.Senha_hash = model.Auth.Senha_hash;
+            funcionario.Auth.Senha_Salt= model.Auth.Senha_Salt;
             return await context.SaveChangesAsync() > 0 ?
             "Funcionário atualizado com sucesso." :
             "Não foi possível efectuar a atualização.";   

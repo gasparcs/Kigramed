@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using Backend.K02.INFRA.Data;
 using Backend.K04.DOMAIN.D09.Cliente;
 using Backend.K04.DOMAIN.Interfaces;
@@ -12,7 +13,7 @@ public class RemoverClienteRepository(KigramedDbContext context) : IRemoverRepos
     {
         try
         {
-             var contactos = context.Tabelatb04_contato
+         var contactos = context.Tabelatb04_contato
         .Where(c => c.Nif_cliente == model.Nif_cliente);
     
          context.Tabelatb04_contato.RemoveRange(contactos);
@@ -25,7 +26,7 @@ public class RemoverClienteRepository(KigramedDbContext context) : IRemoverRepos
         }
         catch(DbUpdateException ex)
         {
-            return (ex.ToString());
+            return (ex.ToString()); 
         }
         
     }

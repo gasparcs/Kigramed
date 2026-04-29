@@ -1,11 +1,29 @@
 {
   "version": 2,
-  "dgSpecHash": "SK//l8nx89c=",
-  "success": true,
+  "dgSpecHash": "kTHDVxtcWDU=",
+  "success": false,
   "projectFilePath": "C:\\Users\\HP\\Desktop\\SAC\\SAC\\Kigramed\\src\\Backend\\Backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\HP\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.7\\microsoft.aspnetcore.openapi.10.0.7.nupkg.sha512",
-    "C:\\Users\\HP\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512"
+    "C:\\Users\\HP\\.nuget\\packages\\microsoft.entityframeworkcore\\10.0.1\\microsoft.entityframeworkcore.10.0.1.nupkg.sha512",
+    "C:\\Users\\HP\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\10.0.1\\microsoft.entityframeworkcore.abstractions.10.0.1.nupkg.sha512",
+    "C:\\Users\\HP\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\10.0.1\\microsoft.entityframeworkcore.analyzers.10.0.1.nupkg.sha512",
+    "C:\\Users\\HP\\.nuget\\packages\\microsoft.entityframeworkcore.relational\\10.0.4\\microsoft.entityframeworkcore.relational.10.0.4.nupkg.sha512",
+    "C:\\Users\\HP\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512",
+    "C:\\Users\\HP\\.nuget\\packages\\npgsql\\10.0.2\\npgsql.10.0.2.nupkg.sha512",
+    "C:\\Users\\HP\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\10.0.1\\npgsql.entityframeworkcore.postgresql.10.0.1.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1605",
+      "level": "Error",
+      "message": "Warning As Error: Detected package downgrade: Microsoft.EntityFrameworkCore from 10.0.4 to 10.0.1. Reference the package directly from the project to select a different version. \r\n Backend -> Npgsql.EntityFrameworkCore.PostgreSQL 10.0.1 -> Microsoft.EntityFrameworkCore (>= 10.0.4 && < 11.0.0) \r\n Backend -> Microsoft.EntityFrameworkCore (>= 10.0.1)",
+      "projectPath": "C:\\Users\\HP\\Desktop\\SAC\\SAC\\Kigramed\\src\\Backend\\Backend.csproj",
+      "filePath": "C:\\Users\\HP\\Desktop\\SAC\\SAC\\Kigramed\\src\\Backend\\Backend.csproj",
+      "libraryId": "Microsoft.EntityFrameworkCore",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
 }

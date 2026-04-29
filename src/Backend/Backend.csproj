@@ -35,6 +35,8 @@
     <Folder Include="K04.DOMAIN\D18.PagamentoConsulta\" />
     <Folder Include="K04.DOMAIN\D19.MedicoConsulta\" />
     <Folder Include="K04.DOMAIN\D20.SMS\" />
+    <Folder Include="K04.DOMAIN\" />
+    <Folder Include="K04.DOMAIN\Interfaces\" />
   </ItemGroup>
 
 </Project>

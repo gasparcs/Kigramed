@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="K03.APPLICATION\ServicosUseCase\DTO\LeituraServicosDTO" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
   </ItemGroup>
@@ -23,11 +27,28 @@
     <Folder Include="K02.INFRA\Repository\Perfil\" />
     <Folder Include="K02.INFRA\Repository\Servicos\" />
     <Folder Include="K02.INFRA\Repository\SMS\" />
-    <Folder Include="K03.APPLICATION\" />
     <Folder Include="K03.APPLICATION\ClienteUseCase\" />
     <Folder Include="K03.APPLICATION\ClienteUseCase\comand\" />
     <Folder Include="K03.APPLICATION\ClienteUseCase\DTO\" />
     <Folder Include="K03.APPLICATION\ClienteUseCase\Queries\" />
+    <Folder Include="K03.APPLICATION\MedicoEspecialidadeUseCase\Queries\" />
+    <Folder Include="K03.APPLICATION\PacienteUseCase\" />
+    <Folder Include="K03.APPLICATION\PacienteUseCase\Comand\" />
+    <Folder Include="K03.APPLICATION\PacienteUseCase\DTO\" />
+    <Folder Include="K03.APPLICATION\PacienteUseCase\Queries\" />
+    <Folder Include="K03.APPLICATION\PagamentoUseCase\Comand\" />
+    <Folder Include="K03.APPLICATION\PagamentoUseCase\DTO\" />
+    <Folder Include="K03.APPLICATION\PagamentoUseCase\Queries\" />
+    <Folder Include="K03.APPLICATION\PerfilUseCase\" />
+    <Folder Include="K03.APPLICATION\PerfilUseCase\DTO\" />
+    <Folder Include="K03.APPLICATION\PerfilUseCase\Queries\" />
+    <Folder Include="K03.APPLICATION\ServicosUseCase\Comand\" />
+    <Folder Include="K03.APPLICATION\Servico\ISmsService\" />
+    <Folder Include="K03.APPLICATION\Servico\ITokenService\" />
+    <Folder Include="K03.APPLICATION\SMSUseCase\" />
+    <Folder Include="K03.APPLICATION\SMSUseCase\Comand\" />
+    <Folder Include="K03.APPLICATION\SMSUseCase\DTO\" />
+    <Folder Include="K03.APPLICATION\SMSUseCase\Queries\" />
     <Folder Include="K04.DOMAIN\D11.ClientePaciente\" />
     <Folder Include="K04.DOMAIN\D01.Perfil\" />
     <Folder Include="K04.DOMAIN\D02.Funcionario\" />

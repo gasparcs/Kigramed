@@ -7,7 +7,7 @@ using Backend.K04.DOMAIN.D15.Consulta;
 namespace Backend.K04.DOMAIN.D08.Servicos;
 
 [Table("tb08_servico")]
-public class ServicoModel
+public class ServicosModel
 {
     [Key]
     [Column("id")]

@@ -32,7 +32,7 @@ public class KigramedDbContext(DbContextOptions<KigramedDbContext> options) : Db
     public DbSet<AuthModel> Tabelatb05_auth{get;set;}
     public DbSet<EspecialidadeModel> Tabelatb06_especialidade{get;set;}
     public DbSet<MedicoEspecilidadeModel> Tabelatb07_medico_especialidade{get;set;}
-    public DbSet<ServicoModel> Tabelatb08_servico{get;set;}
+    public DbSet<ServicosModel> Tabelatb08_servico{get;set;}
     public DbSet<ClienteModel> Tabelatb09_cliente{get;set;} 
     public DbSet<GeneroModel> Tabelatb10_genero{get;set;}
     public DbSet<ClientePacienteModel> Tabelatb11_cliente_paciente{get;set;}
@@ -95,7 +95,7 @@ public class KigramedDbContext(DbContextOptions<KigramedDbContext> options) : Db
            entity.HasMany(me=>me.Consultas).WithOne(c=>c.MedicoEspecialidade).HasForeignKey(fk=> fk.Id_medico_especialiade);
        });
 
-       modelBuilder.Entity<ServicoModel>( entity =>
+       modelBuilder.Entity<ServicosModel>( entity =>
        {
             entity.HasMany(s => s.Consultas).WithOne(c => c.Servico).HasForeignKey(fk => fk.Id_servico);
        });

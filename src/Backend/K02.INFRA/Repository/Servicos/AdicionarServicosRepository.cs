@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.K02.INFRA.Repository.Servicos;
 
-public class AdicionarServicoRepository(KigramedDbContext context) : ICadastrarRepository<ServicoModel>
+public class AdicionarServicoRepository(KigramedDbContext context) : ICadastrarRepository<ServicosModel>
 {
-    public async Task<string> AddAsync(ServicoModel model)
+    public async Task<string> AddAsync(ServicosModel model)
     {
         try
         {

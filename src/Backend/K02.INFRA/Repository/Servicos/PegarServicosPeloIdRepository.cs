@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.K02.INFRA.Repository.Servicos;
 
-public class PegarIdServicoRepository(KigramedDbContext context) : IPesquisarPeloIdRepository<ServicoModel>
+public class PegarIdServicoRepository(KigramedDbContext context) : IPesquisarPeloIdRepository<ServicosModel>
 {
-    public async Task<ServicoModel?> PegarAsync(int id)
+    public async Task<ServicosModel?> PegarAsync(int id)
     {
 
         try

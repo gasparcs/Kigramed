@@ -20,7 +20,6 @@
     <Folder Include="K02.INFRA\Data\" />
     <Folder Include="K02.INFRA\Repository\Cliente\" />
     <Folder Include="K02.INFRA\Repository\Consulta\" />
-    <Folder Include="K02.INFRA\Repository\Especialidade\" />
     <Folder Include="K02.INFRA\Repository\EstadoConsulta\" />
     <Folder Include="K02.INFRA\Repository\Paciente\" />
     <Folder Include="K02.INFRA\Repository\Pagamento\" />

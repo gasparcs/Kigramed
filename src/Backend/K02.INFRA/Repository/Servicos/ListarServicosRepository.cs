@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.K02.INFRA.Repository.Servicos;
 
-public class ListarServicoRepository(KigramedDbContext context) : IlistagemRepository<ServicoModel>
+public class ListarServicoRepository(KigramedDbContext context) : IlistagemRepository<ServicosModel>
 {
-    public async Task<IEnumerable<ServicoModel>> Listagem()
+    public async Task<IEnumerable<ServicosModel>> Listagem()
     {
         try
         {

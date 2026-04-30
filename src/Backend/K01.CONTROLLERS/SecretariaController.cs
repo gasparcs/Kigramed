@@ -1,7 +1,12 @@
 using Backend.K03.APPLICATION.ClienteUseCase.comand;
 using Backend.K03.APPLICATION.ClienteUseCase.DTO;
 using Backend.K03.APPLICATION.ClienteUseCase.Queries;
+using Backend.K03.APPLICATION.MedicoEspecialidadeUseCase.Queries;
+using Backend.K03.APPLICATION.PacienteUseCase.Comand;
 using Backend.K03.APPLICATION.PacienteUseCase.DTO;
+using Backend.K03.APPLICATION.PacienteUseCase.Queries;
+using Backend.K03.APPLICATION.PagamentoUseCase.Queries;
+using Backend.K03.APPLICATION.ServicosUseCase.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

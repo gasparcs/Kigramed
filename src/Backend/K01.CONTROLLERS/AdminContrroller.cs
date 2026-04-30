@@ -13,6 +13,16 @@ using Backend.K03.APPLICATION.EstadoConsultaUseCase.Queries;
 using Backend.K03.APPLICATION.FuncionarioUseCase.Comand;
 using Backend.K03.APPLICATION.FuncionarioUseCase.DTO;
 using Backend.K03.APPLICATION.FuncionarioUseCase.Queries;
+using Backend.K03.APPLICATION.ConsultaUseCase.Comand;
+using Backend.K03.APPLICATION.ConsultaUseCase.DTO;
+using Backend.K03.APPLICATION.ConsultaUseCase.Queries;
+using Backend.K03.APPLICATION.EspecialidadeUseCase.Comand;
+using Backend.K03.APPLICATION.EspecialidadeUseCase.DTO;
+using Backend.K03.APPLICATION.EspecialidadeUseCase.Queries;
+using Backend.K03.APPLICATION.EstadoConsultaUseCase.Queries;
+using Backend.K03.APPLICATION.FuncionarioUseCase.Comand;
+using Backend.K03.APPLICATION.FuncionarioUseCase.DTO;
+using Backend.K03.APPLICATION.FuncionarioUseCase.Queries;
 using Backend.K03.APPLICATION.MedicoEspecialidadeUseCase.Queries;
 using Backend.K03.APPLICATION.PacienteUseCase.Comand;
 using Backend.K03.APPLICATION.PacienteUseCase.DTO;
@@ -53,12 +63,16 @@ namespace Backend.K01.CONTROLLERS;
       AtualizarEspecialidade atualizarespecialidadeServices,
       RemoverEspecialidade removerespecialidadeServices,
       ListarEspecialidade listarespecialidadesServices,
+      ListarEspecialidade listarespecialidadesServices,
       PegarEspecialidadePeloId pegaridespecialidadeServices,
       PegarEspecialidadePeloTexto pegartextoespecialidadeServices,
 
       AdicionarFuncionarios adicionarfuncionarioServices,
+      AdicionarFuncionarios adicionarfuncionarioServices,
       AtualizarFuncionario atualizarfuncionarioServices,
       RemoverFuncionario removerfuncionarioServices,
+      ListarFuncionario listarfuncionariosServices,
+      PegarFuncionaarioPeloNif pegarniffuncionarioServices,
       ListarFuncionario listarfuncionariosServices,
       PegarFuncionaarioPeloNif pegarniffuncionarioServices,
       PegarFuncionarioPeloTexto pegartextofuncionarioServices,
@@ -72,7 +86,7 @@ namespace Backend.K01.CONTROLLERS;
 
          ListarMedicos listarmedicosServices,
 
-        ListarPerfis listarperfisServices,
+      ListarPerfis listarperfisServices,
 
         ListarEstadoConsulta listarestadosServices,
 
@@ -184,6 +198,7 @@ namespace Backend.K01.CONTROLLERS;
 
              return StatusCode(400, "ID da consulta não corresponde");
 
+            dto.IdConsulta = id;
             dto.IdConsulta = id;
             var resposta = await atualizarconsultaServices.ExecuteAsync(dto);
             return resposta.Contains("sucesso") ? StatusCode(200, resposta) : StatusCode(400, resposta);
@@ -302,6 +317,7 @@ namespace Backend.K01.CONTROLLERS;
             if (!ModelState.IsValid)
             return StatusCode(400, ModelState);
 
+            dto.FuncionarioNif = nif;
             dto.FuncionarioNif = nif;
 
             var resposta = await atualizarfuncionarioServices.ExecuteAsync(dto);

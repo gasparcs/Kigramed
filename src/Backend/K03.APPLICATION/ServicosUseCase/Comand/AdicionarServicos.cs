@@ -5,7 +5,7 @@ using Backend.K04.DOMAIN.Interfaces;
 
 namespace Backend.K03.APPLICATION.ServicosUseCase.Comand;
 
-public class AdicionarServico(ICadastrarRepository<ServicosModel> repository)
+public class AdicionarServicos(ICadastrarRepository<ServicosModel> repository)
 {
     public async Task<string> ExecuteAsync(AdicionarServicoDTO dto)
     {

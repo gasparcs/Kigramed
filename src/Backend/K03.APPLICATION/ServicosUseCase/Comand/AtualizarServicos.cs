@@ -5,7 +5,7 @@ using Backend.K04.DOMAIN.Interfaces;
 
 namespace Backend.K03.APPLICATION.ServicosUseCase.Comand;
 
-public class AtualizarServico(IAtualizarRepository<ServicosModel> repository)
+public class AtualizarServicos(IAtualizarRepository<ServicosModel> repository)
 {
     public async Task<string> ExecuteAsync(AtualizarServicosDTO dto)
     {

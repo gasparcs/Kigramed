@@ -9,8 +9,15 @@ using Backend.K02.INFRA.Repository.Paciente;
 using Backend.K02.INFRA.Repository.Pagamento;
 using Backend.K02.INFRA.Repository.Perfil;
 using Backend.K02.INFRA.Repository.Servicos;
-using Backend.K02.INFRA.Repository.SMS;
+using Backend.K03.APPLICATION.ClienteUseCase.comand;
 using Backend.K03.APPLICATION.ClienteUseCase.Queries;
+using Backend.K03.APPLICATION.MedicoEspecialidadeUseCase.Queries;
+using Backend.K03.APPLICATION.PacienteUseCase.Comand;
+using Backend.K03.APPLICATION.PacienteUseCase.Queries;
+using Backend.K03.APPLICATION.PagamentoUseCase.Queries;
+using Backend.K03.APPLICATION.PerfilUseCase.Queries;
+using Backend.K03.APPLICATION.ServicosUseCase.Comand;
+using Backend.K03.APPLICATION.ServicosUseCase.Queries;
 using Backend.K04.DOMAIN.D01.Perfil;
 using Backend.K04.DOMAIN.D02.Funcionario;
 using Backend.K04.DOMAIN.D06.Especialidade;
@@ -82,15 +89,48 @@ builder.Services.AddScoped<IlistagemRepository<PagamentoModel>, ListarPagamentoR
 
 //Contratos para o Serviço
 builder.Services.AddScoped<ICadastrarRepository<ServicosModel>, AdicionarServicoRepository>();
-builder.Services.AddScoped<IAtualizarRepository<ServicosModel>, AtualizarServicoRepository>();
-builder.Services.AddScoped<IlistagemRepository<ServicosModel>,ListarServicoRepository>();
-builder.Services.AddScoped<IPesquisarPeloIdRepository<ServicosModel>, PegarIdServicoRepository>();
-builder.Services.AddScoped<IPegarPeloTextoRepository<ServicosModel>, PegarTextoServicoRepository>();
-builder.Services.AddScoped<IRemoverRepository<ServicosModel>, RemoverServicoRepository>();
+builder.Services.AddScoped<IAtualizarRepository<ServicosModel>, AtualizarServicosRepository>();
+builder.Services.AddScoped<IlistagemRepository<ServicosModel>,ListarServicosRepository>();
+builder.Services.AddScoped<IPesquisarPeloIdRepository<ServicosModel>, PegarIdServicosRepository>();
+builder.Services.AddScoped<IPegarPeloTextoRepository<ServicosModel>, PegarTextoServicosRepository>();
+builder.Services.AddScoped<IRemoverRepository<ServicosModel>, RemoverServicosRepository>();
 
-//contartos para sms
-builder.Services.AddScoped<ICadastrarRepository<SMSModel>, AdicionarSmsRepository>();
-builder.Services.AddScoped<IlistagemRepository<SMSModel>, ListarSmsRepository>();
+
+//CASOS DE USO
+
+//casos de usos cliendemodel
+builder.Services.AddTransient<AdicionarCliente>();
+builder.Services.AddTransient<AtualizarCliente>();
+builder.Services.AddTransient<ListarClientes>();
+builder.Services.AddTransient<RemoverCliente>();
+builder.Services.AddTransient<PegarClientePeloNif>();
+builder.Services.AddTransient<PegarClientePeloTexto>();
+
+//casos de uso perfilmodel
+builder.Services.AddTransient<ListarPerfis>();
+
+//casos de uso servicosmodel
+builder.Services.AddTransient<AdicionarServicos>();
+builder.Services.AddTransient<AtualizarServicos>(); 
+builder.Services.AddTransient<RemoverServico>();
+builder.Services.AddTransient<ListarServicos>();
+builder.Services.AddTransient<PegarServicoPeloId>();
+builder.Services.AddTransient<PegarServicoPeloTexto>();
+
+//casos de uso pacientemodel
+builder.Services.AddTransient<AdicionarPaciente>();
+builder.Services.AddTransient<AtualizarPaciente>();
+builder.Services.AddTransient<RemoverPaciente>();
+builder.Services.AddTransient<ListarPacientes>();
+builder.Services.AddTransient<PegarPacientePeloID>();
+builder.Services.AddTransient<PegarPacientePeloTexto>();
+//caso de uso pagamento
+builder.Services.AddTransient<ListarPagamentos>();
+//casos de uso medico
+builder.Services.AddTransient<ListarMedicos>();
+
+
+
 
 
 var app = builder.Build();

@@ -9,6 +9,7 @@ using Backend.K02.INFRA.Repository.Paciente;
 using Backend.K02.INFRA.Repository.Pagamento;
 using Backend.K02.INFRA.Repository.Perfil;
 using Backend.K02.INFRA.Repository.Servicos;
+using Backend.K02.INFRA.Repository.SMS;
 using Backend.K03.APPLICATION.ClienteUseCase.Queries;
 using Backend.K04.DOMAIN.D01.Perfil;
 using Backend.K04.DOMAIN.D02.Funcionario;
@@ -20,6 +21,7 @@ using Backend.K04.DOMAIN.D12.Paciente;
 using Backend.K04.DOMAIN.D13.EstadoConsulta;
 using Backend.K04.DOMAIN.D14.Pagamento;
 using Backend.K04.DOMAIN.D15.Consulta;
+using Backend.K04.DOMAIN.D20.SMS;
 using Backend.K04.DOMAIN.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -86,7 +88,9 @@ builder.Services.AddScoped<IPesquisarPeloIdRepository<ServicosModel>, PegarIdSer
 builder.Services.AddScoped<IPegarPeloTextoRepository<ServicosModel>, PegarTextoServicoRepository>();
 builder.Services.AddScoped<IRemoverRepository<ServicosModel>, RemoverServicoRepository>();
 
-
+//contartos para sms
+builder.Services.AddScoped<ICadastrarRepository<SMSModel>, AdicionarSmsRepository>();
+builder.Services.AddScoped<IlistagemRepository<SMSModel>, ListarSmsRepository>();
 
 
 var app = builder.Build();

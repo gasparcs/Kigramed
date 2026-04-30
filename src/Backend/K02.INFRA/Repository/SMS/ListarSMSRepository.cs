@@ -13,6 +13,7 @@ public class ListarSmsRepository(KigramedDbContext context): IlistagemRepository
         try
         {
             var dados = await context.Tabelatb20_sms
+            .Include(x=>x.Cliente.Nome)
                 .ToListAsync();
 
             return dados;

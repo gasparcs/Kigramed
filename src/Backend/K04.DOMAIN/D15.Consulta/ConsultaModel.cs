@@ -34,7 +34,7 @@ public class ConsultaModel
 
    public MedicoConsultaModel MedicoConsulta { get; set; }=null!; 
 
-    public ServicoModel Servico{ get; set; }=null!;
+    public ServicosModel Servico{ get; set; }=null!;
 
     public PacienteModel Paciente{ get; set; }=null!;
 

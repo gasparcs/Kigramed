@@ -12,7 +12,9 @@ public class AdicionarSMS(ICadastrarRepository<SMSModel> repository)
         var model = new SMSModel
         {
             Mensagem = dto.SMSMensagem,
+
             Nif_funcionario = dto.SMSNif_funcionario,
+            
             Id_cliente = dto.SMSId_cliente,
         };
 

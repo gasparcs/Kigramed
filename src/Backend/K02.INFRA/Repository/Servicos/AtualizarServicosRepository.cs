@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.K02.INFRA.Repository.Servicos;
 
-public class AtualizarServicoRepository(KigramedDbContext context) : IAtualizarRepository<ServicosModel>
+public class AtualizarServicosRepository(KigramedDbContext context) : IAtualizarRepository<ServicosModel>
 {
     public async Task<string> ActualizarAsync(ServicosModel model)
     {

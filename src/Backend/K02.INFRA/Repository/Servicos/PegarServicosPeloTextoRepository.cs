@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.K02.INFRA.Repository.Servicos;
 
-public class PegarTextoServicoRepository(KigramedDbContext context) : IPegarPeloTextoRepository<ServicosModel>
+public class PegarTextoServicosRepository(KigramedDbContext context) : IPegarPeloTextoRepository<ServicosModel>
 {
     public async Task<IEnumerable<ServicosModel>> PegarAsync(string texto)
     {

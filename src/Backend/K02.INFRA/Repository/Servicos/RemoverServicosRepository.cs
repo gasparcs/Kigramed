@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.K02.INFRA.Repository.Servicos;
 
-public class RemoverServicoRepository(KigramedDbContext context) : IRemoverRepository<ServicosModel>
+public class RemoverServicosRepository(KigramedDbContext context) : IRemoverRepository<ServicosModel>
 {
     public async Task<string> RemoverAsync(ServicosModel model)
     {

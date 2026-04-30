@@ -1,3 +1,6 @@
+using Backend.K03.APPLICATION.ConsultaUseCase.Comand;
+using Backend.K03.APPLICATION.ConsultaUseCase.DTO;
+using Backend.K03.APPLICATION.ConsultaUseCase.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -46,7 +49,7 @@ namespace Backend.K01.CONTROLLERS
                 return StatusCode(400, ModelState);
 
             // Validar se o ID da URL corresponde ao DTO
-            if (id != dto.Id)
+            if (id != dto.IdConsulta)
                 return StatusCode(400, new
                 {
                     mensagem = "ID da consulta não corresponde ao corpo da requisição"

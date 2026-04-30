@@ -3,6 +3,16 @@ using Backend.K02.INFRA.Repository.EstadoConsulta;
 using Backend.K03.APPLICATION.ClienteUseCase.comand;
 using Backend.K03.APPLICATION.ClienteUseCase.DTO;
 using Backend.K03.APPLICATION.ClienteUseCase.Queries;
+using Backend.K03.APPLICATION.ConsultaUseCase.Comand;
+using Backend.K03.APPLICATION.ConsultaUseCase.DTO;
+using Backend.K03.APPLICATION.ConsultaUseCase.Queries;
+using Backend.K03.APPLICATION.EspecialidadeUseCase.Comand;
+using Backend.K03.APPLICATION.EspecialidadeUseCase.DTO;
+using Backend.K03.APPLICATION.EspecialidadeUseCase.Queries;
+using Backend.K03.APPLICATION.EstadoConsultaUseCase.Queries;
+using Backend.K03.APPLICATION.FuncionarioUseCase.Comand;
+using Backend.K03.APPLICATION.FuncionarioUseCase.DTO;
+using Backend.K03.APPLICATION.FuncionarioUseCase.Queries;
 using Backend.K03.APPLICATION.MedicoEspecialidadeUseCase.Queries;
 using Backend.K03.APPLICATION.PacienteUseCase.Comand;
 using Backend.K03.APPLICATION.PacienteUseCase.DTO;
@@ -12,7 +22,7 @@ using Backend.K03.APPLICATION.PerfilUseCase.Queries;
 using Backend.K03.APPLICATION.ServicosUseCase.Comand;
 using Backend.K03.APPLICATION.ServicosUseCase.DTO;
 using Backend.K03.APPLICATION.ServicosUseCase.Queries;
-using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.K01.CONTROLLERS;
@@ -33,15 +43,15 @@ namespace Backend.K01.CONTROLLERS;
       AdicionarEspecialidade adicionarespecialidadeServices,
       AtualizarEspecialidade atualizarespecialidadeServices,
       RemoverEspecialidade removerespecialidadeServices,
-      ListarEspecialidades listarespecialidadesServices,
+      ListarEspecialidade listarespecialidadesServices,
       PegarEspecialidadePeloId pegaridespecialidadeServices,
       PegarEspecialidadePeloTexto pegartextoespecialidadeServices,
 
-      AdicionarFuncionario adicionarfuncionarioServices,
+      AdicionarFuncionarios adicionarfuncionarioServices,
       AtualizarFuncionario atualizarfuncionarioServices,
       RemoverFuncionario removerfuncionarioServices,
-      ListarFuncionarios listarfuncionariosServices,
-      PegarFuncionarioPeloNif pegarniffuncionarioServices,
+      ListarFuncionario listarfuncionariosServices,
+      PegarFuncionaarioPeloNif pegarniffuncionarioServices,
       PegarFuncionarioPeloTexto pegartextofuncionarioServices,
 
       AdicionarPaciente adicionarpacientesServices,
@@ -52,19 +62,19 @@ namespace Backend.K01.CONTROLLERS;
       PegarPacientePeloTexto pegartextopacienteServices,
 
 
-        ListarPerfis listarperfisServices,
+      ListarPerfis listarperfisServices,
 
-        ListarEstadoConsultaRepository listarestadosServices,
-        ListarPagamentos listarpagamentosServices,
+      ListarEstadoConsulta listarestadosServices,
+      ListarPagamentos listarpagamentosServices,
 
-        ListarMedicos listarmedicosServices,
+      ListarMedicos listarmedicosServices,
 
-        AdicionarServicos adicionarservicosServices,
-        AtualizarServicos atualizarservicosServices,
-        RemoverServico removerservicosServices,
-        ListarServicos listarservicosServices,
-        PegarServicoPeloId pegarservicosidServices,
-        PegarServicoPeloTexto pegarservicostextoServices
+      AdicionarServicos adicionarservicosServices,
+      AtualizarServicos atualizarservicosServices,
+      RemoverServico removerservicosServices,
+      ListarServicos listarservicosServices,
+      PegarServicoPeloId pegarservicosidServices,
+      PegarServicoPeloTexto pegarservicostextoServices
 
       
     
@@ -156,10 +166,10 @@ namespace Backend.K01.CONTROLLERS;
             if (!ModelState.IsValid)
                 return StatusCode(400, ModelState);
 
-            if (id != dto.Id)
+            if (id != dto.IdConsulta)
                 return StatusCode(400, "ID da consulta não corresponde");
 
-            dto.Id = id;
+            dto.IdConsulta = id;
             var resposta = await atualizarconsultaServices.ExecuteAsync(dto);
             return resposta.Contains("sucesso") ? StatusCode(200, resposta) : StatusCode(400, resposta);
         }
@@ -261,7 +271,7 @@ namespace Backend.K01.CONTROLLERS;
             if (!ModelState.IsValid)
             return StatusCode(400, ModelState);
 
-            dto.FuncionaioNif = nif;
+            dto.FuncionarioNif = nif;
 
             var resposta = await atualizarfuncionarioServices.ExecuteAsync(dto);
             return resposta.Contains("sucesso")? StatusCode(200, resposta)

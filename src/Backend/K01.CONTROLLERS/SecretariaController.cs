@@ -1,6 +1,11 @@
 using Backend.K03.APPLICATION.ClienteUseCase.comand;
 using Backend.K03.APPLICATION.ClienteUseCase.DTO;
 using Backend.K03.APPLICATION.ClienteUseCase.Queries;
+using Backend.K03.APPLICATION.ConsultaUseCase.Comand;
+using Backend.K03.APPLICATION.ConsultaUseCase.DTO;
+using Backend.K03.APPLICATION.ConsultaUseCase.Queries;
+using Backend.K03.APPLICATION.EspecialidadeUseCase.Queries;
+using Backend.K03.APPLICATION.EstadoConsultaUseCase.Queries;
 using Backend.K03.APPLICATION.MedicoEspecialidadeUseCase.Queries;
 using Backend.K03.APPLICATION.PacienteUseCase.Comand;
 using Backend.K03.APPLICATION.PacienteUseCase.DTO;
@@ -39,11 +44,11 @@ namespace Backend.K01.CONTROLLERS
         PegarServicoPeloId pegarservicoidServices,
         PegarServicoPeloTexto pegarservicotextoServices,
 
-        ListarEspecialidades listarespecialidadesServices,
+        ListarEspecialidade listarespecialidadesServices,
         PegarEspecialidadePeloId pegaridespecialidadeServices,
         PegarEspecialidadePeloTexto pegartextoespecialidadeServices,
 
-        ListarEstados listarestadosServices,
+        ListarEstadoConsulta listarestadosServices,
         ListarPagamentos listarpagamentosServices,
 
         ListarMedicos listarmedicosServices

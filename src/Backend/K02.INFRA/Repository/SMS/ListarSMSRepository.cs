@@ -8,12 +8,12 @@ namespace Backend.K02.INFRA.Repository.SMS;
 
 public class ListarSmsRepository(KigramedDbContext context): IlistagemRepository<SMSModel>
 {
-     public async Task<IEnumerable<SMSModel>?> Listagem()
+     public async Task<IEnumerable<SMSModel>> Listagem()
     {
         try
         {
             var dados = await context.Tabelatb20_sms
-            .Include(x=>x.Cliente.Nome)
+            .Include(x=>x.Cliente)
                 .ToListAsync();
 
             return dados;

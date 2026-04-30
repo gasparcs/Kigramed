@@ -13,7 +13,8 @@ public class ListarConsultaRepository(KigramedDbContext context) : IlistagemRepo
         try
         {
         var consultas = await context.Tabelatb15_consulta
-        .Include(me => me.MedicoEspecialidade).ThenInclude(me => me.Funcionario.Nome)
+        .Include(me => me.MedicoEspecialidade).ThenInclude(me => me.Funcionario)
+        .Include(me => me.MedicoEspecialidade).ThenInclude(me => me.Especialidade)
         .Include(s => s.Servico)
         .Include(p => p.Paciente).ThenInclude(c => c.Cliente)
         .Include(e => e.EstadoConsulta)

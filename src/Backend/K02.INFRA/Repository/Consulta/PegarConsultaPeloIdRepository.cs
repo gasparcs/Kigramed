@@ -12,11 +12,13 @@ public class PegarConsultaPeloIdRepository(KigramedDbContext context) : IPesquis
     {
         try
         {
-        return await context.Tabelatb15_consulta
-        .Include(me=>me.MedicoConsulta)
-        .Include(s=>s.Servico)
-        .Include(p=>p.Paciente)
-        .FirstAsync(c=>c.Id==id);
+            return await context.Tabelatb15_consulta
+            .Include(me => me.MedicoConsulta).ThenInclude(mc => mc.MedicoEspecialidade).ThenInclude(me => me.Funcionario)
+            .Include(me => me.MedicoEspecialidade).ThenInclude(me => me.Funcionario)
+            .Include(me => me.EstadoConsulta)
+            .Include(s => s.Servico)
+            .Include(p => p.Paciente).ThenInclude(c => c.Cliente)
+            .FirstOrDefaultAsync(c => c.Id == id);
         }
         catch
         {

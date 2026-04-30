@@ -30,6 +30,17 @@
     <Folder Include="K03.APPLICATION\ClienteUseCase\comand\" />
     <Folder Include="K03.APPLICATION\ClienteUseCase\DTO\" />
     <Folder Include="K03.APPLICATION\ClienteUseCase\Queries\" />
+    <Folder Include="K03.APPLICATION\EspecialidadeUseCase\" />
+    <Folder Include="K03.APPLICATION\EspecialidadeUseCase\Comand\" />
+    <Folder Include="K03.APPLICATION\EspecialidadeUseCase\DTO\" />
+    <Folder Include="K03.APPLICATION\EspecialidadeUseCase\Queries\" />
+    <Folder Include="K03.APPLICATION\EstadoConsultaUseCase\" />
+    <Folder Include="K03.APPLICATION\EstadoConsultaUseCase\DTO\" />
+    <Folder Include="K03.APPLICATION\EstadoConsultaUseCase\Queries\" />
+    <Folder Include="K03.APPLICATION\FuncionarioUseCase\" />
+    <Folder Include="K03.APPLICATION\FuncionarioUseCase\Comand\" />
+    <Folder Include="K03.APPLICATION\FuncionarioUseCase\DTO\" />
+    <Folder Include="K03.APPLICATION\FuncionarioUseCase\Queries\" />
     <Folder Include="K03.APPLICATION\MedicoEspecialidadeUseCase\Queries\" />
     <Folder Include="K03.APPLICATION\PacienteUseCase\" />
     <Folder Include="K03.APPLICATION\PacienteUseCase\Comand\" />

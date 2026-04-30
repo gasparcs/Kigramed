@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Backend.K03.APPLICATION.ServicosUseCase.DTO;
 
-public class AdicionarServicoDTO
+public class AdicionarServicosDTO
 {
     [Required(ErrorMessage = "O nome do serviço é obrigatório.")]
     public String ServicoNome{get;set;}=string.Empty;

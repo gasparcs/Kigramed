@@ -7,7 +7,7 @@ namespace Backend.K03.APPLICATION.ServicosUseCase.Comand;
 
 public class AdicionarServicos(ICadastrarRepository<ServicosModel> repository)
 {
-    public async Task<string> ExecuteAsync(AdicionarServicoDTO dto)
+    public async Task<string> ExecuteAsync(AdicionarServicosDTO dto)
     {
         var model = new ServicosModel
         {

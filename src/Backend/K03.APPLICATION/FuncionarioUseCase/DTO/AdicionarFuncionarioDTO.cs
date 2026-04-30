@@ -20,11 +20,11 @@ public class AdicionarFuncionarioDTO
     public IEnumerable<AdicionarFuncionarioEspecialidadeDTO> Especialidades { get; set; } = [];
    
     [Required(ErrorMessage = "Informe os contactos do funcionario")]
-    public IEnumerable<AdicionarContactoDTO> Contactos { get; set; } = [];
+    public IEnumerable<AdicionarFuncionarioContactoDTO> Contactos { get; set; } = [];
 
 }
 
-public class AdicionarContactoDTO
+public class AdicionarFuncionarioContactoDTO
 {
     public int TipoContacto { get; set; }
 

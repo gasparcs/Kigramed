@@ -11,8 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.4" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +48,10 @@
     <Folder Include="K03.APPLICATION\PacienteUseCase\Comand\" />
     <Folder Include="K03.APPLICATION\PacienteUseCase\DTO\" />
     <Folder Include="K03.APPLICATION\PacienteUseCase\Queries\" />
+    <Folder Include="K03.APPLICATION\PagamentoConsultaUseCase\" />
+    <Folder Include="K03.APPLICATION\PagamentoConsultaUseCase\Comand\" />
+    <Folder Include="K03.APPLICATION\PagamentoConsultaUseCase\DTO\" />
+    <Folder Include="K03.APPLICATION\PagamentoConsultaUseCase\Queries\" />
     <Folder Include="K03.APPLICATION\PagamentoUseCase\Comand\" />
     <Folder Include="K03.APPLICATION\PagamentoUseCase\DTO\" />
     <Folder Include="K03.APPLICATION\PagamentoUseCase\Queries\" />

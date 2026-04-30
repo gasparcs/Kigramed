@@ -7,7 +7,7 @@ namespace Backend.K03.APPLICATION.EspecialidadeUseCase.Queries;
 
 public class PegarEspecialidadePeloTexto(IPegarPeloTextoRepository<EspecialidadeModel> repository)
 {
-      public async Task<LeituraEspecialidadeDTO?> ExecuteAsync(string texto)
+      public async Task<IEnumerable<LeituraEspecialidadeDTO>?> ExecuteAsync(string texto)
     {
          var especialidade = await repository.PegarAsync(texto);
 

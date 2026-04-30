@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.K02.INFRA.Repository.Funcionario;
 
-public class PegarFuncionarioPeloTexto(KigramedDbContext context) : IPegarPeloTextoRepository<FuncionarioModel>
+public class PegarFuncionarioPeloTextoRepository(KigramedDbContext context) : IPegarPeloTextoRepository<FuncionarioModel>
 {
      public async Task<IEnumerable<FuncionarioModel>> PegarAsync(string texto)
     {

@@ -37,3 +37,6 @@ C:\Users\HP\Desktop\SAC\SAC\Kigramed\src\Backend\obj\Debug\net10.0\refint\Backen
 C:\Users\HP\Desktop\SAC\SAC\Kigramed\src\Backend\obj\Debug\net10.0\Backend.pdb
 C:\Users\HP\Desktop\SAC\SAC\Kigramed\src\Backend\obj\Debug\net10.0\Backend.genruntimeconfig.cache
 C:\Users\HP\Desktop\SAC\SAC\Kigramed\src\Backend\obj\Debug\net10.0\ref\Backend.dll
+C:\Users\HP\Desktop\SAC\SAC\Kigramed\src\Backend\bin\Debug\net10.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\HP\Desktop\SAC\SAC\Kigramed\src\Backend\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\HP\Desktop\SAC\SAC\Kigramed\src\Backend\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerUI.dll

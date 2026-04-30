@@ -24,5 +24,5 @@ public class EspecialidadeModel
 
      public ICollection<MedicoEspecilidadeModel> MedicoEspecialidades { get; set; } = [];
 
-     public ICollection<ServicoModel> Servicos { get; set; } = [];
+     public ICollection<ServicosModel> Servicos { get; set; } = [];
 }

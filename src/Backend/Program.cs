@@ -7,17 +7,32 @@ using Backend.K02.INFRA.Repository.Funcionario;
 using Backend.K02.INFRA.Repository.MedicoEspecialidade;
 using Backend.K02.INFRA.Repository.Paciente;
 using Backend.K02.INFRA.Repository.Pagamento;
+using Backend.K02.INFRA.Repository.PagamentoConsulta;
 using Backend.K02.INFRA.Repository.Perfil;
 using Backend.K02.INFRA.Repository.Servicos;
+using Backend.K02.INFRA.Repository.SMS;
 using Backend.K03.APPLICATION.ClienteUseCase.comand;
 using Backend.K03.APPLICATION.ClienteUseCase.Queries;
+using Backend.K03.APPLICATION.ConsultaUseCase.Comand;
+using Backend.K03.APPLICATION.ConsultaUseCase.Queries;
+using Backend.K03.APPLICATION.EspecialidadeUseCase.Comand;
+using Backend.K03.APPLICATION.EspecialidadeUseCase.Queries;
+using Backend.K03.APPLICATION.EstadoConsultaUseCase.Queries;
+using Backend.K03.APPLICATION.FuncionarioUseCase.Comand;
+using Backend.K03.APPLICATION.FuncionarioUseCase.DTO;
+using Backend.K03.APPLICATION.FuncionarioUseCase.Queries;
 using Backend.K03.APPLICATION.MedicoEspecialidadeUseCase.Queries;
 using Backend.K03.APPLICATION.PacienteUseCase.Comand;
 using Backend.K03.APPLICATION.PacienteUseCase.Queries;
+using Backend.K03.APPLICATION.PagamentoConsultaUseCase.Comand;
+using Backend.K03.APPLICATION.PagamentoConsultaUseCase.Queries;
+using Backend.K03.APPLICATION.PagamentoUseCase.Comand;
 using Backend.K03.APPLICATION.PagamentoUseCase.Queries;
 using Backend.K03.APPLICATION.PerfilUseCase.Queries;
 using Backend.K03.APPLICATION.ServicosUseCase.Comand;
 using Backend.K03.APPLICATION.ServicosUseCase.Queries;
+using Backend.K03.APPLICATION.SMSUseCase.Comand;
+using Backend.K03.APPLICATION.SMSUseCase.Queries;
 using Backend.K04.DOMAIN.D01.Perfil;
 using Backend.K04.DOMAIN.D02.Funcionario;
 using Backend.K04.DOMAIN.D06.Especialidade;
@@ -28,6 +43,7 @@ using Backend.K04.DOMAIN.D12.Paciente;
 using Backend.K04.DOMAIN.D13.EstadoConsulta;
 using Backend.K04.DOMAIN.D14.Pagamento;
 using Backend.K04.DOMAIN.D15.Consulta;
+using Backend.K04.DOMAIN.D18.PagamentoConsulta;
 using Backend.K04.DOMAIN.D20.SMS;
 using Backend.K04.DOMAIN.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +54,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 string conexao= builder.Configuration.GetConnectionString("ConexaoLocal")!;
 builder.Services.AddDbContext<KigramedDbContext>(options => options.UseNpgsql(conexao));
 
@@ -69,7 +86,7 @@ builder.Services.AddScoped<ICadastrarRepository<FuncionarioModel>, AdicionarFunc
 builder.Services.AddScoped<IAtualizarRepository<FuncionarioModel>, AtualizarFuncionarioRepository>();
 builder.Services.AddScoped<IlistagemRepository<FuncionarioModel>, ListarFuncionarioRepository>();
 builder.Services.AddScoped<IPegarPeloNifRepository<FuncionarioModel>, PegarFuncionarioPeloNifRepository>();
-builder.Services.AddScoped<IPegarPeloTextoRepository<FuncionarioModel>, PegarFuncionarioPeloTexto>();
+builder.Services.AddScoped<IPegarPeloTextoRepository<FuncionarioModel>, PegarFuncionarioPeloTextoRepository>();
 builder.Services.AddScoped<IRemoverRepository<FuncionarioModel>, RemoverFuncionarioRepository>();
 
 //Contratos de EstadoConsulta
@@ -95,9 +112,15 @@ builder.Services.AddScoped<IPesquisarPeloIdRepository<ServicosModel>, PegarIdSer
 builder.Services.AddScoped<IPegarPeloTextoRepository<ServicosModel>, PegarTextoServicosRepository>();
 builder.Services.AddScoped<IRemoverRepository<ServicosModel>, RemoverServicosRepository>();
 
+//contratos para a sms
+builder.Services.AddScoped<ICadastrarRepository<SMSModel>, AdicionarSmsRepository>();
+builder.Services.AddScoped<IlistagemRepository<SMSModel>, ListarSmsRepository>();
+ 
+ //contratos para pagamentoconsulta
+builder.Services.AddScoped<ICadastrarRepository<PagamentoConsultaModel>, AdicionarPagamentoConsultaRepository>();
+builder.Services.AddScoped<IlistagemRepository<PagamentoConsultaModel>, ListarPagamentoConsultaRepository>();
 
 //CASOS DE USO
-
 //casos de usos cliendemodel
 builder.Services.AddTransient<AdicionarCliente>();
 builder.Services.AddTransient<AtualizarCliente>();
@@ -105,10 +128,8 @@ builder.Services.AddTransient<ListarClientes>();
 builder.Services.AddTransient<RemoverCliente>();
 builder.Services.AddTransient<PegarClientePeloNif>();
 builder.Services.AddTransient<PegarClientePeloTexto>();
-
 //casos de uso perfilmodel
 builder.Services.AddTransient<ListarPerfis>();
-
 //casos de uso servicosmodel
 builder.Services.AddTransient<AdicionarServicos>();
 builder.Services.AddTransient<AtualizarServicos>(); 
@@ -116,7 +137,6 @@ builder.Services.AddTransient<RemoverServico>();
 builder.Services.AddTransient<ListarServicos>();
 builder.Services.AddTransient<PegarServicoPeloId>();
 builder.Services.AddTransient<PegarServicoPeloTexto>();
-
 //casos de uso pacientemodel
 builder.Services.AddTransient<AdicionarPaciente>();
 builder.Services.AddTransient<AtualizarPaciente>();
@@ -126,19 +146,46 @@ builder.Services.AddTransient<PegarPacientePeloID>();
 builder.Services.AddTransient<PegarPacientePeloTexto>();
 //caso de uso pagamento
 builder.Services.AddTransient<ListarPagamentos>();
+builder.Services.AddTransient<AdicionarPagamento>();
 //casos de uso medico
 builder.Services.AddTransient<ListarMedicos>();
-
-
-
-
+//casos de uso consulta
+builder.Services.AddTransient<AdicionarConsulta>();
+builder.Services.AddTransient<AtualizarConsulta>();
+builder.Services.AddTransient<ListarConsultas>();
+builder.Services.AddTransient<RemoverConsulta>();
+builder.Services.AddTransient<PegarConsultaPeloId>();
+//casos de uso especialidade
+builder.Services.AddTransient<AdicionarEspecialidade>();
+builder.Services.AddTransient<AtualizarEspecialidade>(); 
+builder.Services.AddTransient<RemoverEspecialidade>();
+builder.Services.AddTransient<ListarEspecialidade>();
+builder.Services.AddTransient<PegarEspecialidadePeloId>();
+builder.Services.AddTransient<PegarEspecialidadePeloTexto>();
+//casos de uso estadoconsulta
+builder.Services.AddTransient<ListarEstadoConsulta>();
+//casos de uso funcionario
+builder.Services.AddTransient<AdicionarFuncionarios>();
+builder.Services.AddTransient<ListarFuncionario>(); 
+builder.Services.AddTransient<PegarFuncionaarioPeloNif>();
+builder.Services.AddTransient<PegarFuncionarioPeloTexto>();
+builder.Services.AddTransient<AtualizarFuncionario>();
+builder.Services.AddTransient<RemoverFuncionario>();
+//casos de uso pagamentoconsulta
+builder.Services.AddTransient<ListarPagamentoConsulta>();
+builder.Services.AddTransient<AdicionarPagamentoConsulta>();
+//contratos SMS
+// contratos SMS
+builder.Services.AddTransient<ListarSMS>();
+builder.Services.AddTransient<AdicionarSMS>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+   app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

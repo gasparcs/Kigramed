@@ -3,16 +3,33 @@ using Backend.K02.INFRA.Repository.EstadoConsulta;
 using Backend.K03.APPLICATION.ClienteUseCase.comand;
 using Backend.K03.APPLICATION.ClienteUseCase.DTO;
 using Backend.K03.APPLICATION.ClienteUseCase.Queries;
+using Backend.K03.APPLICATION.ConsultaUseCase.Comand;
+using Backend.K03.APPLICATION.ConsultaUseCase.DTO;
+using Backend.K03.APPLICATION.ConsultaUseCase.Queries;
+using Backend.K03.APPLICATION.EspecialidadeUseCase.Comand;
+using Backend.K03.APPLICATION.EspecialidadeUseCase.DTO;
+using Backend.K03.APPLICATION.EspecialidadeUseCase.Queries;
+using Backend.K03.APPLICATION.EstadoConsultaUseCase.Queries;
+using Backend.K03.APPLICATION.FuncionarioUseCase.Comand;
+using Backend.K03.APPLICATION.FuncionarioUseCase.DTO;
+using Backend.K03.APPLICATION.FuncionarioUseCase.Queries;
 using Backend.K03.APPLICATION.MedicoEspecialidadeUseCase.Queries;
 using Backend.K03.APPLICATION.PacienteUseCase.Comand;
 using Backend.K03.APPLICATION.PacienteUseCase.DTO;
 using Backend.K03.APPLICATION.PacienteUseCase.Queries;
+using Backend.K03.APPLICATION.PagamentoConsultaUseCase.Comand;
+using Backend.K03.APPLICATION.PagamentoConsultaUseCase.DTO;
+using Backend.K03.APPLICATION.PagamentoConsultaUseCase.Queries;
+using Backend.K03.APPLICATION.PagamentoUseCase.Comand;
+using Backend.K03.APPLICATION.PagamentoUseCase.DTO;
 using Backend.K03.APPLICATION.PagamentoUseCase.Queries;
 using Backend.K03.APPLICATION.PerfilUseCase.Queries;
 using Backend.K03.APPLICATION.ServicosUseCase.Comand;
 using Backend.K03.APPLICATION.ServicosUseCase.DTO;
 using Backend.K03.APPLICATION.ServicosUseCase.Queries;
-using Microsoft.AspNetCore.Components;
+using Backend.K03.APPLICATION.SMSUseCase.Comand;
+using Backend.K03.APPLICATION.SMSUseCase.DTO;
+using Backend.K03.APPLICATION.SMSUseCase.Queries;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.K01.CONTROLLERS;
@@ -29,19 +46,21 @@ namespace Backend.K01.CONTROLLERS;
       AdicionarConsulta adicionarconsultServices,
       ListarConsultas listarconsultaServices,
       AtualizarConsulta atualizarconsultaServices,
+      RemoverConsulta removerconsultaServices,
+      PegarConsultaPeloId pegarconsultapeloidServices,
 
       AdicionarEspecialidade adicionarespecialidadeServices,
       AtualizarEspecialidade atualizarespecialidadeServices,
       RemoverEspecialidade removerespecialidadeServices,
-      ListarEspecialidades listarespecialidadesServices,
+      ListarEspecialidade listarespecialidadesServices,
       PegarEspecialidadePeloId pegaridespecialidadeServices,
       PegarEspecialidadePeloTexto pegartextoespecialidadeServices,
 
-      AdicionarFuncionario adicionarfuncionarioServices,
+      AdicionarFuncionarios adicionarfuncionarioServices,
       AtualizarFuncionario atualizarfuncionarioServices,
       RemoverFuncionario removerfuncionarioServices,
-      ListarFuncionarios listarfuncionariosServices,
-      PegarFuncionarioPeloNif pegarniffuncionarioServices,
+      ListarFuncionario listarfuncionariosServices,
+      PegarFuncionaarioPeloNif pegarniffuncionarioServices,
       PegarFuncionarioPeloTexto pegartextofuncionarioServices,
 
       AdicionarPaciente adicionarpacientesServices,
@@ -51,13 +70,20 @@ namespace Backend.K01.CONTROLLERS;
       PegarPacientePeloID pegaridpacienteServices,
       PegarPacientePeloTexto pegartextopacienteServices,
 
+         ListarMedicos listarmedicosServices,
 
         ListarPerfis listarperfisServices,
 
-        ListarEstadoConsultaRepository listarestadosServices,
-        ListarPagamentos listarpagamentosServices,
+        ListarEstadoConsulta listarestadosServices,
 
-        ListarMedicos listarmedicosServices,
+        ListarPagamentos listarpagamentosServices,
+        AdicionarPagamento adicionarpagamentoServices,
+
+        ListarPagamentoConsulta listarpagamentoconsultaServices,
+        AdicionarPagamentoConsulta adicionarpagamentoconsultaServices,
+
+        ListarSMS listarsmsServices,
+        AdicionarSMS adicionarsmsServices,
 
         AdicionarServicos adicionarservicosServices,
         AtualizarServicos atualizarservicosServices,
@@ -66,8 +92,6 @@ namespace Backend.K01.CONTROLLERS;
         PegarServicoPeloId pegarservicosidServices,
         PegarServicoPeloTexto pegarservicostextoServices
 
-      
-    
       )
       : ControllerBase
     {
@@ -154,14 +178,31 @@ namespace Backend.K01.CONTROLLERS;
         public async Task<IActionResult> AtualizarConsulta(int id, AtualizarConsultaDTO dto)
         {
             if (!ModelState.IsValid)
-                return StatusCode(400, ModelState);
+            return StatusCode(400, ModelState);
 
-            if (id != dto.Id)
-                return StatusCode(400, "ID da consulta não corresponde");
+            if (id != dto.IdConsulta)
 
-            dto.Id = id;
+             return StatusCode(400, "ID da consulta não corresponde");
+
+            dto.IdConsulta = id;
             var resposta = await atualizarconsultaServices.ExecuteAsync(dto);
             return resposta.Contains("sucesso") ? StatusCode(200, resposta) : StatusCode(400, resposta);
+        }
+
+        [HttpDelete("consulta/{id}")]
+        public async Task<IActionResult> RemoverConsulta(int id)
+        {
+            var resposta = await removerconsultaServices.ExecuteAsync(id);
+            return resposta.Contains("sucesso") ? StatusCode(200, resposta):
+            StatusCode(404, resposta);
+        }
+
+        [HttpGet("consulta/id/{id}")]
+        public async Task<IActionResult> PegarConsultaPeloId(int id)
+        {
+            var resposta = await pegarconsultapeloidServices.ExecuteAsync(id);
+            return resposta is null ? StatusCode(404, "Especialidade não encontrada"):
+            Ok(resposta);
         }
 
         //--------------- Especialidade -----------//
@@ -219,7 +260,7 @@ namespace Backend.K01.CONTROLLERS;
         }
 
         //--------------- funcionario --------------//
-        [AllowAnonymous]
+      
         [HttpPost("funcionario")]
         public async Task<IActionResult> AdicionarFuncionario(AdicionarFuncionarioDTO dto)
         {
@@ -261,7 +302,7 @@ namespace Backend.K01.CONTROLLERS;
             if (!ModelState.IsValid)
             return StatusCode(400, ModelState);
 
-            dto.FuncionaioNif = nif;
+            dto.FuncionarioNif = nif;
 
             var resposta = await atualizarfuncionarioServices.ExecuteAsync(dto);
             return resposta.Contains("sucesso")? StatusCode(200, resposta)
@@ -348,7 +389,18 @@ namespace Backend.K01.CONTROLLERS;
             var resposta = await listarestadosServices.ExecuteAsync();
             return Ok(resposta);
         }
-
+        
+        //---------------------pagamento--------------//
+         [HttpPost("pagamento")]
+        public async Task<IActionResult> AdicionarPagamentos(AdicionarPagamentoDTO dto)
+        {
+            if(!ModelState.IsValid)
+            return StatusCode(400, ModelState);
+            var resposta = await adicionarpagamentoServices.ExecuteAsync(dto);
+            return resposta.Contains("sucesso")? StatusCode(201, resposta): 
+            StatusCode(500, resposta);
+        }
+        
         [HttpGet("pagamento")]
         public async Task<IActionResult> ListarPagamentos()
         {
@@ -418,8 +470,43 @@ namespace Backend.K01.CONTROLLERS;
             return resposta is null ? StatusCode(404, "Nenhum servico encontrado com o texto fornecido"):
             Ok(resposta);
         }
-        
 
+          //---------------------pagamento consulta--------------//
+         [HttpPost("pagamentoconsulta")]
+        public async Task<IActionResult> AdicionarPagamentoConsulta(AdicionarPagamentoConsultaDTO dto)
+        {
+            if(!ModelState.IsValid)
+            return StatusCode(400, ModelState);
+            var resposta = await adicionarpagamentoconsultaServices.ExecuteAsync(dto);
+            return resposta.Contains("sucesso")? StatusCode(201, resposta): 
+            StatusCode(500, resposta);
+        }
         
+        [HttpGet("pagamentoconsulta")]
+        public async Task<IActionResult> ListarPagamentoConsulta()
+        {
+            var resposta = await listarpagamentoconsultaServices.ExecuteAsync();
+            return Ok(resposta);
+        }
+
+         //---------------------SMS--------------//
+         [HttpPost("SMS")]
+        public async Task<IActionResult> AdicionarSMS(AdicionarSMSDTO dto)
+        {
+            if(!ModelState.IsValid)
+            return StatusCode(400, ModelState);
+            var resposta = await adicionarsmsServices.ExecuteAsync(dto);
+            return resposta.Contains("sucesso")? StatusCode(201, resposta): 
+            StatusCode(500, resposta);
+        }
+        
+        [HttpGet("SMS")]
+        public async Task<IActionResult> ListarSMS()
+        {
+            var resposta = await listarsmsServices.ExecuteAsync();
+            return Ok(resposta);
+        }
+
     }
+
 

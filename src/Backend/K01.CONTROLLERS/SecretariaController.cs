@@ -20,7 +20,6 @@ namespace Backend.K01.CONTROLLERS
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Secretaria")]
      
     public class SecretariaController (
         AdicionarCliente adicionarServices,
@@ -243,6 +242,7 @@ namespace Backend.K01.CONTROLLERS
         }
 
         //---------------estado---------------//
+         [HttpGet("estado")]
          public async Task<IActionResult> ListarEstados()
         {
             var resposta = await listarestadosServices.ExecuteAsync();
@@ -257,6 +257,7 @@ namespace Backend.K01.CONTROLLERS
         }
 
         //----------------médicos------------//
+        [HttpGet("medicos")]
          public async Task<IActionResult> Listarmedicos()
         {
             var resposta = await listarmedicosServices.ExecuteAsync();

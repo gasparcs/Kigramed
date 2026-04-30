@@ -9,7 +9,6 @@ namespace Backend.K01.CONTROLLERS
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Medico")]
     public class MedicoController (
         ListarConsultas listarConsultasServices,
         AtualizarConsulta atualizarConsultaServices

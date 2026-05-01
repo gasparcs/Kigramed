@@ -30,10 +30,12 @@ using Backend.K03.APPLICATION.ServicosUseCase.Queries;
 using Backend.K03.APPLICATION.SMSUseCase.Comand;
 using Backend.K03.APPLICATION.SMSUseCase.DTO;
 using Backend.K03.APPLICATION.SMSUseCase.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.K01.CONTROLLERS;
-
+   
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class AdminController (AdicionarCliente adicionarclienteServices,

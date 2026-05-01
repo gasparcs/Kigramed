@@ -48,6 +48,16 @@ using Backend.K04.DOMAIN.D18.PagamentoConsulta;
 using Backend.K04.DOMAIN.D20.SMS;
 using Backend.K04.DOMAIN.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Backend.K03.APPLICATION.Servico.IPasswordService;
+using Backend.K02.INFRA.Servico.PasswordService;
+using Backend.K03.APPLICATION.Servico.ISmsService;
+using Backend.K02.INFRA.Servico.SmsService;
+using Backend.K03.APPLICATION.Servico.ITokenService;
+using Backend.K02.INFRA.Servico.AuthService;
+using Backend.K03.APPLICATION.AuthUseCase.DTO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,7 +90,8 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtIssuer,
         ValidAudience = jwtAudience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding
+        .UTF8.GetBytes(jwtKey))
     };
 });
 
@@ -205,6 +216,17 @@ builder.Services.AddTransient<AdicionarPagamentoConsulta>();
 builder.Services.AddTransient<ListarSMS>();
 builder.Services.AddTransient<AdicionarSMS>();
 
+builder.Services.AddTransient<IPasswordCreate, PasswordCreateService>();
+builder.Services.AddTransient<IPasswordHash, PasswordHashService>();
+
+builder.Services.AddHttpClient<ISmsService, SmsService>();
+
+builder.Services.AddTransient<ITokenService,JwtTokenService>();
+
+builder.Services.AddTransient<LoginUsuario>();
+
+builder.Services.AddTransient<IPasswordVerify, PasswordVerifyService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -216,7 +238,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllers();
 

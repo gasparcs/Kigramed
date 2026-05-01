@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.K01.CONTROLLERS
-{
+{   
+    [Authorize(Roles = "Medico")]
     [Route("api/[controller]")]
     [ApiController]
     public class MedicoController (

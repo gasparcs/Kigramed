@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.K01.CONTROLLERS
 {
+    [Authorize(Roles = "Secretaria")]
     [Route("api/[controller]")]
     [ApiController]
      

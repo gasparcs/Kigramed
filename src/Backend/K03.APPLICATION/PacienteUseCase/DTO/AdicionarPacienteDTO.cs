@@ -12,7 +12,7 @@ public class AdicionarPacienteDTO
    [Required(ErrorMessage = "Data de nascimento do paciente é obrigatório")]
    public DateTime PacienteData_nascimento{get;set;}
 
-   public string IdCliente{get;set;} = string.Empty;
+   public string Nif_cliente{get;set;} = string.Empty;
 
    public int  IdCliente_Paciente {get;set;}
 

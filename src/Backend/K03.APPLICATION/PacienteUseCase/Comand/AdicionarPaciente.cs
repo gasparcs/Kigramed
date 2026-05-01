@@ -14,7 +14,7 @@ public class AdicionarPaciente(ICadastrarRepository<PacienteModel> repository)
             Nome = dto.PacienteNome,
             Data_nascimento = DateTime.SpecifyKind(dto.PacienteData_nascimento.Date, DateTimeKind.Utc),
             Id_genero = dto.IdGenero,
-            Id_cliente = dto.IdCliente,
+            Nif_cliente = dto.Nif_cliente,
             Id_cliente_paciente = dto.IdCliente_Paciente
         };
 

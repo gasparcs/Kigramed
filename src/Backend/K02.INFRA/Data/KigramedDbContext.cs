@@ -102,7 +102,7 @@ public class KigramedDbContext(DbContextOptions<KigramedDbContext> options) : Db
 
        modelBuilder.Entity<ClienteModel>( entity =>
        {
-           entity.HasMany(c => c.Pacientes).WithOne(p => p.Cliente).HasForeignKey(fk => fk.Id_cliente);
+           entity.HasMany(c => c.Pacientes).WithOne(p => p.Cliente).HasForeignKey(fk => fk.Nif_cliente);
 
            entity.HasMany(c => c.Pagamentos).WithOne(p => p.Cliente).HasForeignKey( fk => fk.Id_cliente);
            

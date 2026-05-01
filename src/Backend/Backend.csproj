@@ -15,6 +15,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.4" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.18.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +29,10 @@
     <Folder Include="K02.INFRA\Repository\Perfil\" />
     <Folder Include="K02.INFRA\Repository\Servicos\" />
     <Folder Include="K02.INFRA\Repository\SMS\" />
+    <Folder Include="K02.INFRA\Servico\AuthService\" />
+    <Folder Include="K02.INFRA\Servico\SmsService\" />
+    <Folder Include="K03.APPLICATION\AuthUseCase\DTO\" />
+    <Folder Include="K03.APPLICATION\AuthUseCase\Queries\" />
     <Folder Include="K03.APPLICATION\ClienteUseCase\" />
     <Folder Include="K03.APPLICATION\ClienteUseCase\comand\" />
     <Folder Include="K03.APPLICATION\ClienteUseCase\DTO\" />

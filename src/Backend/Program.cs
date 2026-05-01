@@ -1,4 +1,5 @@
 using Backend.K02.INFRA.Data;
+using Backend.K02.INFRA.Repository.Auth;
 using Backend.K02.INFRA.Repository.Cliente;
 using Backend.K02.INFRA.Repository.Consulta;
 using Backend.K02.INFRA.Repository.Especialidade;
@@ -59,6 +60,30 @@ builder.Services.AddSwaggerGen();
 string conexao= builder.Configuration.GetConnectionString("ConexaoLocal")!;
 builder.Services.AddDbContext<KigramedDbContext>(options => options.UseNpgsql(conexao));
 
+// Configurar autenticação JWT
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "sua-chave-secreta-muito-longa-e-segura-aqui";
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "Kigramed";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "KigramedApi";
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+    };
+});
+
 //Contratos do Cliente 
 builder.Services.AddScoped<ICadastrarRepository<ClienteModel>, AdicionarClienteRepository>();
 builder.Services.AddScoped<IAtualizarRepository<ClienteModel>, AtualizarClienteRepository>();
@@ -103,7 +128,8 @@ builder.Services.AddScoped<IRemoverRepository<PacienteModel>, RemoverPacienteRep
 //Contratos para o Pagamento
 builder.Services.AddScoped<ICadastrarRepository<PagamentoModel>, AdicionarPagamentoRepository>();
 builder.Services.AddScoped<IlistagemRepository<PagamentoModel>, ListarPagamentoRepository>();
-
+//Contratos do Auth
+builder.Services.AddScoped<IPegarAuthPeloNifRepository, PegarAuthPeloNifRepository>();
 //Contratos para o Serviço
 builder.Services.AddScoped<ICadastrarRepository<ServicosModel>, AdicionarServicoRepository>();
 builder.Services.AddScoped<IAtualizarRepository<ServicosModel>, AtualizarServicosRepository>();

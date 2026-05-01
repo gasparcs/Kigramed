@@ -2,7 +2,8 @@ using System;
 
 namespace Backend.K03.APPLICATION.Servico.ITokenService;
 
-public interface ISmsService
+public interface ITokenService
 {
-    Task<bool> EnviarAsync(string telefone, string mensagemTexto, string nif);
+    string GerarToken(string nif, string nome, string telefone, string role, string perfil);
+
 }

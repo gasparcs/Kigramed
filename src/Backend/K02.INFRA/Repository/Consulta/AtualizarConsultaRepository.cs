@@ -12,16 +12,17 @@ public class AtualizarConsultaRepository(KigramedDbContext context) : IAtualizar
     {
         try
         {
-               var consulta = await context.Tabelatb15_consulta
+                var consulta = await context.Tabelatb15_consulta
+                
                .FirstOrDefaultAsync(c=>c.Id == model.Id);
 
                 if(consulta is null) return "Consulta não encontrada";
 
-                consulta.MedicoConsulta= model.MedicoConsulta;
+                consulta.Data_consulta          = model.Data_consulta;
 
-                consulta.Data_consulta=model.Data_consulta;
+                consulta.Id_medico_especialiade = model.Id_medico_especialiade;
 
-                consulta.EstadoConsulta=model.EstadoConsulta;
+                consulta.Id_estado_consulta     = model.Id_estado_consulta;
 
                 return await context.SaveChangesAsync() >0?
                 "Consulta atualizada com sucesso" :

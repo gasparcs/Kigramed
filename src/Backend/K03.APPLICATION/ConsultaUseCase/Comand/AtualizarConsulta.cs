@@ -12,26 +12,13 @@ public class AtualizarConsulta(IAtualizarRepository<ConsultaModel> repository)
     {
         var model = new ConsultaModel
         {
-            Id = dto.IdConsulta,
+            Id                     = dto.IdConsulta,
 
-            Data_consulta = dto.Data_consulta,
+            Data_consulta          = dto.Data_consulta,
 
-            MedicoConsulta = new MedicoConsultaModel
-            {
-                Id_medico_especialidade = dto.Id_medico_especialiade,
-
-                Id_consulta = dto.IdConsulta,
-
-                MedicoEspecialidade = null!,
-
-                Consulta = null!
-            },
-            EstadoConsulta = new EstadoConsultaModel
-            {
-                Id = dto.Id_estado_consulta,
-                
-                Consultas = null!
-            }
+            Id_medico_especialiade = dto.Id_medico_especialiade,
+            
+            Id_estado_consulta     = dto.Id_estado_consulta,
         };
 
         return await repository.ActualizarAsync(model);

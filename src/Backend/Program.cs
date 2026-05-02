@@ -2,6 +2,7 @@ using Backend.K02.INFRA.Data;
 using Backend.K02.INFRA.Repository.Auth;
 using Backend.K02.INFRA.Repository.Cliente;
 using Backend.K02.INFRA.Repository.Consulta;
+using Backend.K04.DOMAIN.Interfaces;
 using Backend.K02.INFRA.Repository.Especialidade;
 using Backend.K02.INFRA.Repository.EstadoConsulta;
 using Backend.K02.INFRA.Repository.Funcionario;
@@ -46,7 +47,6 @@ using Backend.K04.DOMAIN.D14.Pagamento;
 using Backend.K04.DOMAIN.D15.Consulta;
 using Backend.K04.DOMAIN.D18.PagamentoConsulta;
 using Backend.K04.DOMAIN.D20.SMS;
-using Backend.K04.DOMAIN.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -104,6 +104,7 @@ builder.Services.AddScoped<IPegarPeloTextoRepository<ClienteModel>,PegarClienteP
 builder.Services.AddScoped<IRemoverRepository<ClienteModel>, RemoverClienteRepository>();
 //Contratos da Consulta
 builder.Services.AddScoped<ICadastrarRepository<ConsultaModel>, AdicionarConsultaRepository>();
+builder.Services.AddScoped<IListarConsultaPorMedicoRepository, ListarConsultaPorMedicoRepository>();
 builder.Services.AddScoped<IAtualizarRepository<ConsultaModel>, AtualizarConsultaRepository>();
 builder.Services.AddScoped<IlistagemRepository<ConsultaModel>, ListarConsultaRepository>();
 builder.Services.AddScoped<IPesquisarPeloIdRepository<ConsultaModel>, PegarConsultaPeloIdRepository>();
@@ -190,6 +191,7 @@ builder.Services.AddTransient<ListarMedicos>();
 builder.Services.AddTransient<AdicionarConsulta>();
 builder.Services.AddTransient<AtualizarConsulta>();
 builder.Services.AddTransient<ListarConsultas>();
+builder.Services.AddTransient<ListarConsultasDoMedico>();
 builder.Services.AddTransient<RemoverConsulta>();
 builder.Services.AddTransient<PegarConsultaPeloId>();
 //casos de uso especialidade

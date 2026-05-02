@@ -1,0 +1,14 @@
+# Binaries
+bin/
+obj/
+
+# Segredos de desenvolvimento - NUNCA commitar
+appsettings.Development.json
+appsettings.Production.json
+
+# Ficheiro de segredos do .NET
+secrets.json
+
+# Visual Studio
+.vscode/
+*.user

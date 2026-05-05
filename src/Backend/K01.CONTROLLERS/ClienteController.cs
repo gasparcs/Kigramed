@@ -11,7 +11,8 @@ namespace Backend.K01.CONTROLLERS
     public class ClienteController (
 
          CriarPedido criarPedido,
-          IAgendamentoRepository repository): ControllerBase
+          CancelarPedido cancelarPedido,
+         IAgendamentoRepository repository): ControllerBase
     { 
 
 
@@ -97,6 +98,15 @@ namespace Backend.K01.CONTROLLERS
             especialidade = pedido.Especialidade?.Nome,
             prazoPagamento = pedido.PrazoPagamento
         });
+    }
+
+    [HttpPut("{id}/cancelar")]
+    public async Task<IActionResult> Cancelar(int id)
+    {
+        var resposta = await cancelarPedido.ExecuteAsync(id);
+        return resposta.Contains("sucesso")
+            ? Ok(new { mensagem = "Pedido cancelado. SMS enviado ao cliente." })
+            : StatusCode(404, new { mensagem = resposta });
     }
     }
 }

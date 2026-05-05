@@ -7,6 +7,7 @@ using Backend.K04.DOMAIN.D12.Paciente;
 using Backend.K04.DOMAIN.D13.EstadoConsulta;
 using Backend.K04.DOMAIN.D18.PagamentoConsulta;
 using Backend.K04.DOMAIN.D19.MedicoConsulta;
+using Backend.K04.DOMAIN.D21.Agendamento;
 
 namespace Backend.K04.DOMAIN.D15.Consulta;
 
@@ -43,5 +44,7 @@ public class ConsultaModel
     public PagamentoConsultaModel PagamentoConsulta{ get; set; }=null!;
 
     public MedicoEspecilidadeModel MedicoEspecialidade{get;set;}=null!;
+
+    public AgendamentoModel Agendamento {get;set;}=null!;
 
 }

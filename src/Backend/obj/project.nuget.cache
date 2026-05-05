@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "+6svNlAV3fE=",
+  "dgSpecHash": "EedAybZj7xs=",
   "success": true,
-  "projectFilePath": "C:\\Users\\chala\\OneDrive\\Documents\\GitHub\\Kigramed\\src\\Backend\\Backend.csproj",
+  "projectFilePath": "C:\\Users\\chala\\OneDrive\\Documents\\GitHub\\Kigramed\\Kigramed\\src\\Backend\\Backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\chala\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\10.0.7\\microsoft.aspnetcore.authentication.jwtbearer.10.0.7.nupkg.sha512",
     "C:\\Users\\chala\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.7\\microsoft.aspnetcore.openapi.10.0.7.nupkg.sha512",

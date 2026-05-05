@@ -103,7 +103,10 @@ public class KigramedDbContext(DbContextOptions<KigramedDbContext> options) : Db
        modelBuilder.Entity<ServicosModel>( entity =>
        {
             entity.HasMany(s => s.Consultas).WithOne(c => c.Servico).HasForeignKey(fk => fk.Id_servico);
+
+            entity.HasMany(s => s.Agendamento).WithOne(c => c.Servico).HasForeignKey(fk => fk.Id_Servico);
        });
+
 
        modelBuilder.Entity<ClienteModel>( entity =>
        {
@@ -152,6 +155,11 @@ public class KigramedDbContext(DbContextOptions<KigramedDbContext> options) : Db
         modelBuilder.Entity<MedicoConsultaModel>( entity =>
         {
                  entity.HasOne(mc => mc.Consulta).WithOne(c => c.MedicoConsulta).HasForeignKey<MedicoConsultaModel>(fk => fk.Id_consulta);
+        });
+
+        modelBuilder.Entity<AgendamentoModel>( entity =>
+        {
+                 entity.HasOne(mc => mc.Consulta).WithOne(c => c.Agendamento).HasForeignKey<AgendamentoModel>(fk => fk.IdConsulta);
         });
     }
 }

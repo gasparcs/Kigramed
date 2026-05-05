@@ -1006,11 +1006,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\chala\\OneDrive\\Documents\\GitHub\\Kigramed\\src\\Backend\\Backend.csproj",
+      "projectUniqueName": "C:\\Users\\chala\\OneDrive\\Documents\\GitHub\\Kigramed\\Kigramed\\src\\Backend\\Backend.csproj",
       "projectName": "Backend",
-      "projectPath": "C:\\Users\\chala\\OneDrive\\Documents\\GitHub\\Kigramed\\src\\Backend\\Backend.csproj",
+      "projectPath": "C:\\Users\\chala\\OneDrive\\Documents\\GitHub\\Kigramed\\Kigramed\\src\\Backend\\Backend.csproj",
       "packagesPath": "C:\\Users\\chala\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\chala\\OneDrive\\Documents\\GitHub\\Kigramed\\src\\Backend\\obj\\",
+      "outputPath": "C:\\Users\\chala\\OneDrive\\Documents\\GitHub\\Kigramed\\Kigramed\\src\\Backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\chala\\AppData\\Roaming\\NuGet\\NuGet.Config"

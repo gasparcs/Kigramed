@@ -2,7 +2,10 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Backend.K03.APPLICATION.EspecialidadeUseCase.Comand;
+using Backend.K03.APPLICATION.EstadoConsultaUseCase.DTO;
 using Backend.K04.DOMAIN.D06.Especialidade;
+using Backend.K04.DOMAIN.D08.Servicos;
+using Backend.K04.DOMAIN.D15.Consulta;
 
 namespace Backend.K04.DOMAIN.D21.Agendamento;
 
@@ -54,5 +57,14 @@ public class AgendamentoModel
 
     [Column("criado_em")]
     public DateTime CriadoEm { get; set; } = DateTime.UtcNow;
+
+    [Column("id_servico")]
+    public int Id_Servico  { get; set; }
+
+    public ServicosModel? Servico { get; set; } = null!;
+
+    public ConsultaModel? Consulta { get; set; } = null!;
+
+
 }
 

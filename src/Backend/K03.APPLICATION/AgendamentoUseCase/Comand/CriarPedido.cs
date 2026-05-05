@@ -26,6 +26,7 @@ public class CriarPedido(IAgendamentoRepository repository)
             NomeCliente         = dto.NomeCliente,
             Telefone            = dto.Telefone,
             IdEspecialidade     = dto.IdEspecialidade,
+            Id_Servico           = dto.IdServico,
             HorarioPreferencial = dto.HorarioPreferencial,
             Observacoes         = dto.Observacoes,
             Estado              = "Pendente",

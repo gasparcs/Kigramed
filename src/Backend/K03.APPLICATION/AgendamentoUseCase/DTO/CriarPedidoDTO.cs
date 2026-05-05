@@ -10,9 +10,16 @@ public class CriarPedidoDTO
 
     [Required(ErrorMessage ="Número do cliente é obrigatório")]
     public string Telefone { get; set; } = string.Empty;
+    
     [Required(ErrorMessage ="Especialidade é obrigatório")]
     public int IdEspecialidade { get; set; }
+
+    [Required(ErrorMessage ="Servico é obrigatório")]
+    public int IdServico {get;set;}
+
     [Required(ErrorMessage ="Horário é obrigatório")]
     public DateTime HorarioPreferencial { get; set; }
     public string? Observacoes { get; set; }
+
+    
 }

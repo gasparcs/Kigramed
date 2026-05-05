@@ -3,7 +3,7 @@ using Backend.K04.DOMAIN.D21.Agendamento;
 
 namespace Backend.K04.DOMAIN.Interfaces;
 
-public class IAgendamentoRepository
+public interface IAgendamentoRepository
 {
     Task<AgendamentoModel> CriarPedidoAsync (AgendamentoModel pedido);
     Task<IEnumerable<AgendamentoModel>> ListarPedidosAsync();

@@ -1,3 +1,5 @@
+using Backend.K03.APPLICATION.AgendamentoUseCase.Comand;
+using Backend.K03.APPLICATION.AgendamentoUseCase.Queries;
 using Backend.K03.APPLICATION.ClienteUseCase.comand;
 using Backend.K03.APPLICATION.ClienteUseCase.DTO;
 using Backend.K03.APPLICATION.ClienteUseCase.Queries;
@@ -12,6 +14,7 @@ using Backend.K03.APPLICATION.PacienteUseCase.DTO;
 using Backend.K03.APPLICATION.PacienteUseCase.Queries;
 using Backend.K03.APPLICATION.PagamentoUseCase.Queries;
 using Backend.K03.APPLICATION.ServicosUseCase.Queries;
+using Backend.K04.DOMAIN.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -51,7 +54,14 @@ namespace Backend.K01.CONTROLLERS
         ListarEstadoConsulta listarestadosServices,
         ListarPagamentos listarpagamentosServices,
 
-        ListarMedicos listarmedicosServices
+        ListarMedicos listarmedicosServices,
+
+         ConfirmarPedido confirmarPedido,
+    CancelarPedido cancelarPedido,
+    ValidarPagamento validarPagamento,
+    RejeitarComprovativo rejeitarComprovativo,
+    ListarPedidos listarPedidos,
+    IAgendamentoRepository repository
     )
     : ControllerBase
     {
@@ -264,5 +274,78 @@ namespace Backend.K01.CONTROLLERS
             var resposta = await listarmedicosServices.ExecuteAsync();
             return Ok(resposta);
         }
+
+        /// Lista todos os pedidos
+    
+    [HttpGet("pedidos")]
+    public async Task<IActionResult> ListarPedidos()
+    {
+        var resposta = await listarPedidos.ExecuteAsync();
+        return Ok(new { mensagem = "sucesso", dados = resposta });
+    }
+
+    /// Confirma horário — reserva o horário e inicia prazo de 2 horas
+    
+    [HttpPut("{id}/confirmar")]
+    public async Task<IActionResult> Confirmar(int id)
+    {
+        var resposta = await confirmarPedido.ExecuteAsync(id);
+        return resposta switch
+        {
+            "sucesso"  => Ok(new { mensagem = "Horário confirmado. SMS enviado ao cliente com dados bancários. Prazo de pagamento: 2 horas." }),
+            "conflito" => StatusCode(409, new { mensagem = "⚠️ Conflito de horário! Este horário já foi reservado para outro paciente. Cancele este pedido e sugira outro horário ao cliente." }),
+            _          => StatusCode(400, new { mensagem = resposta })
+        };
+    }
+
+    /// Cancela pedido e liberta horário
+
+    [HttpPut("{id}/cancelar")]
+    public async Task<IActionResult> Cancelar(int id)
+    {
+        var resposta = await cancelarPedido.ExecuteAsync(id);
+        return resposta.Contains("sucesso")
+            ? Ok(new { mensagem = "Pedido cancelado. SMS enviado ao cliente." })
+            : StatusCode(404, new { mensagem = resposta });
+    }
+
+    /// Valida comprovativo e cria consulta oficial
+    [HttpPut("{id}/validar")]
+    public async Task<IActionResult> Validar(int id)
+    {
+        var resposta = await validarPagamento.ExecuteAsync(id);
+        return resposta.Contains("sucesso")
+            ? Ok(new { mensagem = "Pagamento validado. Consulta registada com sucesso. SMS de confirmação enviado ao cliente." })
+            : StatusCode(400, new { mensagem = resposta });
+    }
+
+    /// Rejeita comprovativo — cliente tem de reenviar
+   
+    [HttpPut("{id}/rejeitar")]
+    public async Task<IActionResult> Rejeitar(int id)
+    {
+        var resposta = await rejeitarComprovativo.ExecuteAsync(id);
+        return resposta.Contains("sucesso")
+            ? Ok(new { mensagem = "Comprovativo rejeitado. SMS enviado ao cliente a pedir novo comprovativo." })
+            : StatusCode(404, new { mensagem = resposta });
+    }
+
+    /// Ver comprovativo (imagem ou PDF)
+    [HttpGet("{id}/comprovativo")]
+    public async Task<IActionResult> VerComprovativo(int id)
+    {
+        var pedido = await repository.BuscarPorIdAsync(id);
+        if (pedido is null || string.IsNullOrEmpty(pedido.CaminhoComprovativo))
+            return StatusCode(404, new { mensagem = "Comprovativo não encontrado." });
+
+        var caminho = Path.Combine(Directory.GetCurrentDirectory(), pedido.CaminhoComprovativo);
+        if (!System.IO.File.Exists(caminho))
+            return StatusCode(404, new { mensagem = "Ficheiro não encontrado no servidor." });
+
+        var ext  = Path.GetExtension(caminho).ToLower();
+        var mime = ext == ".pdf" ? "application/pdf" : "image/jpeg";
+        var bytes = await System.IO.File.ReadAllBytesAsync(caminho);
+        return File(bytes, mime);
+    }
     }
 }

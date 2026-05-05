@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Backend.K04.DOMAIN.D07.MedicoEspecialidade;
 using Backend.K04.DOMAIN.D08.Servicos;
+using Backend.K04.DOMAIN.D21.Agendamento;
 
 namespace Backend.K04.DOMAIN.D06.Especialidade;
 
@@ -25,4 +26,5 @@ public class EspecialidadeModel
      public ICollection<MedicoEspecilidadeModel> MedicoEspecialidades { get; set; } = [];
 
      public ICollection<ServicosModel> Servicos { get; set; } = [];
+     public ICollection<AgendamentoModel> Agendamentos {get;set;} = [];
 }

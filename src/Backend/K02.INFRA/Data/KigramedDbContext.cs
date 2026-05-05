@@ -47,6 +47,7 @@ public class KigramedDbContext(DbContextOptions<KigramedDbContext> options) : Db
     public DbSet<MedicoConsultaModel> Tabelatb19_medico_consulta{get;set;}
     public DbSet<SMSModel> Tabelatb20_sms{get;set;}
     public DbSet<AgendamentoModel> Tabelatb21_agendamento {get;set;}
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -88,6 +89,8 @@ public class KigramedDbContext(DbContextOptions<KigramedDbContext> options) : Db
             entity.HasMany(e => e.MedicoEspecialidades).WithOne(me => me.Especialidade).HasForeignKey(fk => fk.Id_especialidade);
 
             entity.HasMany(e => e.Servicos).WithOne(s => s.Especialidade).HasForeignKey(fk => fk.Id_especialidade);
+            entity.HasMany(e => e.Agendamentos).WithOne(s => s.Especialidade).HasForeignKey(fk => fk.IdEspecialidade);
+
        });
 
        modelBuilder.Entity<MedicoEspecilidadeModel>( entity =>

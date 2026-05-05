@@ -13,7 +13,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.7" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.18.0" />
@@ -91,6 +91,7 @@
     <Folder Include="K04.DOMAIN\D19.MedicoConsulta\" />
     <Folder Include="K04.DOMAIN\D20.SMS\" />
     <Folder Include="K04.DOMAIN\" />
+    <Folder Include="K04.DOMAIN\D21.Agendamento\" />
     <Folder Include="K04.DOMAIN\Interfaces\" />
   </ItemGroup>
 

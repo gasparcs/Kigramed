@@ -1,11 +1,12 @@
 using System;
 using System.Globalization;
 using System.Text;
+using Backend.K03.APPLICATION.AuthUseCase.DTO;
 using Backend.K03.APPLICATION.Servico.IPasswordService;
 using Backend.K03.APPLICATION.Servico.ITokenService;
 using Backend.K04.DOMAIN.Interfaces;
 
-namespace Backend.K03.APPLICATION.AuthUseCase.DTO;
+namespace Backend.K03.APPLICATION.AuthUseCase.Comand;
 
 public class LoginUsuario(
     IPegarAuthPeloNifRepository authRepository,

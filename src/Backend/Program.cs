@@ -57,7 +57,7 @@ using Backend.K03.APPLICATION.Servico.ISmsService;
 using Backend.K02.INFRA.Servico.SmsService;
 using Backend.K03.APPLICATION.Servico.ITokenService;
 using Backend.K02.INFRA.Servico.AuthService;
-using Backend.K03.APPLICATION.AuthUseCase.DTO;
+using Backend.K03.APPLICATION.AuthUseCase.Comand;
 
 var builder = WebApplication.CreateBuilder(args);
 

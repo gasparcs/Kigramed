@@ -17,4 +17,6 @@ public class LeituraPedidoDTO
     public string? CaminhoComprovativo { get; set; }
     public int? IdConsulta { get; set; }
     public DateTime CriadoEm { get; set; }
+    public string Servico{ get; set; } = string.Empty;
+
 }

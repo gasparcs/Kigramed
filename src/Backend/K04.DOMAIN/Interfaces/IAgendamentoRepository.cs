@@ -10,6 +10,7 @@ public interface IAgendamentoRepository
     Task<AgendamentoModel?> BuscarPorIdAsync(int id);
     Task<AgendamentoModel?> BuscarPorNumeroPedidoAsync(string numeroPedido);
     Task<bool> AtualizarAsync(AgendamentoModel pedido);
+    Task<bool> CriarConsultaPagamentoAsync(AgendamentoModel pedido);
     Task<bool> ExisteConflitoAsync(int idEspecialidade, DateTime horario, int? excluirId = null);
     Task<bool> ReservarHorarioAsync(int id);
 }

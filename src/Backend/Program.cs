@@ -249,6 +249,8 @@ builder.Services.AddHostedService<PrazoAgendamentoService>();
 // Permitir upload de ficheiros até 5MB
 builder.Services.Configure<FormOptions>(o => o.MultipartBodyLengthLimit = 5_000_000);
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var app = builder.Build();
 
 app.UseStaticFiles();

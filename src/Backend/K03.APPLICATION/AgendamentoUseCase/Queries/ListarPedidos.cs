@@ -24,7 +24,8 @@ public class ListarPedidos(IAgendamentoRepository repository)
             PrazoPagamento      = p.PrazoPagamento,
             CaminhoComprovativo = p.CaminhoComprovativo,
             IdConsulta          = p.IdConsulta,
-            CriadoEm           = p.CriadoEm
+            CriadoEm           = p.CriadoEm,
+            Servico        = p.Servico?.Nome ?? string.Empty
         });
     }
 }

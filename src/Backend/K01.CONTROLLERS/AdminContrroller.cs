@@ -555,9 +555,12 @@ namespace Backend.K01.CONTROLLERS;
     public async Task<IActionResult> Validar(int id)
     {
         var resposta = await validarPagamento.ExecuteAsync(id);
-        return resposta.Contains("sucesso")
-            ? Ok(new { mensagem = "Pagamento validado. Consulta registada com sucesso. SMS de confirmação enviado ao cliente." })
-            : StatusCode(400, new { mensagem = resposta });
+        if (resposta == "sucesso")
+            return Ok(new { mensagem = "Pagamento validado. Consulta registada com sucesso. SMS de confirmação enviado ao cliente." });
+        else if (resposta == "erro_sms")
+            return Ok(new { mensagem = "Pagamento validado. Consulta registada com sucesso. Erro ao enviar SMS de confirmação." });
+        else
+            return StatusCode(400, new { mensagem = resposta });
     }
 
     /// Rejeita comprovativo — cliente tem de reenviar

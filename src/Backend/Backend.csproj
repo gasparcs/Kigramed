@@ -22,6 +22,7 @@
   <ItemGroup>
     <Folder Include="K01.CONTROLLERS\" />
     <Folder Include="K02.INFRA\Data\" />
+    <Folder Include="K02.INFRA\Repository\Agendamento\" />
     <Folder Include="K02.INFRA\Repository\Cliente\" />
     <Folder Include="K02.INFRA\Repository\Consulta\" />
     <Folder Include="K02.INFRA\Repository\EstadoConsulta\" />

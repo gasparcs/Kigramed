@@ -19,6 +19,7 @@ using Backend.K04.DOMAIN.D17.PerfilPermissao;
 using Backend.K04.DOMAIN.D18.PagamentoConsulta;
 using Backend.K04.DOMAIN.D19.MedicoConsulta;
 using Backend.K04.DOMAIN.D20.SMS;
+using Backend.K04.DOMAIN.D21.Agendamento;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.K02.INFRA.Data;
@@ -45,6 +46,7 @@ public class KigramedDbContext(DbContextOptions<KigramedDbContext> options) : Db
     public DbSet<PagamentoConsultaModel> Tabelatb18_pagamento_consulta{get;set;}
     public DbSet<MedicoConsultaModel> Tabelatb19_medico_consulta{get;set;}
     public DbSet<SMSModel> Tabelatb20_sms{get;set;}
+    public DbSet<AgendamentoModel> Tabelatb21_agendamento {get;set;}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

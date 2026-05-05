@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Backend.K03.APPLICATION.EspecialidadeUseCase.Comand;
 using Backend.K04.DOMAIN.D06.Especialidade;
 
 namespace Backend.K04.DOMAIN.D21.Agendamento;

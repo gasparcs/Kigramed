@@ -6,7 +6,7 @@ using Backend.K04.DOMAIN.D06.Especialidade;
 
 namespace Backend.K04.DOMAIN.D21.Agendamento;
 
-[Table("tb_pedido_agendamento")]
+[Table("tb21_pedido_agendamento")]
 public class AgendamentoModel
 {
     [Key]

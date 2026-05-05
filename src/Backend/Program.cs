@@ -58,6 +58,11 @@ using Backend.K02.INFRA.Servico.SmsService;
 using Backend.K03.APPLICATION.Servico.ITokenService;
 using Backend.K02.INFRA.Servico.AuthService;
 using Backend.K03.APPLICATION.AuthUseCase.Comand;
+using Backend.K02.INFRA.Repository.Agendamento;
+using Backend.K03.APPLICATION.AgendamentoUseCase.Comand;
+using Backend.K03.APPLICATION.AgendamentoUseCase.Queries;
+using Backend.K02.INFRA.Servico.AgendamentoService;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -229,7 +234,30 @@ builder.Services.AddTransient<LoginUsuario>();
 
 builder.Services.AddTransient<IPasswordVerify, PasswordVerifyService>();
 
+// 2. SERVIÇOS — adicionar junto aos outros builder.Services:
+builder.Services.AddScoped<IAgendamentoRepository, AgendamentoRepository>();
+builder.Services.AddTransient<CriarPedido>();
+builder.Services.AddTransient<ConfirmarPedido>();
+builder.Services.AddTransient<CancelarPedido>();
+builder.Services.AddTransient<ValidarPagamento>();
+builder.Services.AddTransient<RejeitarComprovativo>();
+builder.Services.AddTransient<ListarPedidos>();
+
+// Background service que cancela pedidos com prazo expirado (verifica a cada 5 minutos)
+builder.Services.AddHostedService<PrazoAgendamentoService>();
+
+// Permitir upload de ficheiros até 5MB
+builder.Services.Configure<FormOptions>(o => o.MultipartBodyLengthLimit = 5_000_000);
+
 var app = builder.Build();
+
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
+    Path.Combine(Directory.GetCurrentDirectory(), "uploads")),
+    RequestPath = "/uploads"
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

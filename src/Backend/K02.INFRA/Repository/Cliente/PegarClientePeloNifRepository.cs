@@ -15,6 +15,7 @@ public class PegarClientePeloNifRepository (KigramedDbContext context) : IPegarP
              return await context.Tabelatb09_cliente 
             .Include(p =>p.Pacientes)
             .Include(c =>c.Contactos)
+            .ThenInclude(tc => tc.TipoContacto)
             .FirstOrDefaultAsync(n =>n.Nif_cliente ==nif);
         }
         catch

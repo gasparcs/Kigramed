@@ -15,6 +15,7 @@ public class PegarConsultaPeloIdRepository(KigramedDbContext context) : IPesquis
             return await context.Tabelatb15_consulta
             .Include(me => me.MedicoConsulta).ThenInclude(mc => mc.MedicoEspecialidade).ThenInclude(me => me.Funcionario)
             .Include(me => me.MedicoEspecialidade).ThenInclude(me => me.Funcionario)
+            .Include(me => me.MedicoEspecialidade).ThenInclude(me => me.Especialidade)
             .Include(me => me.EstadoConsulta)
             .Include(s => s.Servico)
             .Include(p => p.Paciente).ThenInclude(c => c.Cliente)

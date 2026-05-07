@@ -16,6 +16,7 @@ public class ListarEspecialidadeRepository(KigramedDbContext context) : Ilistage
         {
         var especialidades = await context.Tabelatb06_especialidade
         .Include(m => m.MedicoEspecialidades)
+        .ThenInclude(m => m.Funcionario)
         .Include(s => s.Servicos)
         .ToListAsync();
         return especialidades;

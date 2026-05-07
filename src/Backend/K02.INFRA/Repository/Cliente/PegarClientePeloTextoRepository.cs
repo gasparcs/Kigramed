@@ -16,6 +16,7 @@ public class PegarClientePeloTextoRepository(KigramedDbContext context) : IPegar
                 .Where(t => t.Nome.Contains(texto))
                 .Include(p => p.Pacientes)
                 .Include(c => c.Contactos)
+                .ThenInclude(tc => tc.TipoContacto)
                 .ToListAsync();
         }
         catch (Exception)

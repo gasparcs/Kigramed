@@ -12,5 +12,5 @@ public class AdicionarSMSDTO
     public string SMSNif_funcionario { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Informe o cliente")]
-    public string SMSId_cliente { get; set; } = string.Empty;
+    public string SMSNif_cliente { get; set; } = string.Empty;
 }

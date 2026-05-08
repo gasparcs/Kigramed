@@ -15,7 +15,7 @@ public class SMSModel
   public string Nif_funcionario = string.Empty;
 
   [Column("id_cliente")]
-  public string Id_cliente = string.Empty;
+  public string Nif_cliente = string.Empty;
 
   [Column("data_envio")]
   public DateTime Data_envio {get; set;}

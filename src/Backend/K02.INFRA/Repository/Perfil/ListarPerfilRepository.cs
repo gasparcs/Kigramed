@@ -13,6 +13,9 @@ public class ListarPerfilRepository(KigramedDbContext context) : IlistagemReposi
         try
         {
              var perfis = await context.Tabelatb01_perfil
+             .Include(p => p.Funcionarios)
+             .Include(p => p.PerfisPermissoes)
+                .ThenInclude(p => p.Permissao)
             .ToListAsync();
               return perfis;
         }

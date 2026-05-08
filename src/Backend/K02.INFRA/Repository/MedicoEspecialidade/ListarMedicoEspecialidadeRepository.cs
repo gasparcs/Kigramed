@@ -13,7 +13,9 @@ public class ListarMedicoEspecialidadeRepository(KigramedDbContext context) : Il
         try
         {
             return await context.Tabelatb07_medico_especialidade
-            .OrderBy(e => e.Funcionario) // ordena alfabeticamente
+            .Include(e => e.Funcionario)
+            .Include(e => e.Especialidade)
+            .OrderBy(e => e.Funcionario.Nome) // ordena alfabeticamente
             .ToListAsync();
         }
         catch (System.Exception)

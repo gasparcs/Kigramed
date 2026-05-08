@@ -38,7 +38,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.K01.CONTROLLERS;
    
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class AdminController (AdicionarCliente adicionarclienteServices,

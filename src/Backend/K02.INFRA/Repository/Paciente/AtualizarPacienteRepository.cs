@@ -17,7 +17,7 @@ public class AtualizarPacienteRepository(KigramedDbContext context) : IAtualizar
             if(paciente is null) return "Paciente não encontrado";
             paciente.Nome = model.Nome;
             return await context.SaveChangesAsync() > 0 ?
-            "Cliente Atualizado com sucesso." :
+            "Paciente atualizado com sucesso." :
             "Não foi possível efectuar a atualização.";   
         }
         catch(DbUpdateException ex)

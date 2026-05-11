@@ -15,6 +15,7 @@ public class PegarServicoPeloTexto(IPegarPeloTextoRepository<ServicosModel> repo
 
       return servicos.Select( s => new ListarServicosDTO
       {
+           ServicoId = s.Id,
            ServicoNome = s.Nome,
 
           ServicoDuracaoMinuto = s.Duracao_minuto,
@@ -23,7 +24,8 @@ public class PegarServicoPeloTexto(IPegarPeloTextoRepository<ServicosModel> repo
 
           ServicoPreco = s.Preco,
 
-          IdEspecialidade = s.Id_especialidade
+          IdEspecialidade = s.Id_especialidade,
+          NomeEspecialidade = s.Especialidade?.Nome ?? string.Empty
       });
     }
 }

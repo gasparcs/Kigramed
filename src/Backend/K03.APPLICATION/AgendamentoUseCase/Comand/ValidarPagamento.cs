@@ -12,10 +12,10 @@ public class ValidarPagamento(IAgendamentoRepository repository, ISmsService sms
     public async Task<string> ExecuteAsync(int id)
     {
         var pedido = await _repository.BuscarPorIdAsync(id);
-        if (pedido is null) return "Pedido não encontrado";
+        if (pedido is null) return "nao_encontrado";
 
-        if (pedido.Estado != "Comprovativo Enviado")
-            return "O pedido não tem comprovativo para validar.";
+        if (!string.Equals(pedido.Estado, "Comprovativo Enviado", StringComparison.OrdinalIgnoreCase) && !string.Equals(pedido.Estado, "Pagamento Enviado", StringComparison.OrdinalIgnoreCase))
+            return $"estado_invalido_validar:{pedido.Estado}";
 
         // Verifica se o prazo ainda é válido
         if (pedido.PrazoPagamento.HasValue && pedido.PrazoPagamento < DateTime.UtcNow)
@@ -30,7 +30,7 @@ public class ValidarPagamento(IAgendamentoRepository repository, ISmsService sms
         if (!criado)
             return "Não foi possível criar a consulta ou vincular o pagamento.";
 
-        pedido.Estado = "Confirmado";
+        pedido.Estado = "Validado";
         var atualizado = await _repository.AtualizarAsync(pedido);
         if (!atualizado) return "erro";
 

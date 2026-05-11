@@ -15,6 +15,7 @@ public class PegarServicoPeloId(IPesquisarPeloIdRepository<ServicosModel> reposi
 
       return new ListarServicosDTO
       {
+          ServicoId = servico.Id,
           ServicoNome = servico.Nome,
 
           ServicoDuracaoMinuto = servico.Duracao_minuto,
@@ -23,7 +24,8 @@ public class PegarServicoPeloId(IPesquisarPeloIdRepository<ServicosModel> reposi
 
           ServicoPreco = servico.Preco,
 
-          IdEspecialidade = servico.Id_especialidade
+          IdEspecialidade = servico.Id_especialidade,
+          NomeEspecialidade = servico.Especialidade?.Nome ?? string.Empty
       };
 
 

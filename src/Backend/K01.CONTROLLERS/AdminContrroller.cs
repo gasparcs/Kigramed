@@ -527,15 +527,17 @@ namespace Backend.K01.CONTROLLERS;
         return Ok(new { mensagem = "sucesso", dados = resposta });
     }
 
-    /// Confirma horário — reserva o horário e inicia prazo de 2 horas
+    /// Confirma horário — reserva o horário e inicia prazo de 30 minutos
     [HttpPut("{id}/confirmar")]
     public async Task<IActionResult> Confirmar(int id)
     {
         var resposta = await confirmarPedido.ExecuteAsync(id);
         return resposta switch
         {
-            "sucesso"  => Ok(new { mensagem = "Horário confirmado. SMS enviado ao cliente com dados bancários. Prazo de pagamento: 2 horas." }),
+            "sucesso"  => Ok(new { mensagem = "Horário confirmado. SMS enviado ao cliente com dados bancários. Prazo de pagamento: 30 minutos." }),
+            "nao_encontrado" => StatusCode(404, new { mensagem = "Pedido não encontrado." }),
             "conflito" => StatusCode(409, new { mensagem = "⚠️ Conflito de horário! Este horário já foi reservado para outro paciente. Cancele este pedido e sugira outro horário ao cliente." }),
+            var s when s.StartsWith("estado_invalido_confirmar:") => StatusCode(409, new { mensagem = $"Não é possível confirmar pedido no estado atual: {s.Split(':', 2)[1]}." }),
             _          => StatusCode(400, new { mensagem = resposta })
         };
     }
@@ -559,6 +561,10 @@ namespace Backend.K01.CONTROLLERS;
             return Ok(new { mensagem = "Pagamento validado. Consulta registada com sucesso. SMS de confirmação enviado ao cliente." });
         else if (resposta == "erro_sms")
             return Ok(new { mensagem = "Pagamento validado. Consulta registada com sucesso. Erro ao enviar SMS de confirmação." });
+        else if (resposta == "nao_encontrado")
+            return StatusCode(404, new { mensagem = "Pedido não encontrado." });
+        else if (resposta.StartsWith("estado_invalido_validar:"))
+            return StatusCode(409, new { mensagem = $"Não é possível validar pedido no estado atual: {resposta.Split(':', 2)[1]}." });
         else
             return StatusCode(400, new { mensagem = resposta });
     }
@@ -593,5 +599,6 @@ namespace Backend.K01.CONTROLLERS;
     }
 
     }
+
 
 

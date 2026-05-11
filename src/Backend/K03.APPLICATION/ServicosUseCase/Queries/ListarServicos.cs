@@ -13,6 +13,7 @@ public class ListarServicos(IlistagemRepository<ServicosModel> repository)
 
       return servicos.Select( s => new ListarServicosDTO
       {
+        ServicoId = s.Id,
         ServicoNome = s.Nome,
 
         ServicoDuracaoMinuto = s.Duracao_minuto,
@@ -21,7 +22,8 @@ public class ListarServicos(IlistagemRepository<ServicosModel> repository)
 
         ServicoPreco = s.Preco,
 
-        IdEspecialidade = s.Id_especialidade
+        IdEspecialidade = s.Id_especialidade,
+        NomeEspecialidade = s.Especialidade?.Nome ?? string.Empty
       });
     }
  }   

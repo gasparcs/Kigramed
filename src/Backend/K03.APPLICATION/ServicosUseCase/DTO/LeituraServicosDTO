@@ -4,6 +4,7 @@ namespace Backend.K03.APPLICATION.ServicosUseCase.DTO;
 
 public class ListarServicosDTO
 {
+    public int ServicoId { get; set; }
 
     public String ServicoNome{get;set;}=string.Empty;
   
@@ -14,4 +15,6 @@ public class ListarServicosDTO
     public bool ServicoEstado{get;set;}
    
     public int IdEspecialidade{get;set;}
+
+    public string NomeEspecialidade { get; set; } = string.Empty;
 }

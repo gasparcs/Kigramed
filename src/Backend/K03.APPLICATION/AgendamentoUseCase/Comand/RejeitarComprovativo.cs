@@ -11,10 +11,11 @@ public class RejeitarComprovativo(IAgendamentoRepository repository)
         if (pedido is null) return "Pedido não encontrado";
 
         // Volta ao estado anterior para o cliente reenviar
-        pedido.Estado                = "Aguarda Pagamento";
+        pedido.Estado                = "Rejeitado";
         pedido.CaminhoComprovativo   = null;
         await repository.AtualizarAsync(pedido);
 
         return "sucesso";
     }
 }
+

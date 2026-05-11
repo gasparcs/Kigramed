@@ -50,17 +50,44 @@ public class AgendamentoRepository(KigramedDbContext context) : IAgendamentoRepo
         using var transaction = await context.Database.BeginTransactionAsync();
         try
         {
-            var cliente = await context.Tabelatb09_cliente.FirstOrDefaultAsync();
+            var cliente = await context.Tabelatb09_cliente
+                .FirstOrDefaultAsync(c => c.Nome == pedido.NomeCliente)
+                ?? await context.Tabelatb09_cliente.FirstOrDefaultAsync();
             var genero = await context.Tabelatb10_genero.FirstOrDefaultAsync();
             var clientePaciente = await context.Tabelatb11_cliente_paciente.FirstOrDefaultAsync();
-            var estadoConsulta = await context.Tabelatb13_estado_consulta.FirstOrDefaultAsync();
-            var medicoEspecialidade = await context.Tabelatb07_medico_especialidade.FirstOrDefaultAsync();
+            var estadoConsulta = await context.Tabelatb13_estado_consulta
+                .FirstOrDefaultAsync(e => e.Descricao.ToLower().Contains("confirm"))
+                ?? await context.Tabelatb13_estado_consulta.FirstOrDefaultAsync();
+            var medicoEspecialidade = await context.Tabelatb07_medico_especialidade
+                .FirstOrDefaultAsync(me => me.Id_especialidade == pedido.IdEspecialidade)
+                ?? await context.Tabelatb07_medico_especialidade.FirstOrDefaultAsync();
             var funcionario = await context.Tabelatb02_funcionario.FirstOrDefaultAsync();
+            var servicoExiste = await context.Tabelatb08_servico.AnyAsync(s => s.Id == pedido.Id_Servico);
 
-            if (cliente is null || genero is null || clientePaciente is null || estadoConsulta is null || medicoEspecialidade is null || funcionario is null)
+            if (!servicoExiste)
             {
                 await transaction.RollbackAsync();
                 return false;
+            }
+
+            if (cliente is null || estadoConsulta is null || medicoEspecialidade is null || funcionario is null)
+            {
+                await transaction.RollbackAsync();
+                return false;
+            }
+
+            if (genero is null)
+            {
+                genero = new GeneroModel { Nome = "Não informado" };
+                context.Tabelatb10_genero.Add(genero);
+                await context.SaveChangesAsync();
+            }
+
+            if (clientePaciente is null)
+            {
+                clientePaciente = new ClientePacienteModel { Descricao = "Cliente" };
+                context.Tabelatb11_cliente_paciente.Add(clientePaciente);
+                await context.SaveChangesAsync();
             }
 
             var paciente = new PacienteModel
@@ -92,13 +119,14 @@ public class AgendamentoRepository(KigramedDbContext context) : IAgendamentoRepo
             };
             context.Tabelatb14_pagamento.Add(pagamento);
 
+            await context.SaveChangesAsync();
+
             var pagamentoConsulta = new PagamentoConsultaModel
             {
-                Pagamento = pagamento,
-                Consulta = consulta
+                Id_Pagamento = pagamento.Id,
+                Id_Consulta = consulta.Id
             };
             context.Tabelatb18_pagamento_consulta.Add(pagamentoConsulta);
-
             await context.SaveChangesAsync();
 
             pedido.IdConsulta = consulta.Id;

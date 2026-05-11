@@ -37,7 +37,8 @@ function formatDateShort(date) {
 
 function redirectToLogin() {
   localStorage.clear();
-  window.location.href = 'index.html';
+  const inAdminLikeFolder = /\/(admin|secretaria|medico)\//i.test(window.location.pathname);
+  window.location.href = inAdminLikeFolder ? '../index.html' : 'index.html';
 }
 
 function logout() {

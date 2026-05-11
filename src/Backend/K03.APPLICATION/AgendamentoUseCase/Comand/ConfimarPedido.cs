@@ -12,25 +12,26 @@ public class ConfirmarPedido(IAgendamentoRepository repository, ISmsService sms)
     public async Task<string> ExecuteAsync(int id)
     {
         var pedido = await _repository.BuscarPorIdAsync(id);
-        if (pedido is null) return "Pedido não encontrado";
+        if (pedido is null) return "nao_encontrado";
 
-        if (pedido.Estado != "Pendente")
-            return "Este pedido já foi processado.";
+        if (!string.Equals(pedido.Estado, "Pendente", StringComparison.OrdinalIgnoreCase))
+            return $"estado_invalido_confirmar:{pedido.Estado}";
 
         // Tenta reservar o horário com transação atómica
         var reservado = await _repository.ReservarHorarioAsync(id);
         if (!reservado) return "conflito";
 
-        // Define prazo de 2 horas para pagamento
+        // Define prazo de 30 minutos para pagamento
         pedido.Estado         = "Aguarda Pagamento";
-        pedido.PrazoPagamento = DateTime.UtcNow.AddHours(2);
+        pedido.PrazoPagamento = DateTime.UtcNow.AddMinutes(30);
         var atualizado        = await _repository.AtualizarAsync(pedido);
         if (!atualizado) return "erro";
 
-        var deadline = pedido.PrazoPagamento?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? DateTime.UtcNow.AddHours(2).ToString("dd/MM/yyyy HH:mm");
+        var deadline = pedido.PrazoPagamento?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? DateTime.UtcNow.AddMinutes(30).ToString("dd/MM/yyyy HH:mm");
         var mensagem = $"Pedido confirmado. Número do pedido: {pedido.NumeroPedido}. Por favor pague até {deadline}. Dados bancários: Banco XYZ, IBAN PT50000201234567890123456, NIF 123456789. Após o pagamento, envie o comprovativo.";
         var smsEnviado = await _sms.EnviarAsync(pedido.Telefone, mensagem, "101010101010");
 
         return smsEnviado ? "sucesso" : "erro_sms";
     }
 }
+

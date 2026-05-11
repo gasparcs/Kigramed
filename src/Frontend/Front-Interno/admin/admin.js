@@ -197,8 +197,8 @@ async function loadFuncionarios() {
       <tr>
         <td>${item.funcionarioNif || item.Nif || item.Nif_funcionario || '—'}</td>
         <td>${item.funcionarioNome || item.Nome || '—'}</td>
-        <td>${item.perfil || item.FuncionarioPerfil || '—'}</td>
-        <td>${String(item.estado || item.FuncionarioEstado || '—')}</td>
+        <td>${item.funcionarioPerfil || item.FuncionarioPerfil || item.perfil || '—'}</td>
+        <td>${(item.funcionarioEstado || item.FuncionarioEstado) === true ? 'Ativo' : (item.funcionarioEstado || item.FuncionarioEstado) === false ? 'Inativo' : '—'}</td>
         <td><button class="btn btn-sm btn-outline" onclick="alert('NIF: ${item.funcionarioNif || item.Nif || item.Nif_funcionario}')">Detalhes</button></td>
       </tr>`).join('');
   } catch {
@@ -380,7 +380,8 @@ function setSelectOptions(selectId, items, valueKeys, labelKeys) {
 
 async function populateFormSelects() {
   try {
-    const [clientes, medicos, especialidades, pagos, consultas, estados, perfis] = await Promise.all([
+    // ✅ CORRIGIDO: variável renomeada de 'pagos' para 'pagamentos'
+    const [clientes, medicos, especialidades, pagamentos, consultas, estados, perfis] = await Promise.all([
       fetchJson('/Admin/cliente'),
       fetchJson('/Admin/medicos'),
       fetchJson('/Admin/especialidade'),
@@ -589,4 +590,4 @@ async function submitSMS(event) {
   }
 }
 
-window.addEventListener('load', initAdmin);
+window.addEventListener('load', initAdmin); 

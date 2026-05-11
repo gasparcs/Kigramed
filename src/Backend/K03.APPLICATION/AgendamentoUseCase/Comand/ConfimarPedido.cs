@@ -28,7 +28,7 @@ public class ConfirmarPedido(IAgendamentoRepository repository, ISmsService sms)
         if (!atualizado) return "erro";
 
         var deadline = pedido.PrazoPagamento?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? DateTime.UtcNow.AddHours(2).ToString("dd/MM/yyyy HH:mm");
-        var mensagem = $"Pedido confirmado. Por favor pague até {deadline}. Dados bancários: Banco XYZ, IBAN PT50000201234567890123456, NIF 123456789. Após o pagamento, envie o comprovativo.";
+        var mensagem = $"Pedido confirmado. Número do pedido: {pedido.NumeroPedido}. Por favor pague até {deadline}. Dados bancários: Banco XYZ, IBAN PT50000201234567890123456, NIF 123456789. Após o pagamento, envie o comprovativo.";
         var smsEnviado = await _sms.EnviarAsync(pedido.Telefone, mensagem, "101010101010");
 
         return smsEnviado ? "sucesso" : "erro_sms";

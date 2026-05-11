@@ -22,6 +22,8 @@ public class ListarPagamentoConsulta(IlistagemRepository<PagamentoConsultaModel>
             DataConsulta = p.Consulta?.Data_consulta ?? DateTime.MinValue,
             
             Comprovativo = p.Pagamento?.Comprovativo ?? string.Empty,
+
+            ValorServico = p.Consulta?.Servico?.Preco ?? 0,
        
         });
     }

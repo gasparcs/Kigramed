@@ -14,4 +14,6 @@ public class ListarPagamentoConsultaDTO
 
     public string Comprovativo { get; set; } = string.Empty;
 
+    public decimal ValorServico { get; set; }
+
 }

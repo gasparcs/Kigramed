@@ -15,6 +15,7 @@ public class ListarPagamentoConsultaRepository(KigramedDbContext context) : Ilis
             return await context.Tabelatb18_pagamento_consulta
                 .Include(x => x.Pagamento)
                 .Include(x => x.Consulta)
+                .ThenInclude(c => c.Servico)
                 .ToListAsync();
         }
         catch (Exception)

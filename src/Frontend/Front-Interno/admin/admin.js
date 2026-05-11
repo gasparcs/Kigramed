@@ -110,6 +110,28 @@ function setSelectOptions(selectId, items, valueKeys, labelKeys) {
   }).join('');
 }
 
+function renderComprovativoValue(value) {
+  return value ? 'Comprovativo' : '—';
+}
+
+function renderComprovativoCell(value) {
+  if (!value) return '—';
+  const safe = String(value).replace(/'/g, "\\'");
+  return `<button class="btn btn-sm btn-outline" onclick="openComprovativoFromPath('${safe}')">Ver comprovativo</button>`;
+}
+
+function getPrecoServico(item) {
+  return item?.servicoPreco
+    ?? item?.ServicoPreco
+    ?? item?.precoServico
+    ?? item?.PrecoServico
+    ?? item?.preco
+    ?? item?.Preco
+    ?? item?.valor
+    ?? item?.Valor
+    ?? '—';
+}
+
 async function initAdmin() {
   validateAccess();
   await Promise.all([loadEstados(), loadTopLists(), loadConsultas(), loadPacientes(), loadClientes(), loadFuncionarios(), loadEspecialidades(), loadServicos(), loadPagamentos(), loadPagamentoConsulta(), loadSMS(), loadPedidos()]);
@@ -134,18 +156,35 @@ async function loadEstados() {
 }
 
 async function loadConsultas() {
-  const body = document.getElementById('bodyConsultas'); if (!body) return;
+  const body = document.getElementById('bodyConsultas');
+  const dashBody = document.getElementById('dashConsultas');
+  if (!body && !dashBody) return;
   try {
     const items = await fetchJson('/Admin/consulta');
-    body.innerHTML = (items || []).length ? items.map((item, i) => `<tr><td>${item.consultaId || item.ConsultaId || i + 1}</td><td>${item.pacienteNome || item.PacienteNome || '—'}</td><td>${item.medicoNome || item.MedicoNome || '—'}</td><td>${item.servicoNome || item.ServicoNome || '—'}</td><td>${formatDate(item.data_consulta || item.Data_consulta || item.DataConsulta)}</td><td>${badgeEstado(item.estadoDescricao || item.EstadoDescricao || '—')}</td><td><button class="btn btn-sm btn-outline" onclick="editarConsulta(${item.consultaId || item.ConsultaId})">Editar</button> <button class="btn btn-sm btn-danger" onclick="removerConsulta(${item.consultaId || item.ConsultaId})">Remover</button></td></tr>`).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">Nenhuma consulta encontrada.</td></tr>';
-  } catch { body.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--danger);padding:24px">Erro ao carregar consultas.</td></tr>'; }
+    const list = items || [];
+
+    if (body) {
+      body.innerHTML = list.length
+        ? list.map((item, i) => `<tr><td>${item.consultaId || item.ConsultaId || i + 1}</td><td>${item.pacienteNome || item.PacienteNome || '—'}</td><td>${item.medicoNome || item.MedicoNome || '—'}</td><td>${item.servicoNome || item.ServicoNome || '—'}</td><td>${formatDate(item.data_consulta || item.Data_consulta || item.DataConsulta)}</td><td>${badgeEstado(item.estadoDescricao || item.EstadoDescricao || '—')}</td><td><button class="btn btn-sm btn-outline" onclick="editarConsulta(${item.consultaId || item.ConsultaId})">Editar</button> <button class="btn btn-sm btn-danger" onclick="removerConsulta(${item.consultaId || item.ConsultaId})">Remover</button></td></tr>`).join('')
+        : '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">Nenhuma consulta encontrada.</td></tr>';
+    }
+
+    if (dashBody) {
+      dashBody.innerHTML = list.length
+        ? list.slice(0, 5).map((item, i) => `<tr><td>${item.consultaId || item.ConsultaId || i + 1}</td><td>${item.pacienteNome || item.PacienteNome || '—'}</td><td>${item.medicoNome || item.MedicoNome || '—'}</td><td>${item.servicoNome || item.ServicoNome || '—'}</td><td>${formatDate(item.data_consulta || item.Data_consulta || item.DataConsulta)}</td><td>${badgeEstado(item.estadoDescricao || item.EstadoDescricao || '—')}</td></tr>`).join('')
+        : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">Nenhuma consulta encontrada.</td></tr>';
+    }
+  } catch {
+    if (body) body.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--danger);padding:24px">Erro ao carregar consultas.</td></tr>';
+    if (dashBody) dashBody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--danger);padding:24px">Erro ao carregar consultas.</td></tr>';
+  }
 }
 
 async function loadPacientes() {
   const body = document.getElementById('bodyPacientes'); if (!body) return;
   try {
     const items = await fetchJson('/Admin/paciente');
-    body.innerHTML = (items || []).length ? items.map((item, i) => `<tr><td>${item.pacienteId || item.Id || i + 1}</td><td>${item.pacienteNome || item.PacienteNome || '—'}</td><td>${formatDateShort(item.pacienteData_nascimento || item.Data_nascimento || item.DataNascimento)}</td><td>${item.clienteNome || item.ClienteNome || item.nif_cliente || item.Nif_cliente || '—'}</td><td><button class="btn btn-sm btn-outline" onclick="editarPaciente(${item.pacienteId || item.Id})">Editar</button> <button class="btn btn-sm btn-danger" onclick="removerPaciente(${item.pacienteId || item.Id})">Remover</button></td></tr>`).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px">Nenhum paciente encontrado.</td></tr>';
+    body.innerHTML = (items || []).length ? items.map((item, i) => `<tr><td>${item.pacienteId || item.Id || i + 1}</td><td>${item.pacienteNome || item.PacienteNome || '—'}</td><td>${formatDateShort(item.pacienteData_nascimento || item.Data_nascimento || item.DataNascimento)}</td><td>${item.cliente || item.Cliente || item.clienteNome || item.ClienteNome || item.nif_cliente || item.Nif_cliente || '—'}</td><td><button class="btn btn-sm btn-outline" onclick="editarPaciente(${item.pacienteId || item.Id})">Editar</button> <button class="btn btn-sm btn-danger" onclick="removerPaciente(${item.pacienteId || item.Id})">Remover</button></td></tr>`).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px">Nenhum paciente encontrado.</td></tr>';
   } catch { body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--danger);padding:24px">Erro ao carregar pacientes.</td></tr>'; }
 }
 
@@ -188,8 +227,27 @@ async function loadServicos() {
   } catch { body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--danger);padding:24px">Erro ao carregar serviços.</td></tr>'; }
 }
 
-async function loadPagamentos() { const body = document.getElementById('bodyPagamentos'); if (!body) return; try { const items = await fetchJson('/Admin/pagamento'); body.innerHTML = (items || []).length ? items.map((item) => `<tr><td>${item.id || item.Id || '—'}</td><td>${item.cliente || item.Cliente || '—'}</td><td>${item.secretaria || item.Secretaria || '—'}</td><td>${item.comprovativo || item.Comprovativo || '—'}</td><td>${formatDate(item.dataEnvio || item.DataEnvio || item.Data)}</td></tr>`).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">Nenhum pagamento encontrado.</td></tr>'; } catch { body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--danger);padding:24px">Erro ao carregar pagamentos.</td></tr>'; } }
-async function loadPagamentoConsulta() { const body = document.getElementById('bodyPagamentoConsulta'); if (!body) return; try { const items = await fetchJson('/Admin/pagamentoconsulta'); body.innerHTML = (items || []).length ? items.map((item) => `<tr><td>${item.id || item.Id || '—'}</td><td>${item.idPagamento || item.IdPagamento || '—'}</td><td>${item.idConsulta || item.IdConsulta || '—'}</td><td>${formatDate(item.dataConsulta || item.DataConsulta)}</td><td>${item.comprovativo || item.Comprovativo || '—'}</td></tr>`).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px">Nenhum registo encontrado.</td></tr>'; } catch { body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--danger);padding:24px">Erro ao carregar pagamentos de consulta.</td></tr>'; } }
+async function loadPagamentos() {
+  const body = document.getElementById('bodyPagamentos'); if (!body) return;
+  try {
+    const [pagamentos, pagamentosConsulta] = await Promise.all([
+      fetchJson('/Admin/pagamento'),
+      fetchJson('/Admin/pagamentoconsulta')
+    ]);
+
+    const pagamentoValorMap = new Map((pagamentosConsulta || []).map((pc) => [pc.idPagamento || pc.IdPagamento, pc.valorServico ?? pc.ValorServico ?? '—']));
+
+    const items = pagamentos || [];
+    body.innerHTML = items.length ? items.map((item) => {
+      const pagamentoId = item.id || item.Id;
+      const precoServico = pagamentoValorMap.get(pagamentoId) ?? '—';
+      return `<tr><td>${pagamentoId || '—'}</td><td>${item.cliente || item.Cliente || '—'}</td><td>${item.secretaria || item.Secretaria || '—'}</td><td>${precoServico}</td><td>${renderComprovativoCell(item.comprovativo || item.Comprovativo || item.caminhoComprovativo || item.CaminhoComprovativo)}</td><td>${formatDate(item.dataEnvio || item.DataEnvio || item.Data)}</td></tr>`;
+    }).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">Nenhum pagamento encontrado.</td></tr>';
+  } catch {
+    body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--danger);padding:24px">Erro ao carregar pagamentos.</td></tr>';
+  }
+}
+async function loadPagamentoConsulta() { const body = document.getElementById('bodyPagamentoConsulta'); if (!body) return; try { const items = await fetchJson('/Admin/pagamentoconsulta'); body.innerHTML = (items || []).length ? items.map((item) => `<tr><td>${item.id || item.Id || '—'}</td><td>${item.idPagamento || item.IdPagamento || '—'}</td><td>${item.idConsulta || item.IdConsulta || '—'}</td><td>${formatDate(item.dataConsulta || item.DataConsulta)}</td><td>${renderComprovativoCell(item.comprovativo || item.Comprovativo || item.caminhoComprovativo || item.CaminhoComprovativo)}</td></tr>`).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px">Nenhum registo encontrado.</td></tr>'; } catch { body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--danger);padding:24px">Erro ao carregar pagamentos de consulta.</td></tr>'; } }
 async function loadSMS() { const body = document.getElementById('bodySMS'); if (!body) return; try { const items = await fetchJson('/Admin/SMS'); body.innerHTML = (items || []).length ? items.map((item) => `<tr><td>${item.smsId || item.SmsId || '—'}</td><td>${item.cliente?.clienteNome || item.cliente?.ClienteNome || '—'}</td><td>${item.mensagem || item.Mensagem || '—'}</td><td>${formatDate(item.dataEnvio || item.DataEnvio)}</td></tr>`).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">Nenhum SMS enviado.</td></tr>'; } catch { body.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--danger);padding:24px">Erro ao carregar SMS.</td></tr>'; } }
 
 async function loadPedidos() {
@@ -230,7 +288,7 @@ async function populateFormSelects() {
 }
 
 async function submitConsulta(event) { event.preventDefault(); try { await fetchJson('/Admin/consulta', { method: 'POST', body: { Id_medico_especialiade: parseInt(document.getElementById('cMedico').value, 10), Id_servico: parseInt(document.getElementById('cServico').value, 10), Id_paciente: parseInt(document.getElementById('cPaciente').value, 10), Id_estado_consulta: parseInt(document.getElementById('cEstado').value, 10), Data_consulta: document.getElementById('cData').value } }); showToast('Consulta criada com sucesso.', 'success'); closeModal('modalConsulta'); loadConsultas(); loadTopLists(); } catch (e) { showToast(getErrorMessage(e, 'Erro ao criar consulta.'), 'error'); } }
-async function submitPaciente(event) { event.preventDefault(); try { await fetchJson('/Admin/paciente', { method: 'POST', body: { PacienteNome: document.getElementById('pNome').value, PacienteData_nascimento: document.getElementById('pNasc').value, IdCliente_Paciente: parseInt(document.getElementById('pCliente').value, 10), IdGenero: parseInt(document.getElementById('pGenero').value, 10), Nif_cliente: document.getElementById('pCliente').value } }); showToast('Paciente criado com sucesso.', 'success'); closeModal('modalPaciente'); loadPacientes(); loadTopLists(); } catch (e) { showToast(getErrorMessage(e, 'Erro ao criar paciente.'), 'error'); } }
+async function submitPaciente(event) { event.preventDefault(); try { const nifCliente = document.getElementById('pCliente').value; await fetchJson('/Admin/paciente', { method: 'POST', body: { PacienteNome: document.getElementById('pNome').value, PacienteData_nascimento: document.getElementById('pNasc').value, IdCliente_Paciente: parseInt(document.getElementById('pTipo')?.value || '1', 10) || 1, IdGenero: parseInt(document.getElementById('pGenero').value, 10), Nif_cliente: nifCliente } }); showToast('Paciente criado com sucesso.', 'success'); closeModal('modalPaciente'); loadPacientes(); loadTopLists(); } catch (e) { showToast(getErrorMessage(e, 'Erro ao criar paciente.'), 'error'); } }
 async function submitCliente(event) { event.preventDefault(); try { const payload = { ClienteNome: document.getElementById('clNome').value.trim(), ClienteNif: document.getElementById('clNif').value.trim(), Contactos: [] }; const email = document.getElementById('clEmail').value.trim(); const tel = document.getElementById('clTel').value.trim(); if (email) payload.Contactos.push({ TipoContacto: 2, Contacto: email }); if (tel) payload.Contactos.push({ TipoContacto: 1, Contacto: tel }); if (!payload.Contactos.length) return showToast('Informe pelo menos um contacto.', 'error'); await fetchJson('/Admin/cliente', { method: 'POST', body: payload }); showToast('Cliente criado com sucesso.', 'success'); closeModal('modalCliente'); loadClientes(); populateFormSelects(); } catch (e) { showToast(getErrorMessage(e, 'Erro ao criar cliente.'), 'error'); } }
 async function submitFuncionario(event) { event.preventDefault(); try { const payload = { FuncionarioNome: document.getElementById('fNome').value, FuncionaioNif: document.getElementById('fNif').value, FuncionarioPerfil: parseInt(document.getElementById('fPerfil').value, 10), FuncionarioEstado: document.getElementById('fEstado').value === 'true', Contactos: [], Especialidades: [] }; const tel = document.getElementById('fTel').value; const esp = document.getElementById('fEspecialidade').value; if (tel) payload.Contactos.push({ TipoContacto: 1, Contacto: tel }); if (esp) payload.Especialidades.push({ IdEspecialidade: parseInt(esp, 10) }); await fetchJson('/Admin/funcionario', { method: 'POST', body: payload }); showToast('Funcionário criado com sucesso.', 'success'); closeModal('modalFuncionario'); loadFuncionarios(); loadTopLists(); } catch (e) { showToast(getErrorMessage(e, 'Erro ao criar funcionário.'), 'error'); } }
 async function submitEspecialidade(event) { event.preventDefault(); try { await fetchJson('/Admin/especialidade', { method: 'POST', body: { EspecialidadeNome: document.getElementById('espNome').value, EspecialidadeDescricao: document.getElementById('espDesc').value, EspecialidadeEstado: document.getElementById('espEstado').value === 'true' } }); showToast('Especialidade criada com sucesso.', 'success'); closeModal('modalEspecialidade'); loadEspecialidades(); populateFormSelects(); } catch (e) { showToast(getErrorMessage(e, 'Erro ao criar especialidade.'), 'error'); } }
@@ -354,6 +412,24 @@ async function openComprovativo(id) {
     const url = URL.createObjectURL(blob);
     window.open(url, '_blank');
     setTimeout(() => URL.revokeObjectURL(url), 60000);
+  } catch (error) {
+    showToast(getErrorMessage(error, 'Erro ao abrir comprovativo.'), 'error');
+  }
+}
+
+function openComprovativoFromPath(path) {
+  try {
+    const raw = String(path || '').trim();
+    if (!raw) return showToast('Comprovativo indisponível.', 'error');
+
+    if (/^https?:\/\//i.test(raw)) {
+      window.open(raw, '_blank');
+      return;
+    }
+
+    const relative = raw.replace(/^\/+/, '');
+    const url = `${API}/${relative}`;
+    window.open(url, '_blank');
   } catch (error) {
     showToast(getErrorMessage(error, 'Erro ao abrir comprovativo.'), 'error');
   }

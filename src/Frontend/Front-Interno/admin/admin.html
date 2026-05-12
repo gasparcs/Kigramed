@@ -150,6 +150,26 @@
             <label>Nome *</label>
             <input type="text" id="epNome" required placeholder="Nome completo" />
           </div>
+          <div class="form-group">
+            <label>Nascimento *</label>
+            <input type="date" id="epNasc" required />
+          </div>
+          <div class="form-group">
+            <label>Género *</label>
+            <select id="epGenero" required>
+              <option value="">Seleccionar...</option>
+              <option value="1">Masculino</option>
+              <option value="2">Feminino</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipo (Cliente-Paciente) *</label>
+            <select id="epTipo" required>
+              <option value="">Seleccionar...</option>
+              <option value="1">Titular</option>
+              <option value="2">Dependente</option>
+            </select>
+          </div>
         </div>
         <div class="form-actions">
           <button type="button" class="btn btn-outline" onclick="closeModal('modalEditPaciente')">Cancelar</button>
@@ -192,14 +212,113 @@
     </div>
   </div>
 
+  <!-- Editar Funcionário -->
+  <div class="modal-overlay" id="modalEditFuncionario">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Editar Funcionário</div>
+        <button class="modal-close" onclick="closeModal('modalEditFuncionario')">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form id="formEditFuncionario" onsubmit="submitEditFuncionario(event)">
+        <input type="hidden" id="efNif" />
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Nome *</label>
+            <input type="text" id="efNome" required placeholder="Nome completo" />
+          </div>
+          <div class="form-group">
+            <label>Perfil *</label>
+            <select id="efPerfil" required><option value="">Seleccionar...</option></select>
+          </div>
+          <div class="form-group">
+            <label>Estado *</label>
+            <select id="efEstado" required>
+              <option value="true">Activo</option>
+              <option value="false">Inactivo</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Telefone</label>
+            <input type="text" id="efTel" placeholder="900 000 000" />
+          </div>
+          <div class="form-group">
+            <label>Especialidade (Médico)</label>
+            <select id="efEspecialidade"><option value="">Seleccionar...</option></select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modalEditFuncionario')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Editar Serviço -->
+  <div class="modal-overlay" id="modalEditServico">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Editar Serviço</div>
+        <button class="modal-close" onclick="closeModal('modalEditServico')">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form id="formEditServico" onsubmit="submitEditServico(event)">
+        <input type="hidden" id="esId" />
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Nome do Serviço *</label>
+            <input type="text" id="esNome" required placeholder="Ex: Consulta Geral" />
+          </div>
+          <div class="form-group">
+            <label>Especialidade *</label>
+            <select id="esEsp" required><option value="">Seleccionar...</option></select>
+          </div>
+          <div class="form-group">
+            <label>Duração (minutos) *</label>
+            <input type="number" id="esDuracao" required min="5" step="5" value="30" />
+          </div>
+          <div class="form-group">
+            <label>Preço (Kz) *</label>
+            <input type="number" id="esPreco" required min="0" step="100" />
+          </div>
+          <div class="form-group">
+            <label>Estado *</label>
+            <select id="esEstado" required>
+              <option value="true">Activo</option>
+              <option value="false">Inactivo</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modalEditServico')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- ── MODAIS GENÉRICOS ─────────────────────────────────────────────────── -->
 
   <div class="modal-overlay" id="modalActionForm"><div class="modal"><div class="modal-header"><div class="modal-title" id="actionFormTitle">Editar Registo</div><button class="modal-close" onclick="closeModal('modalActionForm')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><form id="actionForm"><div class="form-grid"><div class="form-group full"><label>Nome</label><input type="text" id="actionFieldNome" /></div><div class="form-group full" id="actionGroupDescricao"><label>Descrição</label><input type="text" id="actionFieldDescricao" /></div><div class="form-group full" id="actionGroupData"><label>Data e Hora</label><input type="datetime-local" id="actionFieldData" /></div></div><div class="form-actions"><button type="button" class="btn btn-outline" onclick="closeModal('modalActionForm')">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div></form></div></div>
 
   <div class="modal-overlay" id="modalActionConfirm"><div class="modal"><div class="modal-header"><div class="modal-title" id="actionConfirmTitle">Confirmar Ação</div><button class="modal-close" onclick="closeModal('modalActionConfirm')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div style="color:var(--muted);margin-bottom:14px" id="actionConfirmMessage">Tem a certeza?</div><div class="form-actions"><button type="button" class="btn btn-outline" onclick="closeModal('modalActionConfirm')">Cancelar</button><button type="button" class="btn btn-danger" id="actionConfirmBtn">Confirmar</button></div></div></div>
 
-  <div id="toast"></div>
+  <div id="toast" class="toast"></div>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="sidebarToggle()"></div>
+
   <script src="../common.js"></script>
   <script src="admin.js"></script>
+  <!-- Módulos do Admin -->
+  <script src="modules/consultas.js"></script>
+  <script src="modules/pacientes.js"></script>
+  <script src="modules/clientes.js"></script>
+  <script src="modules/funcionarios.js"></script>
+  <script src="modules/servicos.js"></script>
+  <script src="modules/especialidades.js"></script>
+  <script src="modules/faturamento.js"></script>
+  <script src="modules/pedidos.js"></script>
 </body>
 </html>

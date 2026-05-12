@@ -7,13 +7,15 @@ namespace Backend.K03.APPLICATION.PacienteUseCase.Comand;
 
 public class AtualizarPaciente(IAtualizarRepository<PacienteModel> repository)
 {
-   public async Task<string> ExecuteAsync(AtualizarPacienteDTO dto)
+    public async Task<string> ExecuteAsync(AtualizarPacienteDTO dto)
     {
         var model = new PacienteModel
         {
             Id = dto.IdPaciente,
-
-            Nome= dto.PacienteNome
+            Nome = dto.PacienteNome,
+            Data_nascimento = dto.DataNascimento,
+            Id_genero = dto.IdGenero,
+            Id_cliente_paciente = dto.IdClientePaciente
         };
         return await repository.ActualizarAsync(model);
     }

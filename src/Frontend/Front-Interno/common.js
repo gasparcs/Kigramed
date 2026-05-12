@@ -56,11 +56,7 @@ function fetchJson(path, options = {}) {
       const text = await res.text();
       let json = null;
       if (text) {
-        try {
-          json = JSON.parse(text);
-        } catch {
-          json = text;
-        }
+        try { json = JSON.parse(text); } catch { json = text; }
       }
       if (!res.ok) throw { status: res.status, data: json };
       return json;
@@ -104,6 +100,81 @@ function safeField(item, ...keys) {
   }
   return '—';
 }
+
+function openModal(id) {
+  document.getElementById(id)?.classList.add('open');
+}
+
+function closeModal(id) {
+  document.getElementById(id)?.classList.remove('open');
+}
+
+function pickValue(item, keys) {
+  for (const key of keys) {
+    if (item && item[key] !== undefined && item[key] !== null) {
+      return item[key];
+    }
+  }
+  return '';
+}
+
+function setSelectOptions(selectId, items, valueKeys, labelKeys) {
+  const select = document.getElementById(selectId);
+  if (!select) return;
+  const valArr = Array.isArray(valueKeys) ? valueKeys : [valueKeys];
+  const labArr = Array.isArray(labelKeys) ? labelKeys : [labelKeys];
+  select.innerHTML = '<option value="">Seleccionar...</option>' + items.map(item => {
+    const value = pickValue(item, valArr);
+    const label = pickValue(item, labArr) || value;
+    return `<option value="${value}">${label}</option>`;
+  }).join('');
+}
+
+function toDatetimeLocal(value) {
+  if (!value) return '';
+  const d = new Date(value);
+  if (Number.isNaN(d.valueOf())) return '';
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function badgeEstado(estado) {
+  const t = String(estado || '').trim();
+  const map = {
+    'Activo': 'badge-green', 'Inactivo': 'badge-red',
+    'Pendente': 'badge-amber', 'Validado': 'badge-green',
+    'Cancelado': 'badge-red', 'Rejeitado': 'badge-red',
+    'Finalizada': 'badge-blue', 'Agendada': 'badge-amber'
+  };
+  return `<span class="badge ${map[t] || 'badge-gray'}">${t}</span>`;
+}
+
+let actionConfirmHandler = null;
+function openActionConfirmModal(title, message, onConfirm) {
+  const t = document.getElementById('actionConfirmTitle');
+  const m = document.getElementById('actionConfirmMessage');
+  if (t) t.textContent = title || 'Confirmar Ação';
+  if (m) m.textContent = message || 'Tem a certeza?';
+  actionConfirmHandler = onConfirm;
+  openModal('modalActionConfirm');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('actionConfirmBtn')?.addEventListener('click', async () => {
+    if (!actionConfirmHandler) return;
+    try {
+      await actionConfirmHandler();
+      closeModal('modalActionConfirm');
+    } catch (error) {
+      showToast(getErrorMessage(error), 'error');
+    }
+  });
+});
+
+const Validators = {
+  nif: (val) => /^\d{9}$/.test(val),
+  bi: (val) => /^\d{9}[A-Z]{2}\d{3}$/.test(val)
+};
 
 function filterTable(input, tableId) {
   const query = input.value.toLowerCase();

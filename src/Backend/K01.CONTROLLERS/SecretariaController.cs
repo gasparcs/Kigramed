@@ -172,6 +172,8 @@ namespace Backend.K01.CONTROLLERS
 
             dto.IdConsulta = id;
             var resposta = await atualizarconsultaServices.ExecuteAsync(dto);
+            if (resposta == "consulta_finalizada")
+                return StatusCode(409, "Esta consulta já foi finalizada e não pode ser editada.");
             return resposta.Contains("sucesso") ? StatusCode(200, resposta) : StatusCode(400, resposta);
         }
 

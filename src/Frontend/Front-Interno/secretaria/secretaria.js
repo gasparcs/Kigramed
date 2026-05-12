@@ -170,7 +170,14 @@ async function loadConsultas() {
         <td>${formatDate(item.data_consulta || item.Data_consulta || item.DataConsulta || item.Data_Consulta)}</td>
         <td><span class="badge badge-gray">${pickValue(item, ['estadoDescricao', 'EstadoDescricao', 'estado', 'Estado']) || 'â€”'}</span></td>
         <td style="display:flex;gap:6px;flex-wrap:wrap;">
-          <button class="btn btn-sm btn-outline" onclick="editarConsulta(${pickValue(item, ['consultaId', 'ConsultaId', 'id']) || index + 1})">Editar</button>
+          ${(()=>{
+            const estadoDesc = (pickValue(item, ['estadoDescricao', 'EstadoDescricao', 'estado', 'Estado']) || '').trim().toLowerCase();
+            const finalizada = estadoDesc === 'finalizada';
+            const consultaId = pickValue(item, ['consultaId', 'ConsultaId', 'id']) || index + 1;
+            return finalizada
+              ? `<button class="btn btn-sm btn-outline" disabled title="Consulta finalizada — não é possível editar" style="opacity:0.45;cursor:not-allowed;">Editar</button>`
+              : `<button class="btn btn-sm btn-outline" onclick="editarConsulta(${consultaId})">Editar</button>`;
+          })()}
           <button class="btn btn-sm btn-danger" onclick="removerConsulta(${pickValue(item, ['consultaId', 'ConsultaId', 'id']) || index + 1})">Remover</button>
         </td>
       </tr>`).join('');
@@ -574,6 +581,11 @@ async function submitSMS(event) {
 
 async function editarConsulta(id) {
   const item = secretariaState.consultas.get(id) || {};
+  const estadoDesc = (pickValue(item, ['estadoDescricao', 'EstadoDescricao', 'estado', 'Estado']) || '').trim().toLowerCase();
+  if (estadoDesc === 'finalizada') {
+    showToast('Esta consulta já foi finalizada e não pode ser editada.', 'error');
+    return;
+  }
   document.getElementById('ecConsultaId').value = id;
   document.getElementById('ecData').value = toDatetimeLocal(item.data_consulta || item.Data_consulta || item.DataConsulta);
   document.getElementById('ecMedico').value = pickValue(item, ['id_medico_especialiade', 'Id_medico_especialiade', 'idMedicoEspecialidade', 'IdMedicoEspecialidade', 'idMedico', 'IdMedico']) || '';
@@ -707,9 +719,11 @@ async function submitEditConsulta(event) {
     loadConsultas();
     loadTopStats();
   } catch (error) {
-    showToast(getErrorMessage(error, 'Erro ao atualizar consulta.'), 'error');
+    const msg = error?.status === 409
+      ? 'Esta consulta já foi finalizada e não pode ser editada.'
+      : getErrorMessage(error, 'Erro ao atualizar consulta.');
+    showToast(msg, 'error');
   }
 }
 
 window.addEventListener('load', initSecretaria);
-

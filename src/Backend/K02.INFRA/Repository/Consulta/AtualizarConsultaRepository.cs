@@ -13,10 +13,16 @@ public class AtualizarConsultaRepository(KigramedDbContext context) : IAtualizar
         try
         {
                 var consulta = await context.Tabelatb15_consulta
-                
-               .FirstOrDefaultAsync(c=>c.Id == model.Id);
+                    .Include(c => c.EstadoConsulta)
+                    .FirstOrDefaultAsync(c => c.Id == model.Id);
 
-                if(consulta is null) return "Consulta não encontrada";
+                if (consulta is null) return "Consulta não encontrada";
+
+                // Bloquear edição se a consulta já foi finalizada
+
+                if (consulta.EstadoConsulta?.Descricao?.Trim().ToLower() == "finalizada")
+
+                return "consulta_finalizada";
 
                 consulta.Data_consulta          = model.Data_consulta;
 
@@ -24,7 +30,7 @@ public class AtualizarConsultaRepository(KigramedDbContext context) : IAtualizar
 
                 consulta.Id_estado_consulta     = model.Id_estado_consulta;
 
-                return await context.SaveChangesAsync() >0?
+                return await context.SaveChangesAsync() > 0 ?
                 "Consulta atualizada com sucesso" :
                 "Não foi possível realizar a atualização";
         }

@@ -48,18 +48,49 @@ function openActionConfirmModal(title, message, onConfirm) {
   openModal('modalActionConfirm');
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// BADGES DE ESTADO
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Estados das consultas (usado em loadConsultas e renderDashboardConsultas)
+function badgeEstadoConsulta(estado) {
+  const texto = estado || '—';
+  const norm = String(texto).trim().toLowerCase();
+  const map = {
+    'agendada':    'badge-amber',
+    'confirmada':  'badge-amber',
+    'em curso':    'badge-blue',
+    'em andamento':'badge-blue',
+    'finalizada':  'badge-green',
+    'concluida':   'badge-green',
+    'concluída':   'badge-green',
+    'cancelada':   'badge-red',
+    'cancelado':   'badge-red',
+    'rejeitada':   'badge-red',
+    'rejeitado':   'badge-red',
+    'pendente':    'badge-amber'
+  };
+  return `<span class="badge ${map[norm] || 'badge-gray'}">${texto}</span>`;
+}
+
+// Estados dos pedidos e funcionários (usado em loadPedidos, loadFuncionarios)
 function badgeEstado(estado) {
   const texto = estado || '-';
   const map = {
     'Aguarda Confirmacao': 'badge-amber',
-    'Aguarda Pagamento': 'badge-amber',
-    'Pago': 'badge-green',
-    'Cancelado': 'badge-red',
-    'Concluido': 'badge-blue',
-    'Activo': 'badge-green',
-    'Ativo': 'badge-green',
-    'Inactivo': 'badge-red',
-    'Inativo': 'badge-red',
+    'Aguarda Pagamento':   'badge-amber',
+    'Pendente':            'badge-amber',
+    'Pagamento Enviado':   'badge-amber',
+    'Pago':                'badge-green',
+    'Validado':            'badge-green',
+    'Cancelado':           'badge-red',
+    'Rejeitado':           'badge-red',
+    'Concluido':           'badge-blue',
+    'Concluído':           'badge-blue',
+    'Activo':              'badge-green',
+    'Ativo':               'badge-green',
+    'Inactivo':            'badge-red',
+    'Inativo':             'badge-red',
   };
   return `<span class="badge ${map[texto] || 'badge-gray'}">${texto}</span>`;
 }
@@ -209,7 +240,6 @@ async function loadConsultas() {
     const items = await fetchJson('/Admin/consulta');
     const list = items || [];
 
-    // Guardar no estado para edição
     adminState.consultas.clear();
     list.forEach((item, index) => {
       const id = item.consultaId || item.ConsultaId || index + 1;
@@ -218,18 +248,26 @@ async function loadConsultas() {
 
     if (body) {
       body.innerHTML = list.length
-        ? list.map((item, i) => `<tr>
-            <td>${item.consultaId || item.ConsultaId || i + 1}</td>
-            <td>${item.pacienteNome || item.PacienteNome || '—'}</td>
-            <td>${item.medicoNome || item.MedicoNome || '—'}</td>
-            <td>${item.servicoNome || item.ServicoNome || '—'}</td>
-            <td>${formatDate(item.data_consulta || item.Data_consulta || item.DataConsulta)}</td>
-            <td>${badgeEstado(item.estadoDescricao || item.EstadoDescricao || '—')}</td>
-            <td>
-              <button class="btn btn-sm btn-outline" onclick="editarConsulta(${item.consultaId || item.ConsultaId})">Editar</button>
-              <button class="btn btn-sm btn-danger" onclick="removerConsulta(${item.consultaId || item.ConsultaId})">Remover</button>
-            </td>
-          </tr>`).join('')
+        ? list.map((item, i) => {
+            const estadoDesc = (item.estadoDescricao || item.EstadoDescricao || '').trim().toLowerCase();
+            const finalizada = estadoDesc === 'finalizada';
+            const consultaId = item.consultaId || item.ConsultaId || i + 1;
+            return `<tr>
+              <td>${consultaId}</td>
+              <td>${item.pacienteNome || item.PacienteNome || '—'}</td>
+              <td>${item.medicoNome || item.MedicoNome || '—'}</td>
+              <td>${item.servicoNome || item.ServicoNome || '—'}</td>
+              <td>${formatDate(item.data_consulta || item.Data_consulta || item.DataConsulta)}</td>
+              <td>${badgeEstadoConsulta(item.estadoDescricao || item.EstadoDescricao || '—')}</td>
+              <td>
+                ${finalizada
+                  ? `<button class="btn btn-sm btn-outline" disabled title="Consulta finalizada — não é possível editar" style="opacity:0.45;cursor:not-allowed;">Editar</button>`
+                  : `<button class="btn btn-sm btn-outline" onclick="editarConsulta(${consultaId})">Editar</button>`
+                }
+                <button class="btn btn-sm btn-danger" onclick="removerConsulta(${consultaId})">Remover</button>
+              </td>
+            </tr>`;
+          }).join('')
         : '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">Nenhuma consulta encontrada.</td></tr>';
     }
 
@@ -241,7 +279,7 @@ async function loadConsultas() {
             <td>${item.medicoNome || item.MedicoNome || '—'}</td>
             <td>${item.servicoNome || item.ServicoNome || '—'}</td>
             <td>${formatDate(item.data_consulta || item.Data_consulta || item.DataConsulta)}</td>
-            <td>${badgeEstado(item.estadoDescricao || item.EstadoDescricao || '—')}</td>
+            <td>${badgeEstadoConsulta(item.estadoDescricao || item.EstadoDescricao || '—')}</td>
           </tr>`).join('')
         : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">Nenhuma consulta encontrada.</td></tr>';
     }
@@ -257,7 +295,6 @@ async function loadPacientes() {
   try {
     const items = await fetchJson('/Admin/paciente');
 
-    // Guardar no estado para edição
     adminState.pacientes.clear();
     (items || []).forEach((item, index) => {
       const id = item.pacienteId || item.Id || index + 1;
@@ -287,7 +324,6 @@ async function loadClientes() {
   try {
     const items = await fetchJson('/Admin/cliente');
 
-    // Guardar no estado para edição
     adminState.clientes.clear();
     (items || []).forEach((item) => {
       const nif = item.clienteNif || item.Nif_cliente || '';
@@ -504,7 +540,6 @@ async function populateFormSelects() {
     setSelectOptions('pcPagamento', pagamentos || [], ['id', 'Id'], ['comprovativo', 'Comprovativo']);
     setSelectOptions('pcConsulta', consultas || [], ['consultaId', 'ConsultaId', 'id', 'Id'], ['pacienteNome', 'PacienteNome']);
     setSelectOptions('smsCliente', clientes || [], ['clienteNif', 'Nif_cliente', 'ClienteNif'], ['clienteNome', 'ClienteNome', 'nome']);
-    // Selects dos modais de edição
     setSelectOptions('ecMedico', medicos || [], ['id', 'Id'], ['nomefuncionario', 'Nomefuncionario', 'nomeFuncionario', 'NomeFuncionario']);
     setSelectOptions('ecEstado', estados || [], ['consultaId', 'id', 'ConsultaId'], ['descricao', 'Descricao', 'EstadoDescricao']);
   } catch (error) {
@@ -757,10 +792,15 @@ async function removerServico(id) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// EDITAR CONSULTA — modal dedicado (igual à Secretaria)
+// EDITAR CONSULTA — com guarda de finalizada (igual à Secretaria)
 // ─────────────────────────────────────────────────────────────────────────────
 async function editarConsulta(id) {
   const item = adminState.consultas.get(id) || {};
+  const estadoDesc = (pickValue(item, ['estadoDescricao', 'EstadoDescricao', 'estado', 'Estado']) || '').trim().toLowerCase();
+  if (estadoDesc === 'finalizada') {
+    showToast('Esta consulta já foi finalizada e não pode ser editada.', 'error');
+    return;
+  }
   document.getElementById('ecConsultaId').value = id;
   document.getElementById('ecData').value = toDatetimeLocal(
     item.data_consulta || item.Data_consulta || item.DataConsulta || ''
@@ -793,12 +833,15 @@ async function submitEditConsulta(event) {
     loadConsultas();
     loadTopLists();
   } catch (error) {
-    showToast(getErrorMessage(error, 'Erro ao atualizar consulta.'), 'error');
+    const msg = error?.status === 409
+      ? 'Esta consulta já foi finalizada e não pode ser editada.'
+      : getErrorMessage(error, 'Erro ao atualizar consulta.');
+    showToast(msg, 'error');
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// EDITAR PACIENTE — modal dedicado (igual à Secretaria)
+// EDITAR PACIENTE
 // ─────────────────────────────────────────────────────────────────────────────
 async function editarPaciente(id) {
   const item = adminState.pacientes.get(id) || {};
@@ -826,7 +869,7 @@ async function submitEditPaciente(event) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// EDITAR CLIENTE — modal dedicado (igual à Secretaria)
+// EDITAR CLIENTE
 // ─────────────────────────────────────────────────────────────────────────────
 async function editarCliente(nif) {
   const item = adminState.clientes.get(nif) || {};
@@ -869,7 +912,7 @@ async function submitEditCliente(event) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// EDITAR — outros (mantém o modal genérico)
+// EDITAR — outros (modal genérico)
 // ─────────────────────────────────────────────────────────────────────────────
 async function editarFuncionario(nif) {
   openActionFormModal({
@@ -974,9 +1017,9 @@ function openComprovativoFromPath(path) {
 document.getElementById('actionForm')?.addEventListener('submit', async (event) => {
   event.preventDefault();
   if (!actionFormHandler) return;
-  const nome     = document.getElementById('actionFieldNome').value.trim();
+  const nome      = document.getElementById('actionFieldNome').value.trim();
   const descricao = document.getElementById('actionFieldDescricao').value.trim();
-  const data     = document.getElementById('actionFieldData').value;
+  const data      = document.getElementById('actionFieldData').value;
   try {
     await actionFormHandler({ nome, descricao, data });
     closeModal('modalActionForm');

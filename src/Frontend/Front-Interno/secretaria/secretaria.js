@@ -73,7 +73,7 @@ function renderDashboardConsultas(consultas) {
       <td>${item.medicoNome || item.MedicoNome || '—'}</td>
       <td>${item.servicoNome || item.ServicoNome || '—'}</td>
       <td>${formatDate(item.data_consulta || item.Data_consulta || item.DataConsulta)}</td>
-      <td>${badgeEstado(item.estadoDescricao || item.EstadoDescricao)}</td>
+      <td>${badgeEstadoConsulta(item.estadoDescricao || item.EstadoDescricao)}</td>
     </tr>`).join('');
 }
 
@@ -112,7 +112,7 @@ async function loadConsultas() {
         <td>${item.medicoNome || item.MedicoNome || '—'}</td>
         <td>${item.servicoNome || item.ServicoNome || '—'}</td>
         <td>${formatDate(item.data_consulta || item.Data_consulta)}</td>
-        <td>${badgeEstado(item.estadoDescricao || item.EstadoDescricao)}</td>
+        <td>${badgeEstadoConsulta(item.estadoDescricao || item.EstadoDescricao)}</td>
         <td style="display:flex;gap:6px;flex-wrap:wrap;">
           ${finalizada
             ? `<button class="btn btn-sm btn-outline" disabled title="Consulta finalizada" style="opacity:0.45;cursor:not-allowed;">Editar</button>`
@@ -146,7 +146,7 @@ async function loadPacientes() {
         <td>${id}</td>
         <td>${item.pacienteNome || item.Nome || '—'}</td>
         <td>${formatDateShort(item.pacienteData_nascimento || item.Data_nascimento)}</td>
-        <td>${item.clienteNome || item.ClienteNome || item.nif_cliente || '—'}</td>
+        <td>${item.cliente || item.Cliente || item.clienteNome || item.ClienteNome || item.nif_cliente || item.Nif_cliente || '—'}</td>
         <td style="display:flex;gap:6px;flex-wrap:wrap;">
           <button class="btn btn-sm btn-outline" onclick="editarPaciente(${id})">Editar</button>
           <button class="btn btn-sm btn-danger" onclick="removerPaciente(${id})">Remover</button>
@@ -194,12 +194,15 @@ async function loadEspecialidades() {
   if (!body) return;
   try {
     const items = await fetchJson('/Secretaria/especialidade');
-    body.innerHTML = (items || []).length ? items.map((item, index) => `
-      <tr>
-        <td>${item.especialidadeId || item.id || index + 1}</td>
+    body.innerHTML = (items || []).length ? items.map((item, index) => {
+      const eid = item.especialidadeId || item.id || item.Id || index + 1;
+      return `<tr>
+        <td>${eid}</td>
         <td>${item.especialidadeNome || item.Nome || item.NomeEspecialidade || '—'}</td>
         <td>${item.especialidadeDescricao || item.Descricao || '—'}</td>
-      </tr>`).join('') : '<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:24px">Nenhuma especialidade encontrada.</td></tr>';
+        <td><button class="btn btn-sm btn-primary" onclick="abrirNovaConsultaCom(null, '${eid}')">Marcar consulta</button></td>
+      </tr>`;
+    }).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">Nenhuma especialidade encontrada.</td></tr>';
   } catch { }
 }
 
@@ -208,13 +211,16 @@ async function loadServicos() {
   if (!body) return;
   try {
     const items = await fetchJson('/Secretaria/servico');
-    body.innerHTML = (items || []).length ? items.map((item, index) => `
-      <tr>
-        <td>${item.servicoId || item.id || index + 1}</td>
+    body.innerHTML = (items || []).length ? items.map((item, index) => {
+      const sid = item.id || item.Id || item.servicoId || index + 1;
+      return `<tr>
+        <td>${sid}</td>
         <td>${item.servicoNome || item.nome || '—'}</td>
         <td>${item.especialidade || item.nomeEspecialidade || '—'}</td>
         <td>${item.servicoPreco || item.preco || '—'} Kz</td>
-      </tr>`).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">Nenhum serviço encontrado.</td></tr>';
+        <td><button class="btn btn-sm btn-primary" onclick="abrirNovaConsultaComServico('${sid}')">Marcar consulta</button></td>
+      </tr>`;
+    }).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px">Nenhum serviço encontrado.</td></tr>';
   } catch { }
 }
 
@@ -243,7 +249,7 @@ async function loadPagamentos() {
     const map = new Map((pagamentosConsulta || []).map(pc => [pc.idPagamento || pc.IdPagamento, pc.valorServico ?? '—']));
     body.innerHTML = (pagamentos || []).length ? pagamentos.map((item) => {
       const id = item.id || item.Id;
-      return `<tr><td>${id || '—'}</td><td>${item.cliente || '—'}</td><td>${item.secretaria || '—'}</td><td>${map.get(id) ?? '—'}</td><td>${item.comprovativo ? 'Sim' : 'Não'}</td><td>${formatDate(item.dataEnvio || item.Data)}</td></tr>`;
+      return `<tr><td>${id || '—'}</td><td>${item.cliente || '—'}</td><td>${item.secretaria || '—'}</td><td>${map.get(id) ?? '—'}</td><td>${renderComprovativoCell(item.comprovativo || item.Comprovativo || item.caminhoComprovativo || item.CaminhoComprovativo)}</td><td>${formatDate(item.dataEnvio || item.Data)}</td></tr>`;
     }).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">Nenhum pagamento encontrado.</td></tr>';
   } catch { }
 }
@@ -253,7 +259,7 @@ async function loadPagamentoConsulta() {
   if (!body) return;
   try {
     const items = await fetchJson('/Secretaria/pagamentoconsulta');
-    body.innerHTML = (items || []).length ? items.map((item) => `<tr><td>${item.id || '—'}</td><td>${item.idPagamento || '—'}</td><td>${item.idConsulta || '—'}</td><td>${formatDate(item.dataConsulta)}</td><td>${item.comprovativo ? 'Sim' : 'Não'}</td></tr>`).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px">Nenhum registo encontrado.</td></tr>';
+    body.innerHTML = (items || []).length ? items.map((item) => `<tr><td>${item.id || '—'}</td><td>${item.idPagamento || '—'}</td><td>${item.idConsulta || '—'}</td><td>${formatDate(item.dataConsulta)}</td><td>${renderComprovativoCell(item.comprovativo || item.Comprovativo || item.caminhoComprovativo || item.CaminhoComprovativo)}</td></tr>`).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px">Nenhum registo encontrado.</td></tr>';
   } catch { }
 }
 
@@ -273,15 +279,19 @@ async function loadPedidos() {
     const res = await fetchJson('/Secretaria/pedidos');
     const items = res?.dados || [];
     body.innerHTML = items.length ? items.map((item) => {
-      const id = item.id || '—';
-      const estado = normalizePedidoEstado(item.estado || '—');
+      const id = item.id || item.Id || '—';
+      const cliente = item.nomeCliente || item.NomeCliente || item.clienteNome || item.ClienteNome || '—';
+      const servico = item.servico || item.Servico || item.servicoNome || item.ServicoNome || '—';
+      const horario = item.horarioPreferencial || item.HorarioPreferencial || item.data_consulta || item.DataConsulta;
+      const estado = normalizePedidoEstado(item.estado || item.Estado || '—');
+      const actions = renderPedidoActions(id, estado);
       return `<tr>
         <td>${id}</td>
-        <td>${item.clienteNome || item.NomeCliente || '—'}</td>
-        <td>${item.servicoNome || '—'}</td>
-        <td>${formatDate(item.horarioPreferencial || item.data_consulta)}</td>
-        <td>${badgeEstado(estado)}</td>
-        <td style="display:flex;gap:6px;flex-wrap:wrap;">${renderPedidoActions(id, estado) || '—'}</td>
+        <td>${cliente}</td>
+        <td>${servico}</td>
+        <td>${formatDate(horario)}</td>
+        <td>${badgeEstadoConsulta(estado)}</td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap;">${actions || '—'}</td>
       </tr>`;
     }).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">Nenhum pedido encontrado.</td></tr>';
   } catch { }
@@ -290,6 +300,26 @@ async function loadPedidos() {
 // ─────────────────────────────────────────────────────────────────────────────
 // ACTIONS & SUBMITS
 // ─────────────────────────────────────────────────────────────────────────────
+
+function abrirNovaConsultaComServico(servicoId) {
+  openModal('modalConsulta');
+  setTimeout(() => {
+    const sel = document.getElementById('cServico');
+    if (sel) sel.value = String(servicoId);
+  }, 0);
+}
+
+function abrirNovaConsultaCom(servicoId, medicoEspId) {
+  if (servicoId) {
+    const sel = document.getElementById('cServico');
+    if (sel) sel.value = String(servicoId);
+  }
+  if (medicoEspId) {
+    const sel = document.getElementById('cMedico');
+    if (sel) sel.value = String(medicoEspId);
+  }
+  openModal('modalConsulta');
+}
 
 async function populateSecretariaSelects() {
   try {
@@ -338,8 +368,8 @@ async function editarConsulta(id) {
   const item = secretariaState.consultas.get(id) || {};
   document.getElementById('ecConsultaId').value = id;
   document.getElementById('ecData').value = toDatetimeLocal(item.data_consulta || item.Data_consulta);
-  document.getElementById('ecMedico').value = pickValue(item, ['id_medico_especialiade', 'idMedico']) || '';
-  document.getElementById('ecEstado').value = pickValue(item, ['id_estado_consulta', 'idEstado']) || '';
+  document.getElementById('ecMedico').value = item.idMedicoEspecialidade || '';
+  document.getElementById('ecEstado').value = item.idEstadoConsulta || '';
   openModal('modalEditConsulta');
 }
 
@@ -380,7 +410,7 @@ async function submitPaciente(event) {
       body: {
         PacienteNome: document.getElementById('pNome').value,
         PacienteData_nascimento: document.getElementById('pNasc').value,
-        IdCliente_Paciente: 1, // Default Titular
+        IdCliente_Paciente: parseInt(document.getElementById('pTipo')?.value || '1', 10) || 1,
         IdGenero: parseInt(document.getElementById('pGenero').value, 10),
         Nif_cliente: document.getElementById('pCliente').value
       }
@@ -397,7 +427,8 @@ async function editarPaciente(id) {
   document.getElementById('epPacienteId').value = id;
   document.getElementById('epNome').value = item.pacienteNome || item.Nome || '';
   document.getElementById('epNasc').value = (item.pacienteData_nascimento || item.Data_nascimento || '').split('T')[0];
-  document.getElementById('epGenero').value = item.id_genero || item.Id_genero || '';
+  document.getElementById('epGenero').value = item.idGenero || item.IdGenero || '';
+  document.getElementById('epTipo').value = item.idClientePaciente || item.IdClientePaciente || '';
   openModal('modalEditPaciente');
 }
 
@@ -411,7 +442,8 @@ async function submitEditPaciente(event) {
         IdPaciente: id,
         PacienteNome: document.getElementById('epNome').value.trim(),
         DataNascimento: document.getElementById('epNasc').value,
-        IdGenero: parseInt(document.getElementById('epGenero').value, 10)
+        IdGenero: parseInt(document.getElementById('epGenero').value, 10),
+        IdClientePaciente: parseInt(document.getElementById('epTipo').value, 10)
       }
     });
     showToast('Paciente atualizado.', 'success');
@@ -454,10 +486,25 @@ async function submitCliente(event) {
 async function editarCliente(nif) {
   const item = secretariaState.clientes.get(nif) || {};
   const contactos = Array.isArray(item.contactos) ? item.contactos : [];
-  const emailObj = contactos.find(c => Number(c.tipoContacto || c.TipoContacto) === 2);
-  const telObj = contactos.find(c => Number(c.tipoContacto || c.TipoContacto) === 1);
+
+  const emailObj = contactos.find(c => {
+    const desc = String(
+      c.tipoContacto?.descricao || c.TipoContacto?.descricao ||
+      c.tipoContacto?.Descricao || c.TipoContacto?.Descricao || ''
+    ).trim().toLowerCase();
+    return desc === 'email' || desc === 'e-mail';
+  });
+
+  const telObj = contactos.find(c => {
+    const desc = String(
+      c.tipoContacto?.descricao || c.TipoContacto?.descricao ||
+      c.tipoContacto?.Descricao || c.TipoContacto?.Descricao || ''
+    ).trim().toLowerCase();
+    return desc === 'telefone' || desc === 'telemóvel' || desc === 'telemovel' || desc === 'phone';
+  });
+
   document.getElementById('eclNif').value = nif;
-  document.getElementById('eclNome').value = item.clienteNome || item.Nome || '';
+  document.getElementById('eclNome').value = item.clienteNome || item.ClienteNome || item.Nome || '';
   document.getElementById('eclEmail').value = (emailObj?.contacto || emailObj?.Contacto || '').trim();
   document.getElementById('eclTel').value = (telObj?.contacto || telObj?.Contacto || '').trim();
   openModal('modalEditCliente');
@@ -509,20 +556,68 @@ async function handlePedidoAction(id, action) {
   } catch (e) { showToast(getErrorMessage(e), 'error'); }
 }
 
-function normalizePedidoEstado(raw) {
-  const s = String(raw || '').trim().toLowerCase();
-  if (s === 'pendente') return 'Pendente';
-  if (s.includes('pagamento') || s.includes('comprovativo')) return 'Pagamento Enviado';
-  if (s === 'confirmado' || s === 'validado') return 'Validado';
-  if (s === 'cancelado') return 'Cancelado';
-  if (s === 'rejeitado') return 'Rejeitado';
-  return raw || '—';
+function normalizePedidoEstado(rawEstado) {
+  const estado = String(rawEstado || '').trim().toLowerCase();
+  if (estado === 'pendente') return 'Pendente';
+  if (estado === 'comprovativo enviado' || estado === 'pagamento enviado') return 'Pagamento Enviado';
+  if (estado === 'confirmado' || estado === 'validado') return 'Validado';
+  if (estado === 'cancelado') return 'Cancelado';
+  if (estado === 'rejeitado') return 'Rejeitado';
+  return rawEstado || '—';
 }
 
-function renderPedidoActions(id, estado) {
-  if (estado === 'Pendente') return `<button class="btn btn-sm btn-success" onclick="handlePedidoAction(${id}, 'confirmar')">Confirmar</button><button class="btn btn-sm btn-outline" onclick="handlePedidoAction(${id}, 'cancelar')">Cancelar</button>`;
-  if (estado === 'Pagamento Enviado') return `<button class="btn btn-sm btn-primary" onclick="handlePedidoAction(${id}, 'validar')">Validar</button><button class="btn btn-sm btn-danger" onclick="handlePedidoAction(${id}, 'rejeitar')">Rejeitar</button>`;
+function renderPedidoActions(id, estadoNormalizado) {
+  if (estadoNormalizado === 'Pendente') {
+    return `<button class="btn btn-sm btn-success" onclick="handlePedidoAction(${id}, 'confirmar')">Confirmar</button>
+            <button class="btn btn-sm btn-outline" onclick="handlePedidoAction(${id}, 'cancelar')">Cancelar</button>`;
+  }
+  if (estadoNormalizado === 'Pagamento Enviado') {
+    return `<button class="btn btn-sm btn-primary" onclick="handlePedidoAction(${id}, 'validar')">Validar</button>
+            <button class="btn btn-sm btn-danger" onclick="handlePedidoAction(${id}, 'rejeitar')">Rejeitar</button>
+            <button class="btn btn-sm btn-outline" onclick="openComprovativo(${id})">Comprovativo</button>`;
+  }
+  if (estadoNormalizado === 'Validado') {
+    return `<button class="btn btn-sm btn-outline" onclick="openComprovativo(${id})">Comprovativo</button>`;
+  }
   return '';
+}
+
+function badgeEstadoConsulta(estado) {
+  const texto = estado || '—';
+  const norm = String(texto).trim().toLowerCase();
+  const map = {
+    'agendada':             'badge-amber',
+    'confirmada':           'badge-amber',
+    'pendente':             'badge-amber',
+    'pagamento enviado':    'badge-amber',
+    'em curso':             'badge-blue',
+    'em andamento':         'badge-blue',
+    'finalizada':           'badge-green',
+    'concluida':            'badge-green',
+    'concluída':            'badge-green',
+    'validado':             'badge-green',
+    'confirmado':           'badge-green',
+    'cancelada':            'badge-red',
+    'cancelado':            'badge-red',
+    'rejeitada':            'badge-red',
+    'rejeitado':            'badge-red'
+  };
+  return `<span class="badge ${map[norm] || 'badge-gray'}">${texto}</span>`;
+}
+
+function renderComprovativoCell(value) {
+  if (!value) return '—';
+  const safe = String(value).replace(/'/g, "\\'");
+  return `<button class="btn btn-sm btn-outline" onclick="openComprovativoFromPath('${safe}')">Ver comprovativo</button>`;
+}
+
+function openComprovativoFromPath(path) {
+  if (!path) return;
+  window.open(`http://localhost:5290/api/Secretaria/comprovativo?caminho=${encodeURIComponent(path)}`, '_blank');
+}
+
+function openComprovativo(id) {
+  window.open(`http://localhost:5290/api/Secretaria/${id}/comprovativo`, '_blank');
 }
 
 window.addEventListener('load', initSecretaria);

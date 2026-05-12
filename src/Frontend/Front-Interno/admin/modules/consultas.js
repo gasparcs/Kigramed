@@ -83,8 +83,8 @@ async function editarConsulta(id) {
   const item = adminState.consultas.get(id) || {};
   document.getElementById('ecConsultaId').value = id;
   document.getElementById('ecData').value = toDatetimeLocal(item.data_consulta || item.Data_consulta || item.DataConsulta);
-  document.getElementById('ecMedico').value = pickValue(item, ['id_medico_especialiade', 'Id_medico_especialiade', 'idMedicoEspecialidade', 'IdMedicoEspecialidade', 'idMedico', 'IdMedico']) || '';
-  document.getElementById('ecEstado').value = pickValue(item, ['id_estado_consulta', 'Id_estado_consulta', 'idEstadoConsulta', 'IdEstadoConsulta']) || '';
+  document.getElementById('ecMedico').value = pickValue(item, ['idMedicoEspecialidade', 'IdMedicoEspecialidade', 'id_medico_especialiade', 'Id_medico_especialiade', 'idMedico', 'IdMedico']) || '';
+  document.getElementById('ecEstado').value = pickValue(item, ['idEstadoConsulta', 'IdEstadoConsulta', 'id_estado_consulta', 'Id_estado_consulta']) || '';
   openModal('modalEditConsulta');
 }
 

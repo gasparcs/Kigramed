@@ -56,12 +56,14 @@ async function editarServico(id) {
   const item = adminState.servicos?.get(id) || {};
   document.getElementById('esId').value = id;
   document.getElementById('esNome').value = item.servicoNome || item.nome || '';
-  document.getElementById('esEsp').value = item.idEspecialidade || item.id_especialidade || '';
   document.getElementById('esDuracao').value = item.servicoDuracaoMinuto || item.duracao_minuto || 30;
   document.getElementById('esPreco').value = item.servicoPreco || item.preco || 0;
   document.getElementById('esEstado').value = String(item.servicoEstado ?? item.estado ?? true);
   
   openModal('modalEditServico');
+
+  // Select depois do modal abrir — options já existem pois populateFormSelects correu no init
+  document.getElementById('esEsp').value = item.idEspecialidade || item.id_especialidade || '';
 }
 
 async function submitEditServico(event) {

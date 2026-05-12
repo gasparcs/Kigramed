@@ -16,6 +16,10 @@ public class LeituraPacienteDTO
 
    public string  Genero{get;set;}=null!;
 
+   public int IdGenero{get;set;}
+
+   public int IdClientePaciente{get;set;}
+
    public IEnumerable<ConsultaDTO> Consultas{get;set;}=null!;
 
 }

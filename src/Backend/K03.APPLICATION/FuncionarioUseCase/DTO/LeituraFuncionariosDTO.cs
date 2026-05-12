@@ -12,6 +12,8 @@ public class LeituraFuncionariosDTO
 
     public bool FuncionaroEstado {get;set;} 
 
+    public int IdPerfil {get;set;}
+
     public IEnumerable<ContactoDTO> Contactos {get;set;} = [];
 }
 

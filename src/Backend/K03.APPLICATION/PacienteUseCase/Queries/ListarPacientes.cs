@@ -26,6 +26,10 @@ public class ListarPacientes(IlistagemRepository<PacienteModel> repository)
 
             Genero = p.Genero?.Nome ?? string.Empty,
 
+            IdGenero = p.Id_genero,
+
+            IdClientePaciente = p.Id_cliente_paciente,
+
             Consultas = p.Consultas?.Select( c => new ConsultaDTO
             {
                 IdConsuta = c.Id,

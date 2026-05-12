@@ -64,12 +64,14 @@ async function submitFuncionario(event) {
 async function editarFuncionario(nif) {
   const item = adminState.funcionarios.get(nif) || {};
   const contactos = Array.isArray(item.contactos) ? item.contactos : [];
-  const telObj = contactos.find(c => Number(c.tipoContacto || c.TipoContacto) === 1);
+  const telObj = contactos.find(c =>
+    (c.tipoContacto?.descricao || c.TipoContacto?.Descricao || '').toLowerCase().includes('tel')
+  );
   const especialidades = Array.isArray(item.medicoEspecialidades) ? item.medicoEspecialidades : [];
 
   document.getElementById('efNif').value = nif;
   document.getElementById('efNome').value = item.funcionarioNome || item.Nome || '';
-  document.getElementById('efPerfil').value = item.id_Perfil || item.Id_Perfil || '';
+  document.getElementById('efPerfil').value = item.idPerfil || item.IdPerfil || '';
   document.getElementById('efEstado').value = String(item.funcionaroEstado ?? item.FuncionaroEstado ?? item.funcionarioEstado ?? true);
   document.getElementById('efTel').value = (telObj?.contacto || telObj?.Contacto || '').trim();
   document.getElementById('efEspecialidade').value = especialidades[0]?.id_especialidade || especialidades[0]?.Id_especialidade || '';

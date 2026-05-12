@@ -70,7 +70,7 @@ async function loadEstados() {
 
 async function populateFormSelects() {
   try {
-    const [clientes, medicos, especialidades, pagamentos, consultas, estados, perfis, servicos, pacientes] = await Promise.all([
+    const [clientes, medicos, especialidades, pagamentos, consultas, estados, perfis, servicos, pacientes, tiposClientePaciente] = await Promise.all([
       fetchJson('/Admin/cliente'),
       fetchJson('/Admin/medicos'),
       fetchJson('/Admin/especialidade'),
@@ -79,7 +79,8 @@ async function populateFormSelects() {
       fetchJson('/Admin/estados'),
       fetchJson('/Admin/perfil'),
       fetchJson('/Admin/servicos'),
-      fetchJson('/Admin/paciente')
+      fetchJson('/Admin/paciente'),
+      fetchJson('/Admin/cliente-paciente').catch(() => [])
     ]);
     setSelectOptions('cMedico', medicos || [], ['id', 'Id'], ['nomefuncionario', 'Nomefuncionario', 'nomeFuncionario', 'NomeFuncionario']);
     setSelectOptions('cServico', servicos || [], ['servicoId', 'ServicoId', 'id', 'Id'], ['servicoNome', 'ServicoNome', 'nome', 'Nome']);
@@ -88,16 +89,17 @@ async function populateFormSelects() {
     setSelectOptions('svcEsp', especialidades || [], ['especialidadeId', 'EspecialidadeId', 'id', 'Id'], ['especialidadeNome', 'EspecialidadeNome', 'nome', 'Nome']);
     setSelectOptions('esEsp', especialidades || [], ['especialidadeId', 'EspecialidadeId', 'id', 'Id'], ['especialidadeNome', 'EspecialidadeNome', 'nome', 'Nome']);
     setSelectOptions('pCliente', clientes || [], ['clienteNif', 'Nif_cliente', 'ClienteNif'], ['clienteNome', 'ClienteNome', 'nome']);
-    setSelectOptions('fPerfil', perfis || [], ['perfilId', 'PerfilId'], ['perfilNome', 'PerfilNome']);
+    setSelectOptions('fPerfil', perfis || [], ['perfilId', 'PerfilId'], ['perfilDescricao', 'PerfilDescricao']);
     setSelectOptions('fEspecialidade', especialidades || [], ['especialidadeId', 'EspecialidadeId'], ['especialidadeNome', 'EspecialidadeNome']);
     setSelectOptions('payCliente', clientes || [], ['clienteNif', 'Nif_cliente', 'ClienteNif'], ['clienteNome', 'ClienteNome', 'nome']);
     setSelectOptions('pcPagamento', pagamentos || [], ['id', 'Id'], ['comprovativo', 'Comprovativo']);
     setSelectOptions('pcConsulta', consultas || [], ['consultaId', 'ConsultaId', 'id', 'Id'], ['pacienteNome', 'PacienteNome']);
     setSelectOptions('smsCliente', clientes || [], ['clienteNif', 'Nif_cliente', 'ClienteNif'], ['clienteNome', 'ClienteNome', 'nome']);
-    setSelectOptions('efPerfil', perfis || [], ['perfilId', 'PerfilId'], ['perfilNome', 'PerfilNome']);
+    setSelectOptions('efPerfil', perfis || [], ['perfilId', 'PerfilId'], ['perfilDescricao', 'PerfilDescricao']);
     setSelectOptions('efEspecialidade', especialidades || [], ['especialidadeId', 'EspecialidadeId'], ['especialidadeNome', 'EspecialidadeNome']);
     setSelectOptions('ecMedico', medicos || [], ['id', 'Id'], ['nomefuncionario', 'Nomefuncionario', 'nomeFuncionario', 'NomeFuncionario']);
     setSelectOptions('ecEstado', estados || [], ['consultaId', 'id', 'ConsultaId'], ['descricao', 'Descricao', 'EstadoDescricao']);
+    setSelectOptions('epTipo', tiposClientePaciente || [], ['id', 'Id'], ['descricao', 'Descricao']);
   } catch (error) {
     console.warn('Falha ao preencher selects', error);
   }

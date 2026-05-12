@@ -19,6 +19,8 @@ public class ListarFuncionario(IlistagemRepository<FuncionarioModel> repository)
 
             FuncionarioNome = f.Nome ?? string.Empty,
 
+            IdPerfil = f.Id_Perfil,
+
             FuncionaroEstado = f.Estado,
 
             Contactos = f.Contactos.Select(c => new ContactoDTO

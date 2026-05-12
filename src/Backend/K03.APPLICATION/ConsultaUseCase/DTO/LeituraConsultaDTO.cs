@@ -19,4 +19,8 @@ public class LeituraConsultaDTO
     public string MedicoNome { get; set; } = string.Empty;
     
     public string Especialidade { get; set; } = string.Empty;
+
+    public int IdMedicoEspecialidade { get; set; }
+
+    public int IdEstadoConsulta { get; set; }
 }

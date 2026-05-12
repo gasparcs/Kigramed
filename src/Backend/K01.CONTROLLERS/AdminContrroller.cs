@@ -385,6 +385,14 @@ namespace Backend.K01.CONTROLLERS;
             Ok(resposta);
         }
 
+        [HttpGet("cliente-paciente")]
+        public async Task<IActionResult> ListarClientePaciente([FromServices] Backend.K02.INFRA.Data.KigramedDbContext context)
+        {
+            var tipos = await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync(
+                context.Tabelatb11_cliente_paciente.Select(c => new { id = c.Id, descricao = c.Descricao }));
+            return Ok(tipos);
+        }
+
         //-------------- perfil -----------------//
 
         [HttpGet("perfil")]

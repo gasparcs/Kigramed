@@ -26,7 +26,11 @@ public class ListarConsultas(IlistagemRepository<ConsultaModel> repository)
 
             MedicoNome = c.MedicoEspecialidade?.Funcionario?.Nome ?? string.Empty,
 
-            Especialidade = c.MedicoEspecialidade?.Especialidade?.Nome ?? string.Empty
+            Especialidade = c.MedicoEspecialidade?.Especialidade?.Nome ?? string.Empty,
+
+            IdMedicoEspecialidade = c.Id_medico_especialiade,
+
+            IdEstadoConsulta = c.Id_estado_consulta
         });
     }
 }

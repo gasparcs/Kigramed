@@ -57,8 +57,8 @@ async function editarPaciente(id) {
   document.getElementById('epPacienteId').value = id;
   document.getElementById('epNome').value = pickValue(item, ['pacienteNome', 'PacienteNome', 'Nome']) || '';
   document.getElementById('epNasc').value = (item.pacienteData_nascimento || item.Data_nascimento || '').split('T')[0];
-  document.getElementById('epGenero').value = item.id_genero || item.Id_genero || '';
-  document.getElementById('epTipo').value = item.id_cliente_paciente || item.Id_cliente_paciente || '';
+  document.getElementById('epGenero').value = item.idGenero || item.IdGenero || item.id_genero || item.Id_genero || '';
+  document.getElementById('epTipo').value = item.idClientePaciente || item.IdClientePaciente || item.id_cliente_paciente || item.Id_cliente_paciente || '';
   openModal('modalEditPaciente');
 }
 

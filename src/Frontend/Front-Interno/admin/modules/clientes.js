@@ -54,8 +54,14 @@ async function submitCliente(event) {
 async function editarCliente(nif) {
   const item = adminState.clientes.get(nif) || {};
   const contactos = Array.isArray(item.contactos) ? item.contactos : [];
-  const emailObj = contactos.find(c => Number(c.tipoContacto || c.TipoContacto) === 2);
-  const telObj = contactos.find(c => Number(c.tipoContacto || c.TipoContacto) === 1);
+  const emailObj = contactos.find(c =>
+    (c.tipoContacto?.descricao || c.TipoContacto?.Descricao || '').toLowerCase().includes('email') ||
+    (c.tipoContacto?.descricao || c.TipoContacto?.Descricao || '').toLowerCase().includes('mail')
+  );
+  const telObj = contactos.find(c =>
+    (c.tipoContacto?.descricao || c.TipoContacto?.Descricao || '').toLowerCase().includes('tel') ||
+    (c.tipoContacto?.descricao || c.TipoContacto?.Descricao || '').toLowerCase().includes('fone')
+  );
 
   document.getElementById('eclNif').value = nif;
   document.getElementById('eclNome').value = item.clienteNome || item.Nome || '';

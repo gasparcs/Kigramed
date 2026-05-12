@@ -35,6 +35,10 @@ function validateSecretariaAccess() {
 }
 
 function showSection(sectionId, button) {
+  if (window.innerWidth <= 900) {
+    document.getElementById('sidebar')?.classList.remove('open');
+    document.getElementById('sidebarOverlay')?.classList.remove('open');
+  }
   document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
   document.getElementById(`sec-${sectionId}`)?.classList.add('active');
   document.getElementById('topbarTitle').textContent = button?.textContent.trim() || sectionId;

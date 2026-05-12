@@ -34,7 +34,18 @@ public class ValidarPagamento(IAgendamentoRepository repository, ISmsService sms
         var atualizado = await _repository.AtualizarAsync(pedido);
         if (!atualizado) return "erro";
 
-        var mensagem = $"Pagamento validado. Consulta confirmada para {pedido.HorarioPreferencial.ToLocalTime().ToString("dd/MM/yyyy HH:mm")}.";
+        var mensagem =
+            $"Estimado(a) {pedido.NomeCliente},\n\n" +
+            $"Temos o prazer de informar que o seu pagamento foi validado " +
+            $"com sucesso e a sua consulta está oficialmente confirmada.\n\n" +
+            $"Detalhes da consulta:\n" +
+            $"  • Número do Pedido: {pedido.NumeroPedido}\n" +
+            $"  • Data e Hora: {pedido.HorarioPreferencial.ToLocalTime().ToString("dd/MM/yyyy 'às' HH:mm")}\n\n" +
+            $"Recomendamos que se apresente com 10 minutos de antecedência " +
+            $"munido do seu documento de identificação.\n\n" +
+            $"Contamos com a sua presença.\n\n" +
+            $"Atenciosamente,\n" +
+            $"Centro Médico Kigramed";
         var smsEnviado = await _sms.EnviarAsync(pedido.Telefone, mensagem, "101010101010");
 
         return smsEnviado ? "sucesso" : "erro_sms";

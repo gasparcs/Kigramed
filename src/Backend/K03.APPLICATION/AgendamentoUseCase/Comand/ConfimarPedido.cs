@@ -28,7 +28,22 @@ public class ConfirmarPedido(IAgendamentoRepository repository, ISmsService sms)
         if (!atualizado) return "erro";
 
         var deadline = pedido.PrazoPagamento?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? DateTime.UtcNow.AddMinutes(30).ToString("dd/MM/yyyy HH:mm");
-        var mensagem = $"Pedido confirmado. Número do pedido: {pedido.NumeroPedido}. Por favor pague até {deadline}. Dados bancários: Banco XYZ, IBAN PT50000201234567890123456, NIF 123456789. Após o pagamento, envie o comprovativo.";
+        var mensagem =
+            $"Estimado(a) {pedido.NomeCliente},\n\n" +
+            $"O seu pedido de agendamento foi recebido e aceite com sucesso.\n\n" +
+            $"Detalhes do pedido:\n" +
+            $"  • Número do Pedido: {pedido.NumeroPedido}\n" +
+            $"  • Prazo para pagamento: {deadline}\n\n" +
+            $"Para confirmar a sua consulta, efectue o pagamento dentro do prazo " +
+            $"indicado e envie o comprovativo através do portal.\n\n" +
+            $"Dados bancários para transferência:\n" +
+            $"  • Banco: [NOME DO BANCO]\n" +
+            $"  • IBAN: [IBAN DA CLÍNICA]\n" +
+            $"  • Referência: {pedido.NumeroPedido}\n\n" +
+            $"Atenção: o pedido será cancelado automaticamente caso o pagamento " +
+            $"não seja efectuado dentro do prazo.\n\n" +
+            $"Atenciosamente,\n" +
+            $"Centro Médico Kigramed";
         var smsEnviado = await _sms.EnviarAsync(pedido.Telefone, mensagem, "101010101010");
 
         return smsEnviado ? "sucesso" : "erro_sms";

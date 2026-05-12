@@ -69,7 +69,19 @@ ISmsService sms)
         if (resultado != "Funcionário cadastrado com sucesso.")
          return resultado;
 
-        string texto = $"Caro sr(a) {model.Nome}, foste cadastrado na plataforma do centro médico Kigramed, acesse o sistema no link: www.kigramed.com, use a seguinte credencial: Nif : {model.Nif} e Senha : {senha}";
+        string texto =
+            $"Estimado(a) {model.Nome},\n\n" +
+            $"É com satisfação que informamos que o seu registo na plataforma do " +
+            $"Centro Médico Kigramed foi efectuado com sucesso.\n\n" +
+            $"As suas credenciais de acesso são:\n" +
+            $"  • NIF: {model.Nif}\n" +
+            $"  • Senha: {senha}\n\n" +
+            $"Aceda ao sistema através do portal: www.kigramed.com\n\n" +
+            $"Por motivos de segurança, recomendamos que altere a sua senha " +
+            $"imediatamente após o primeiro acesso.\n\n" +
+            $"Caso necessite de apoio, contacte a nossa equipa de suporte.\n\n" +
+            $"Atenciosamente,\n" +
+            $"Equipa Kigramed";
 
         var contato = model.Contactos.FirstOrDefault();
 

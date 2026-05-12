@@ -19,7 +19,17 @@ public class CancelarPedido(IAgendamentoRepository repository, ISmsService sms)
         var atualizado = await _repository.AtualizarAsync(pedido);
         if (!atualizado) return "erro";
 
-        var mensagem = "Pedido cancelado. O horário foi libertado.";
+        var mensagem =
+            $"Estimado(a) {pedido.NomeCliente},\n\n" +
+            $"Informamos que o seu pedido de agendamento foi cancelado.\n\n" +
+            $"Detalhes do pedido cancelado:\n" +
+            $"  • Número do Pedido: {pedido.NumeroPedido}\n\n" +
+            $"Se o cancelamento foi inesperado ou deseja efectuar um novo " +
+            $"agendamento, convidamo-lo(a) a aceder ao nosso portal em " +
+            $"www.kigramed.com ou a contactar-nos directamente.\n\n" +
+            $"Pedimos desculpa por qualquer inconveniente causado.\n\n" +
+            $"Atenciosamente,\n" +
+            $"Centro Médico Kigramed";
         var smsEnviado = await _sms.EnviarAsync(pedido.Telefone, mensagem, "101010101010");
 
         return smsEnviado ? "sucesso" : "erro_sms";

@@ -79,6 +79,8 @@
     </main>
   </div>
 
+  <!-- ── MODAIS CRIAR ─────────────────────────────────────────────────────── -->
+
   <div class="modal-overlay" id="modalConsulta"><div class="modal"><div class="modal-header"><div class="modal-title">Nova Consulta</div><button class="modal-close" onclick="closeModal('modalConsulta')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><form id="formConsulta" onsubmit="submitConsulta(event)"><div class="form-grid"><div class="form-group"><label>Médico *</label><select id="cMedico" required><option value="">Seleccionar...</option></select></div><div class="form-group"><label>Serviço *</label><select id="cServico" required><option value="">Seleccionar...</option></select></div><div class="form-group"><label>Paciente *</label><select id="cPaciente" required><option value="">Seleccionar...</option></select></div><div class="form-group"><label>Estado *</label><select id="cEstado" required><option value="">Seleccionar...</option></select></div><div class="form-group full"><label>Data e Hora *</label><input type="datetime-local" id="cData" required/></div></div><div class="form-actions"><button type="button" class="btn btn-outline" onclick="closeModal('modalConsulta')">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div></form></div></div>
 
   <div class="modal-overlay" id="modalPaciente"><div class="modal"><div class="modal-header"><div class="modal-title">Novo Paciente</div><button class="modal-close" onclick="closeModal('modalPaciente')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><form id="formPaciente" onsubmit="submitPaciente(event)"><div class="form-grid"><div class="form-group full"><label>Nome *</label><input type="text" id="pNome" required placeholder="Nome completo"/></div><div class="form-group"><label>Nascimento *</label><input type="date" id="pNasc" required/></div><div class="form-group"><label>Cliente NIF *</label><select id="pCliente" required><option value="">Seleccionar...</option></select></div><div class="form-group"><label>Género *</label><select id="pGenero" required><option value="">Seleccionar...</option><option value="1">Masculino</option><option value="2">Feminino</option></select></div><div class="form-group"><label>Tipo (opcional)</label><input type="number" id="pTipo" value="1" min="1"/></div></div><div class="form-actions"><button type="button" class="btn btn-outline" onclick="closeModal('modalPaciente')">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div></form></div></div>
@@ -97,6 +99,101 @@
 
   <div class="modal-overlay" id="modalSMS"><div class="modal"><div class="modal-header"><div class="modal-title">Enviar SMS</div><button class="modal-close" onclick="closeModal('modalSMS')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><form id="formSMS" onsubmit="submitSMS(event)"><div class="form-grid"><div class="form-group"><label>Cliente NIF *</label><select id="smsCliente" required><option value="">Seleccionar...</option></select></div><div class="form-group full"><label>Mensagem *</label><textarea id="smsMensagem" required placeholder="Texto da mensagem"></textarea></div></div><div class="form-actions"><button type="button" class="btn btn-outline" onclick="closeModal('modalSMS')">Cancelar</button><button type="submit" class="btn btn-primary">Enviar</button></div></form></div></div>
 
+  <!-- ── MODAIS EDITAR (NOVOS) ────────────────────────────────────────────── -->
+
+  <!-- Editar Consulta -->
+  <div class="modal-overlay" id="modalEditConsulta">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Editar Consulta</div>
+        <button class="modal-close" onclick="closeModal('modalEditConsulta')">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form id="formEditConsulta" onsubmit="submitEditConsulta(event)">
+        <input type="hidden" id="ecConsultaId" />
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Médico *</label>
+            <select id="ecMedico" required><option value="">Seleccionar...</option></select>
+          </div>
+          <div class="form-group">
+            <label>Estado *</label>
+            <select id="ecEstado" required><option value="">Seleccionar...</option></select>
+          </div>
+          <div class="form-group full">
+            <label>Data e Hora *</label>
+            <input type="datetime-local" id="ecData" required />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modalEditConsulta')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Editar Paciente -->
+  <div class="modal-overlay" id="modalEditPaciente">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Editar Paciente</div>
+        <button class="modal-close" onclick="closeModal('modalEditPaciente')">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form id="formEditPaciente" onsubmit="submitEditPaciente(event)">
+        <input type="hidden" id="epPacienteId" />
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Nome *</label>
+            <input type="text" id="epNome" required placeholder="Nome completo" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modalEditPaciente')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Editar Cliente -->
+  <div class="modal-overlay" id="modalEditCliente">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Editar Cliente</div>
+        <button class="modal-close" onclick="closeModal('modalEditCliente')">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form id="formEditCliente" onsubmit="submitEditCliente(event)">
+        <input type="hidden" id="eclNif" />
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Nome *</label>
+            <input type="text" id="eclNome" required placeholder="Nome completo" />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="eclEmail" placeholder="email@exemplo.com" />
+          </div>
+          <div class="form-group">
+            <label>Telefone</label>
+            <input type="text" id="eclTel" placeholder="900 000 000" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modalEditCliente')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── MODAIS GENÉRICOS ─────────────────────────────────────────────────── -->
+
   <div class="modal-overlay" id="modalActionForm"><div class="modal"><div class="modal-header"><div class="modal-title" id="actionFormTitle">Editar Registo</div><button class="modal-close" onclick="closeModal('modalActionForm')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><form id="actionForm"><div class="form-grid"><div class="form-group full"><label>Nome</label><input type="text" id="actionFieldNome" /></div><div class="form-group full" id="actionGroupDescricao"><label>Descrição</label><input type="text" id="actionFieldDescricao" /></div><div class="form-group full" id="actionGroupData"><label>Data e Hora</label><input type="datetime-local" id="actionFieldData" /></div></div><div class="form-actions"><button type="button" class="btn btn-outline" onclick="closeModal('modalActionForm')">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div></form></div></div>
 
   <div class="modal-overlay" id="modalActionConfirm"><div class="modal"><div class="modal-header"><div class="modal-title" id="actionConfirmTitle">Confirmar Ação</div><button class="modal-close" onclick="closeModal('modalActionConfirm')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div style="color:var(--muted);margin-bottom:14px" id="actionConfirmMessage">Tem a certeza?</div><div class="form-actions"><button type="button" class="btn btn-outline" onclick="closeModal('modalActionConfirm')">Cancelar</button><button type="button" class="btn btn-danger" id="actionConfirmBtn">Confirmar</button></div></div></div>
@@ -106,4 +203,3 @@
   <script src="admin.js"></script>
 </body>
 </html>
-

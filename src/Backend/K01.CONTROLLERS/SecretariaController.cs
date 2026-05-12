@@ -12,8 +12,16 @@ using Backend.K03.APPLICATION.MedicoEspecialidadeUseCase.Queries;
 using Backend.K03.APPLICATION.PacienteUseCase.Comand;
 using Backend.K03.APPLICATION.PacienteUseCase.DTO;
 using Backend.K03.APPLICATION.PacienteUseCase.Queries;
+using Backend.K03.APPLICATION.PagamentoConsultaUseCase.Comand;
+using Backend.K03.APPLICATION.PagamentoConsultaUseCase.DTO;
+using Backend.K03.APPLICATION.PagamentoConsultaUseCase.Queries;
+using Backend.K03.APPLICATION.PagamentoUseCase.Comand;
+using Backend.K03.APPLICATION.PagamentoUseCase.DTO;
 using Backend.K03.APPLICATION.PagamentoUseCase.Queries;
 using Backend.K03.APPLICATION.ServicosUseCase.Queries;
+using Backend.K03.APPLICATION.SMSUseCase.Comand;
+using Backend.K03.APPLICATION.SMSUseCase.DTO;
+using Backend.K03.APPLICATION.SMSUseCase.Queries;
 using Backend.K04.DOMAIN.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -35,6 +43,8 @@ namespace Backend.K01.CONTROLLERS
 
         AdicionarConsulta adicionarconsultaServices,
         ListarConsultas listarconsultaServices,
+        AtualizarConsulta atualizarconsultaServices,
+        RemoverConsulta removerconsultaServices,
 
         AdicionarPaciente adicionarpacienteServices,
         AtualizarPaciente atualizarpacienteServices,
@@ -53,6 +63,11 @@ namespace Backend.K01.CONTROLLERS
 
         ListarEstadoConsulta listarestadosServices,
         ListarPagamentos listarpagamentosServices,
+        AdicionarPagamento adicionarpagamentoServices,
+        ListarPagamentoConsulta listarpagamentoconsultaServices,
+        AdicionarPagamentoConsulta adicionarpagamentoconsultaServices,
+        ListarSMS listarsmsServices,
+        AdicionarSMS adicionarsmsServices,
 
         ListarMedicos listarmedicosServices,
 
@@ -144,6 +159,28 @@ namespace Backend.K01.CONTROLLERS
         {
             var resposta = await listarconsultaServices.ExecuteAsync();
             return Ok(resposta);
+        }
+
+        [HttpPut("consulta/{id}")]
+        public async Task<IActionResult> AtualizarConsulta(int id, AtualizarConsultaDTO dto)
+        {
+            if (!ModelState.IsValid)
+            return StatusCode(400, ModelState);
+
+            if (id != dto.IdConsulta)
+            return StatusCode(400, "ID da consulta não corresponde");
+
+            dto.IdConsulta = id;
+            var resposta = await atualizarconsultaServices.ExecuteAsync(dto);
+            return resposta.Contains("sucesso") ? StatusCode(200, resposta) : StatusCode(400, resposta);
+        }
+
+        [HttpDelete("consulta/{id}")]
+        public async Task<IActionResult> RemoverConsulta(int id)
+        {
+            var resposta = await removerconsultaServices.ExecuteAsync(id);
+            return resposta.Contains("sucesso") ? StatusCode(200, resposta):
+            StatusCode(404, resposta);
         }
 
          //------------------ paciente ----------------//
@@ -265,6 +302,50 @@ namespace Backend.K01.CONTROLLERS
         {
             var resposta = await listarpagamentosServices.ExecuteAsync();
             return Ok(resposta);
+        }
+
+        [HttpPost("pagamento")]
+        public async Task<IActionResult> AdicionarPagamentos(AdicionarPagamentoDTO dto)
+        {
+            if(!ModelState.IsValid)
+            return StatusCode(400, ModelState);
+            var resposta = await adicionarpagamentoServices.ExecuteAsync(dto);
+            return resposta.Contains("sucesso")? StatusCode(201, resposta): 
+            StatusCode(500, resposta);
+        }
+
+        [HttpGet("pagamentoconsulta")]
+        public async Task<IActionResult> ListarPagamentoConsulta()
+        {
+            var resposta = await listarpagamentoconsultaServices.ExecuteAsync();
+            return Ok(resposta);
+        }
+
+        [HttpPost("pagamentoconsulta")]
+        public async Task<IActionResult> AdicionarPagamentoConsulta(AdicionarPagamentoConsultaDTO dto)
+        {
+            if(!ModelState.IsValid)
+            return StatusCode(400, ModelState);
+            var resposta = await adicionarpagamentoconsultaServices.ExecuteAsync(dto);
+            return resposta.Contains("sucesso")? StatusCode(201, resposta): 
+            StatusCode(500, resposta);
+        }
+
+        [HttpGet("SMS")]
+        public async Task<IActionResult> ListarSMS()
+        {
+            var resposta = await listarsmsServices.ExecuteAsync();
+            return Ok(resposta);
+        }
+
+        [HttpPost("SMS")]
+        public async Task<IActionResult> AdicionarSMS(AdicionarSMSDTO dto)
+        {
+            if(!ModelState.IsValid)
+            return StatusCode(400, ModelState);
+            var resposta = await adicionarsmsServices.ExecuteAsync(dto);
+            return resposta.Contains("sucesso")? StatusCode(201, resposta): 
+            StatusCode(500, resposta);
         }
 
         //----------------médicos------------//

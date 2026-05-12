@@ -4,6 +4,7 @@ using Backend.K03.APPLICATION.ConsultaUseCase.DTO;
 using Backend.K03.APPLICATION.ConsultaUseCase.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Backend.K01.CONTROLLERS;
 
@@ -21,7 +22,9 @@ public class MedicoController(
     {
         // Lê o NIF do claim "sub" do JWT (definido como JwtRegisteredClaimNames.Sub no login)
         string? nifMedico = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
-                         ?? User.FindFirst("sub")?.Value;
+                         ?? User.FindFirst("sub")?.Value
+                         ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                         ?? User.FindFirst("nameid")?.Value;
 
         if (string.IsNullOrWhiteSpace(nifMedico))
             return StatusCode(401, new { mensagem = "Não foi possível identificar o médico autenticado." });

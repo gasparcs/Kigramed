@@ -1,5 +1,6 @@
 function validateMedicoAccess() {
-  if (!token || role !== 'Medico') redirectToLogin();
+  const roleNorm = String(role || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  if (!token || roleNorm !== 'medico') redirectToLogin();
   document.getElementById('sidebarName').textContent = nome;
   document.getElementById('topbarName').textContent = nome;
   document.getElementById('sidebarAvatar').textContent = nome.slice(0, 2).toUpperCase();

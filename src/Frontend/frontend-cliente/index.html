@@ -496,29 +496,11 @@
               <div style="font-size:.75rem;color:var(--muted);margin-top:.35rem">Guarde este número — precisará dele para acompanhar o estado.</div>
             </div>
             <div class="alert alert-warn">
-              ⏳ Após a secretaria confirmar o horário, receberá um SMS com os dados bancários para pagamento. Depois tem <strong>2 horas</strong> para enviar o comprovativo.
+              ⏳ Após a secretaria confirmar o horário, receberá um SMS com os dados bancários. Acompanhe o estado do pedido no separador "Consultar Estado".
             </div>
-
-            <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border)">
-              <label class="form-label" style="margin-bottom:.5rem">Enviar Comprovativo de Pagamento</label>
-              <p style="font-size:.83rem;color:var(--muted);margin-bottom:.75rem">Só deverá enviar o comprovativo após receber o SMS de confirmação do horário.</p>
-              <div class="form-group">
-                <label class="form-label">Número do Pedido</label>
-                <input type="text" class="form-input" id="comp-num" placeholder="Ex: PED-2026-1234">
-              </div>
-              <div class="form-group">
-                <label class="form-label">Ficheiro (PDF, JPG ou PNG — máx. 5MB)</label>
-                <input type="file" class="form-input" id="comp-file" accept=".pdf,.jpg,.jpeg,.png" style="padding:.5rem">
-              </div>
-              <div id="comp-alert"></div>
-              <div style="display:flex;gap:.65rem;flex-wrap:wrap">
-                <button class="btn btn-teal" id="btn-comp" onclick="enviarComprovativo()">📎 Enviar Comprovativo</button>
-                <button class="btn btn-ghost" onclick="novoPedido()">Novo Pedido</button>
-              </div>
-              <div class="loading-overlay" id="loading-comp">
-                <div class="spinner"></div> A enviar comprovativo...
-              </div>
-            </div>
+            <button class="btn btn-primary" onclick="irParaConsulta()">
+              🔍 Consultar Estado do Pedido
+            </button>
           </div>
         </div>
       </div>
@@ -557,6 +539,31 @@
                 </div>
                 <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
                   <div id="er-instrucao" style="font-size:.84rem;color:var(--muted)"></div>
+                  <div id="comp-section" style="display:none;margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border)">
+                    <label class="form-label" style="margin-bottom:.5rem">
+                      Enviar Comprovativo de Pagamento
+                    </label>
+                    <p style="font-size:.83rem;color:var(--muted);margin-bottom:.75rem">
+                      Efectue a transferência bancária e envie o comprovativo abaixo. Tem 30 minutos após a confirmação do horário.
+                    </p>
+                    <div class="form-group">
+                      <label class="form-label">Ficheiro (PDF, JPG ou PNG — máx. 5MB)</label>
+                      <div class="file-picker">
+                        <input type="file" id="comp-file" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="atualizarFicheiro(this)">
+                        <button type="button" class="btn btn-ghost file-btn" onclick="document.getElementById('comp-file').click()">
+                          📎 Escolher ficheiro
+                        </button>
+                        <span class="file-name" id="file-name-label">Nenhum ficheiro seleccionado</span>
+                      </div>
+                    </div>
+                    <div id="comp-alert"></div>
+                    <div class="loading-overlay" id="loading-comp">
+                      <div class="spinner"></div> A enviar comprovativo...
+                    </div>
+                    <button class="btn btn-teal" id="btn-comp" onclick="enviarComprovatioEstado()">
+                      📎 Enviar Comprovativo
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

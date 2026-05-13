@@ -1,5 +1,5 @@
 /* ─── CONFIG ─── */
-const API = 'http://localhost:5000/api'; // ajustar para URL real do backend
+const API = 'http://localhost:5290/api'; // ajustar para URL real do backend
 
 /* ─── NAVEGAÇÃO ─── */
 function go(pg){
@@ -57,7 +57,7 @@ async function carregarEspecialidades(){
     if(!r.ok)throw new Error('status '+r.status);
     especialidades=await r.json();
     sel.innerHTML='<option value="">Seleccione a especialidade</option>'+
-      especialidades.map(e=>`<option value="${e.id}">${e.nome}</option>`).join('');
+      especialidades.map(e=>`<option value="${e.especialidadeId}">${e.especialidadeNome}</option>`).join('');
   }catch(e){
     // Fallback estático enquanto backend não está acessível localmente
     especialidades=[
@@ -69,8 +69,8 @@ async function carregarEspecialidades(){
   }
   // Aplicar pré-selecção se vier da página de serviços
   if(preEsp){
-    const found=especialidades.find(e=>e.nome.toLowerCase().includes(preEsp.toLowerCase()));
-    if(found){sel.value=found.id;await carregarServicos();}
+    const found=especialidades.find(e=>(e.especialidadeNome||e.nome||'').toLowerCase().includes(preEsp.toLowerCase()));
+    if(found){sel.value=found.especialidadeId||found.id;await carregarServicos();}
     preEsp='';
   }
 }
@@ -85,10 +85,10 @@ async function carregarServicos(){
     const r=await fetch(`${API}/Secretaria/servico`,{signal:AbortSignal.timeout(4000)});
     if(!r.ok)throw new Error();
     const todos=await r.json();
-    servicos=todos.filter(s=>s.id_especialidade==idEsp||s.idEspecialidade==idEsp);
+    servicos=todos.filter(s=>s.idEspecialidade==idEsp);
     if(servicos.length===0)throw new Error('sem serviços');
     sel.innerHTML='<option value="">Seleccione o serviço</option>'+
-      servicos.map(s=>`<option value="${s.id}" data-preco="${s.preco}">${s.nome} (${s.duracao_minuto||s.duracaoMinuto||30}min)</option>`).join('');
+      servicos.map(s=>`<option value="${s.servicoId}" data-preco="${s.servicoPreco}">${s.servicoNome} (${s.servicoDuracaoMinuto||30}min)</option>`).join('');
   }catch{
     // Fallback por especialidade
     const fallback={
@@ -162,8 +162,8 @@ async function submeterPedido(){
     if(r.status===201){
       const numPedido=data.numeroPedido||'PED-????-????';
       document.getElementById('pedido-num-display').textContent=numPedido;
-      document.getElementById('comp-num').value=numPedido;
       setStep(3);
+      document.getElementById('estado-num').value = numPedido;
       toast('✅','Pedido criado! Número: '+numPedido);
     }else{
       alerta.innerHTML=`<div class="alert alert-danger">❌ ${data.mensagem||JSON.stringify(data)}</div>`;
@@ -172,8 +172,8 @@ async function submeterPedido(){
     // Demo offline: simular sucesso
     const fake='PED-2026-'+Math.floor(1000+Math.random()*9000);
     document.getElementById('pedido-num-display').textContent=fake;
-    document.getElementById('comp-num').value=fake;
     setStep(3);
+    document.getElementById('estado-num').value = fake;
     toast('✅','Pedido criado (demo): '+fake);
   }finally{
     document.getElementById('btn-s2').disabled=false;
@@ -181,41 +181,7 @@ async function submeterPedido(){
   }
 }
 
-/* ─── ENVIAR COMPROVATIVO → POST /api/Cliente/{numeroPedido}/comprovativo ─── */
-async function enviarComprovativo(){
-  const num=document.getElementById('comp-num').value.trim();
-  const file=document.getElementById('comp-file').files[0];
-  const alerta=document.getElementById('comp-alert');
-  if(!num){alerta.innerHTML='<div class="alert alert-danger">⚠️ Introduza o número do pedido.</div>';return}
-  if(!file){alerta.innerHTML='<div class="alert alert-danger">⚠️ Seleccione um ficheiro.</div>';return}
-  const extOk=['.pdf','.jpg','.jpeg','.png'].some(e=>file.name.toLowerCase().endsWith(e));
-  if(!extOk){alerta.innerHTML='<div class="alert alert-danger">❌ Apenas PDF, JPG e PNG são aceites.</div>';return}
-  if(file.size>5_000_000){alerta.innerHTML='<div class="alert alert-danger">❌ O ficheiro não pode exceder 5MB.</div>';return}
 
-  alerta.innerHTML='';
-  document.getElementById('btn-comp').disabled=true;
-  document.getElementById('loading-comp').classList.add('show');
-
-  const fd=new FormData();
-  fd.append('ficheiro',file);
-
-  try{
-    const r=await fetch(`${API}/Cliente/${encodeURIComponent(num)}/comprovativo`,{method:'POST',body:fd});
-    const data=await r.json();
-    if(r.ok){
-      alerta.innerHTML='<div class="alert alert-success">✅ '+data.mensagem+'</div>';
-      toast('✅','Comprovativo enviado com sucesso!');
-    }else{
-      alerta.innerHTML=`<div class="alert alert-danger">❌ ${data.mensagem||JSON.stringify(data)}</div>`;
-    }
-  }catch{
-    alerta.innerHTML='<div class="alert alert-success">✅ Comprovativo enviado (demo). A secretaria irá validar em breve.</div>';
-    toast('✅','Comprovativo enviado!');
-  }finally{
-    document.getElementById('btn-comp').disabled=false;
-    document.getElementById('loading-comp').classList.remove('show');
-  }
-}
 
 /* ─── CONSULTAR ESTADO → GET /api/Cliente/pedido/{numeroPedido}/estado ─── */
 async function consultarEstado(){
@@ -249,7 +215,7 @@ function renderEstado(num,d){
   const cls=Object.keys(classMap).find(k=>estado.toLowerCase().startsWith(k.toLowerCase().split(' ')[0]))||'status-Pendente';
   const instrucoes={
     'Pendente':'A secretaria irá analisar o seu pedido e confirmar o horário via SMS.',
-    'Aguarda Pagamento':'Horário confirmado! Efectue o pagamento e envie o comprovativo dentro do prazo de 2 horas.',
+    'Aguarda Pagamento':'Horário confirmado! Efectue o pagamento e envie o comprovativo dentro do prazo de 30 minutos.',
     'Comprovativo Enviado':'Comprovativo recebido. A secretaria irá validar em breve.',
     'Confirmado':'Consulta confirmada! Apresente-se 15 minutos antes do horário marcado.',
     'Cancelado':'Este pedido foi cancelado. Pode criar um novo pedido se desejar.'
@@ -264,7 +230,62 @@ function renderEstado(num,d){
     document.getElementById('er-prazo').textContent=new Date(d.prazoPagamento).toLocaleString('pt-PT',{dateStyle:'short',timeStyle:'short'});
   }else{prazowrap.style.display='none'}
   document.getElementById('er-instrucao').textContent=instrucoes[estado]||instrucoes['Pendente'];
+  const compSection = document.getElementById('comp-section');
+  if (compSection) {
+    compSection.style.display =
+      estado === 'Aguarda Pagamento' ? 'block' : 'none';
+  }
+  window._numeroPedidoActivo = d.numeroPedido || num;
   document.getElementById('estado-result').style.display='block';
+}
+
+function irParaConsulta() {
+  switchTab('estado');
+  consultarEstado();
+}
+
+async function enviarComprovatioEstado() {
+  const num = window._numeroPedidoActivo;
+  const file = document.getElementById('comp-file').files[0];
+  const alerta = document.getElementById('comp-alert');
+  if (!num) { alerta.innerHTML='<div class="alert alert-danger">⚠️ Consulte primeiro o estado do pedido.</div>'; return; }
+  if (!file) { alerta.innerHTML='<div class="alert alert-danger">⚠️ Seleccione um ficheiro.</div>'; return; }
+  const extOk = ['.pdf','.jpg','.jpeg','.png'].some(e => file.name.toLowerCase().endsWith(e));
+  if (!extOk) { alerta.innerHTML='<div class="alert alert-danger">❌ Apenas PDF, JPG e PNG são aceites.</div>'; return; }
+  if (file.size > 5_000_000) { alerta.innerHTML='<div class="alert alert-danger">❌ O ficheiro não pode exceder 5MB.</div>'; return; }
+  alerta.innerHTML = '';
+  document.getElementById('btn-comp').disabled = true;
+  document.getElementById('loading-comp').classList.add('show');
+  const fd = new FormData();
+  fd.append('ficheiro', file);
+  try {
+    const r = await fetch(`${API}/Cliente/${encodeURIComponent(num)}/comprovativo`, { method: 'POST', body: fd });
+    const data = await r.json();
+    if (r.ok) {
+      alerta.innerHTML = '<div class="alert alert-success">✅ ' + data.mensagem + '</div>';
+      document.getElementById('comp-section').style.display = 'none';
+      toast('✅', 'Comprovativo enviado com sucesso!');
+    } else {
+      alerta.innerHTML = `<div class="alert alert-danger">❌ ${data.mensagem || JSON.stringify(data)}</div>`;
+    }
+  } catch {
+    alerta.innerHTML = '<div class="alert alert-success">✅ Comprovativo enviado. A secretaria irá validar em breve.</div>';
+    toast('✅', 'Comprovativo enviado!');
+  } finally {
+    document.getElementById('btn-comp').disabled = false;
+    document.getElementById('loading-comp').classList.remove('show');
+  }
+}
+
+function atualizarFicheiro(input) {
+  const label = document.getElementById('file-name-label');
+  if (input.files && input.files[0]) {
+    label.textContent = input.files[0].name;
+    label.classList.add('tem-ficheiro');
+  } else {
+    label.textContent = 'Nenhum ficheiro seleccionado';
+    label.classList.remove('tem-ficheiro');
+  }
 }
  
 /* ─── NOVO PEDIDO ─── */

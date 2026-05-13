@@ -64,7 +64,7 @@ namespace Backend.K01.CONTROLLERS
 
         // Verifica prazo
         if (pedido.PrazoPagamento.HasValue && pedido.PrazoPagamento < DateTime.UtcNow)
-            return StatusCode(400, new { mensagem = "O prazo de pagamento de 2 horas expirou. O pedido foi cancelado." });
+            return StatusCode(400, new { mensagem = "O prazo de pagamento de 30 minutos expirou. O pedido foi cancelado." });
 
         // Guarda o ficheiro
         var pasta = Path.Combine(Directory.GetCurrentDirectory(), "uploads", "comprovativos");

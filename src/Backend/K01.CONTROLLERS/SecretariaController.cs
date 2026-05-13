@@ -243,6 +243,7 @@ namespace Backend.K01.CONTROLLERS
 
         //------------ serviço -------------//
 
+         [AllowAnonymous]
          [HttpGet("servico")] 
         public async Task<IActionResult> ListarServicos()
         {
@@ -268,6 +269,7 @@ namespace Backend.K01.CONTROLLERS
 
         //------------- especialidade -------------//
 
+         [AllowAnonymous]
          [HttpGet("especialidade")] 
         public async Task<IActionResult> ListarEspecialidades()
         {

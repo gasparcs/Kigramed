@@ -55,11 +55,29 @@ public class AtualizarFuncionarioRepository(KigramedDbContext context) : IAtuali
                 }
             }
 
+            // IDs de estados que indicam consulta terminada (não bloqueiam)
+            var estadosTerminados = new[] { 4, 6 }; // 4=Cancelada, 6=Finalizada
+
             // Sincronizar Especialidades (se for médico)
             var espParaRemover = funcionario.MedicoEspecialidades
                 .Where(old => !model.MedicoEspecialidades.Any(n => n.Id_especialidade == old.Id_especialidade))
                 .ToList();
-            foreach (var e in espParaRemover) context.Tabelatb07_medico_especialidade.Remove(e);
+
+            foreach (var e in espParaRemover)
+            {
+                // Bloqueia apenas se existirem consultas ACTIVAS nesta especialidade
+                var temConsultasActivas = await context.Tabelatb15_consulta
+                    .AnyAsync(c => c.Id_medico_especialiade == e.Id
+                                && !estadosTerminados.Contains(c.Id_estado_consulta));
+
+                if (temConsultasActivas)
+                    return $"Não é possível remover a especialidade porque existem " +
+                           $"consultas activas associadas a este médico nessa especialidade. " +
+                           $"Conclua ou cancele as consultas primeiro.";
+            }
+
+            foreach (var e in espParaRemover)
+                context.Tabelatb07_medico_especialidade.Remove(e);
 
             foreach (var n in model.MedicoEspecialidades)
             {

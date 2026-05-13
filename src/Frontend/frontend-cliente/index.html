@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kigramed — Clínica Médica Especializada</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ─── NAVBAR ─── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <div class="nav-logo" onclick="go('home')">
+      <div class="nav-logo-mark">⚕</div>
+      <div>
+        <div class="nav-logo-text">Kigramed</div>
+        <div class="nav-logo-sub">Luanda · Angola</div>
+      </div>
+    </div>
+    <div class="nav-links">
+      <span class="nav-link active" data-nav="home" onclick="go('home')">Início</span>
+      <span class="nav-link" data-nav="sobre" onclick="go('sobre')">Sobre</span>
+      <span class="nav-link" data-nav="servicos" onclick="go('servicos')">Serviços</span>
+      <span class="nav-cta" onclick="go('agendamento')">Agendar Consulta</span>
+    </div>
+    <button class="nav-burger" id="burger" onclick="toggleMenu()">☰</button>
+  </div>
+  <div class="nav-mobile" id="nav-mobile">
+    <span class="nav-link" onclick="go('home');closeMenu()">Início</span>
+    <span class="nav-link" onclick="go('sobre');closeMenu()">Sobre</span>
+    <span class="nav-link" onclick="go('servicos');closeMenu()">Serviços</span>
+    <span class="nav-link" style="background:var(--primary);color:#fff;margin-top:.25rem" onclick="go('agendamento');closeMenu()">Agendar Consulta</span>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════ HOME ════════════════════════════════════ -->
+<div id="page-home" class="page active">
+
+  <!-- HERO CAROUSEL -->
+  <section class="hero" id="hero">
+    <div class="hero-slides">
+      <div class="hero-slide active" style="background-image:url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=2000&q=80')"><div class="hero-overlay"></div></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=2000&q=80')"><div class="hero-overlay"></div></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&w=2000&q=80')"><div class="hero-overlay"></div></div>
+    </div>
+    <div class="hero-body">
+      <div class="hero-badge">Clínica Médica Especializada</div>
+      <h1 class="hero-title">Cuidados de saúde especializados com excelência e humanidade.</h1>
+      <p class="hero-sub">Clínica Geral, Ginecologia, Cardiologia e Pediatria — num só centro, com equipa dedicada em Luanda.</p>
+      <div class="hero-actions">
+        <button class="btn btn-accent" onclick="go('agendamento')">Agendar Consulta</button>
+        <button class="btn btn-outline" onclick="go('servicos')">Ver Especialidades</button>
+      </div>
+      <div class="hero-nav">
+        <button class="hero-arr" onclick="prevSlide()">‹</button>
+        <div class="hero-dots" id="hero-dots">
+          <div class="hero-dot active" onclick="goSlide(0)"></div>
+          <div class="hero-dot" onclick="goSlide(1)"></div>
+          <div class="hero-dot" onclick="goSlide(2)"></div>
+        </div>
+        <button class="hero-arr" onclick="nextSlide()">›</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICK ACCESS -->
+  <div class="quick-wrap">
+    <div class="quick-grid">
+      <div class="quick-card" onclick="go('agendamento')">
+        <div class="quick-ico" style="background:#FFF0E8">🚨</div>
+        <div><h4>Urgências 24h</h4><p style="color:var(--accent)">+244 9XX XXX XXX</p></div>
+      </div>
+      <div class="quick-card" onclick="go('agendamento')">
+        <div class="quick-ico" style="background:#EEF2F9">📅</div>
+        <div><h4>Agendar Consulta</h4><p>Consultas externas</p></div>
+      </div>
+      <div class="quick-card" onclick="go('sobre')">
+        <div class="quick-ico" style="background:#E1F5EE">🕐</div>
+        <div><h4>Horário</h4><p style="color:var(--teal)">Seg–Sex: 7h–19h</p></div>
+      </div>
+      <div class="quick-card" onclick="go('sobre')">
+        <div class="quick-ico" style="background:#FFFBEB">📍</div>
+        <div><h4>Localização</h4><p>Luanda, Angola</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APRESENTAÇÃO -->
+  <div class="section" style="margin-top:2rem">
+    <div class="pres-grid">
+      <img class="pres-img" src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=800&q=80" alt="Clínica Kigramed">
+      <div>
+        <div class="pill">Sobre a Kigramed</div>
+        <h2 class="section-title">Referência em cuidados de saúde integrados</h2>
+        <p style="color:var(--muted);margin:.75rem 0;font-size:.93rem">A nossa clínica médica privada em Luanda oferece cuidados especializados em Clínica Geral, Ginecologia, Cardiologia e Pediatria, com uma equipa multidisciplinar dedicada.</p>
+        <p style="color:var(--muted);margin:.75rem 0;font-size:.93rem">Combinamos tecnologia moderna com uma abordagem humanizada, garantindo diagnósticos precisos e acompanhamento contínuo para cada paciente.</p>
+        <div class="pres-btns">
+          <button class="btn btn-primary" onclick="go('sobre')">Saber mais</button>
+          <button class="btn btn-outline-dark" onclick="go('servicos')">Ver especialidades →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ESPECIALIDADES -->
+  <div class="section" style="padding-top:1rem">
+    <div style="text-align:center;margin-bottom:2rem">
+      <div class="pill">Especialidades</div>
+      <h2 class="section-title">As nossas áreas de actuação</h2>
+    </div>
+    <div class="esp-grid">
+      <div class="card esp-card" onclick="go('servicos')">
+        <div class="esp-ico">🩺</div>
+        <h3>Clínica Geral</h3>
+        <p>Atendimento ambulatorial com diagnóstico e acompanhamento de saúde geral.</p>
+        <span class="esp-link">Ver detalhes →</span>
+      </div>
+      <div class="card esp-card" onclick="go('servicos')">
+        <div class="esp-ico">👩‍⚕️</div>
+        <h3>Ginecologia</h3>
+        <p>Cuidados especializados em saúde da mulher, acompanhamento pré e pós-natal.</p>
+        <span class="esp-link">Ver detalhes →</span>
+      </div>
+      <div class="card esp-card" onclick="go('servicos')">
+        <div class="esp-ico">❤️</div>
+        <h3>Cardiologia</h3>
+        <p>Avaliação e acompanhamento cardiovascular com exames complementares.</p>
+        <span class="esp-link">Ver detalhes →</span>
+      </div>
+      <div class="card esp-card" onclick="go('servicos')">
+        <div class="esp-ico">👶</div>
+        <h3>Pediatria</h3>
+        <p>Saúde infantil com acompanhamento do desenvolvimento e vacinação.</p>
+        <span class="esp-link">Ver detalhes →</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIFERENCIAIS -->
+  <div class="section" style="padding-top:1rem">
+    <div style="text-align:center;margin-bottom:2rem">
+      <div class="pill">Diferenciais</div>
+      <h2 class="section-title">Por que nos escolher?</h2>
+    </div>
+    <div class="diff-grid">
+      <div class="card diff-card"><div class="diff-ico">👨‍⚕️</div><h4>Equipa Especializada</h4><p>Médicos dedicados em cada especialidade com formação contínua.</p></div>
+      <div class="card diff-card"><div class="diff-ico">🏥</div><h4>Infraestrutura Moderna</h4><p>Instalações equipadas para diagnóstico e tratamento avançado.</p></div>
+      <div class="card diff-card"><div class="diff-ico">🔄</div><h4>Cuidado Integrado</h4><p>Coordenação entre especialidades para um tratamento completo.</p></div>
+      <div class="card diff-card"><div class="diff-ico">📊</div><h4>Protocolos Rigorosos</h4><p>Procedimentos alinhados com normas internacionais de qualidade.</p></div>
+      <div class="card diff-card"><div class="diff-ico">🤝</div><h4>Humanização</h4><p>Atendimento centrado no utente com empatia e respeito.</p></div>
+      <div class="card diff-card"><div class="diff-ico">🎓</div><h4>Formação Contínua</h4><p>Equipa em actualização permanente das melhores práticas clínicas.</p></div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-band">
+    <div class="kpi-inner">
+      <h2 style="font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:#fff;margin-bottom:.3rem">Os nossos números</h2>
+      <p style="color:rgba(255,255,255,.65);font-size:.9rem">Resultados que reflectem o compromisso com a excelência.</p>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-val">8.000+</div><div class="kpi-lbl">Pacientes atendidos</div><div class="kpi-det">desde a fundação</div></div>
+        <div class="kpi-card"><div class="kpi-val">95%</div><div class="kpi-lbl">Taxa de satisfação</div><div class="kpi-det">em inquéritos a utentes</div></div>
+        <div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-lbl">Especialidades médicas</div><div class="kpi-det">com equipa dedicada</div></div>
+        <div class="kpi-card"><div class="kpi-val">24h</div><div class="kpi-lbl">Resposta média</div><div class="kpi-det">para confirmação de marcações</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TESTEMUNHOS -->
+  <div class="section">
+    <div style="text-align:center;margin-bottom:2rem">
+      <div class="pill">Testemunhos</div>
+      <h2 class="section-title">O que dizem os nossos utentes</h2>
+    </div>
+    <div class="test-grid">
+      <div class="card test-card">
+        <div class="test-stars">★★★★★</div>
+        <p class="test-q">O atendimento foi excelente. A equipa é atenciosa e os médicos explicam tudo com clareza.</p>
+        <div class="test-author">
+          <div class="test-av" style="background:var(--primary)">M</div>
+          <div><div class="test-name">Maria J.</div><div class="test-role">Utente de Consulta</div></div>
+        </div>
+      </div>
+      <div class="card test-card">
+        <div class="test-stars">★★★★★</div>
+        <p class="test-q">Desde a consulta ao acompanhamento, senti que o meu pai estava em boas mãos.</p>
+        <div class="test-author">
+          <div class="test-av" style="background:var(--primary-mid)">A</div>
+          <div><div class="test-name">António S.</div><div class="test-role">Familiar de paciente</div></div>
+        </div>
+      </div>
+      <div class="card test-card">
+        <div class="test-stars">★★★★★</div>
+        <p class="test-q">Referencio pacientes com total confiança no protocolo clínico e na disponibilidade da equipa.</p>
+        <div class="test-author">
+          <div class="test-av" style="background:var(--accent)">D</div>
+          <div><div class="test-name">Dra. Ana M.</div><div class="test-role">Médica referenciadora</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-band" style="background-image:url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=2000&q=80')">
+    <div class="cta-overlay"></div>
+    <div class="cta-content">
+      <div class="pill-white">Marque já</div>
+      <h2 class="cta-title">Agende a sua consulta hoje</h2>
+      <p class="cta-sub">A sua saúde é a nossa prioridade. Escolha uma das nossas especialidades e cuide de si com a atenção que merece.</p>
+      <div class="cta-actions">
+        <button class="btn btn-accent" onclick="go('agendamento')">Agendar Consulta</button>
+        <button class="btn btn-outline" onclick="go('servicos')">Ver Especialidades</button>
+      </div>
+      <div class="cta-contacts">
+        <span>📞 +244 9XX XXX XXX</span>
+        <span>✉️ contacto@kigramed.ao</span>
+        <span>🕐 Seg–Sex: 7h–19h | Urgências 24h</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SOBRE ════════════════════════════════════ -->
+<div id="page-sobre" class="page">
+  <div class="page-hero" style="background-image:url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=2000&q=80')">
+    <div class="page-hero-overlay"></div>
+    <div class="page-hero-body">
+      <div class="pill-white">Sobre a Kigramed</div>
+      <h1 class="page-hero-title">Cuidados de saúde com excelência e compromisso.</h1>
+      <p class="page-hero-sub">Referência em Luanda pela qualidade do atendimento e dedicação à saúde dos angolanos.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card" style="padding:2rem">
+      <div class="sobre-grid">
+        <img class="sobre-img" src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80" alt="Equipa Kigramed">
+        <div class="sobre-text">
+          <div class="pill">Quem Somos</div>
+          <h2 class="section-title">Kigramed — Clínica Médica Especializada</h2>
+          <p>A Kigramed foi fundada com a missão de proporcionar cuidados de saúde de elevada qualidade à população angolana, combinando rigor clínico com humanização no atendimento.</p>
+          <p>Contamos com especialistas em Clínica Geral, Ginecologia, Cardiologia e Pediatria, trabalhando de forma integrada para garantir diagnósticos completos e acompanhamento contínuo a cada paciente.</p>
+          <p>A nossa abordagem centraliza o utente em cada decisão clínica, promovendo a transparência na comunicação, o respeito pela dignidade humana e a melhoria constante dos nossos serviços.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0">
+    <div style="text-align:center;margin-bottom:1.5rem">
+      <div class="pill">Identidade Institucional</div>
+      <h2 class="section-title">Missão e Visão</h2>
+    </div>
+    <div class="mv-grid">
+      <div class="card mv-card">
+        <div class="mv-label">Missão</div>
+        <h3 class="mv-title">O nosso propósito</h3>
+        <p class="mv-text">Prestar cuidados de saúde especializados com excelência clínica, humanização e acessibilidade, contribuindo para o bem-estar e qualidade de vida dos nossos utentes e das suas famílias.</p>
+      </div>
+      <div class="card mv-card">
+        <div class="mv-label">Visão</div>
+        <h3 class="mv-title">Para onde vamos</h3>
+        <p class="mv-text">Ser reconhecida como clínica de referência em Angola pelas 4 especialidades, pela qualidade do atendimento e pelo impacto positivo na saúde da população angolana.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0">
+    <div style="text-align:center;margin-bottom:1.5rem">
+      <div class="pill">Valores</div>
+      <h2 class="section-title">Os princípios que nos guiam</h2>
+    </div>
+    <div class="vals-grid">
+      <div class="card val-card"><div class="val-ico">⚕️</div><h4>Ética Clínica</h4><p>Actuamos com integridade e responsabilidade em cada acto médico.</p></div>
+      <div class="card val-card"><div class="val-ico">🎯</div><h4>Rigor Científico</h4><p>Protocolos baseados em evidência e melhores práticas internacionais.</p></div>
+      <div class="card val-card"><div class="val-ico">🤝</div><h4>Humanização</h4><p>O utente no centro — acolhemos com empatia e dignidade.</p></div>
+      <div class="card val-card"><div class="val-ico">🔬</div><h4>Inovação</h4><p>Investimento contínuo em tecnologia e formação da equipa.</p></div>
+      <div class="card val-card"><div class="val-ico">📋</div><h4>Transparência</h4><p>Comunicação clara com utentes e parceiros em todo o processo.</p></div>
+      <div class="card val-card"><div class="val-ico">🌍</div><h4>Compromisso Social</h4><p>Contribuição para a saúde pública e o desenvolvimento de Angola.</p></div>
+    </div>
+  </div>
+
+  <div class="kpi-band">
+    <div class="kpi-inner">
+      <h2 style="font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:#fff;margin-bottom:.3rem">Os nossos resultados</h2>
+      <p style="color:rgba(255,255,255,.65);font-size:.9rem">Números que traduzem o compromisso com a qualidade.</p>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-val">8.000+</div><div class="kpi-lbl">Pacientes atendidos</div><div class="kpi-det">desde a fundação</div></div>
+        <div class="kpi-card"><div class="kpi-val">95%</div><div class="kpi-lbl">Taxa de satisfação</div><div class="kpi-det">em inquéritos a utentes</div></div>
+        <div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-lbl">Especialidades médicas</div><div class="kpi-det">com equipa dedicada</div></div>
+        <div class="kpi-card"><div class="kpi-val">24h</div><div class="kpi-lbl">Resposta média</div><div class="kpi-det">para confirmação de marcações</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SERVIÇOS ════════════════════════════════════ -->
+<div id="page-servicos" class="page">
+  <div class="page-hero" style="background:linear-gradient(135deg,var(--primary),var(--primary-mid));min-height:46vh">
+    <div class="page-hero-body" style="width:100%">
+      <div class="pill-white">Especialidades</div>
+      <h1 class="page-hero-title">Os nossos serviços clínicos</h1>
+      <p class="page-hero-sub">Atendimento especializado em 4 áreas, com equipa dedicada e tecnologia moderna.</p>
+      <div class="srv-pills">
+        <span class="srv-pill" onclick="scrollTo('sec-clinica')">🩺 Clínica Geral</span>
+        <span class="srv-pill" onclick="scrollTo('sec-gine')">👩‍⚕️ Ginecologia</span>
+        <span class="srv-pill" onclick="scrollTo('sec-cardio')">❤️ Cardiologia</span>
+        <span class="srv-pill" onclick="scrollTo('sec-ped')">👶 Pediatria</span>
+      </div>
+      <div class="srv-stats">
+        <div><div class="srv-stat-val">4</div><div class="srv-stat-lab">especialidades</div></div>
+        <div><div class="srv-stat-val">8h–18h</div><div class="srv-stat-lab">atendimento</div></div>
+        <div><div class="srv-stat-val">24h</div><div class="srv-stat-lab">urgências</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="esp-sec" id="sec-clinica">
+      <div class="esp-sec-hdr"><div class="esp-sec-ico">🩺</div><div><div class="esp-sec-title">Clínica Geral</div><div class="esp-sec-desc">Atendimento ambulatorial, diagnóstico e orientação clínica geral.</div></div></div>
+      <div class="srv-card">
+        <div class="srv-card-img" style="background-image:url('https://images.unsplash.com/photo-1584982751601-97dcc096659c?auto=format&fit=crop&w=1400&q=80')"><span class="srv-badge">🩺 Clínica Geral</span></div>
+        <div class="srv-body">
+          <div class="srv-name">Consulta de Clínica Geral</div>
+          <div class="srv-desc">Avaliação completa do estado de saúde, diagnóstico de patologias comuns, prescrição e encaminhamento para especialidade.</div>
+          <div class="srv-meta"><span>👨‍⚕️ Médico Clínico Geral</span><span>🏥 Enfermeiro de consulta</span></div>
+          <div class="srv-cond"><strong>Condições de acesso</strong>Apresentar BI/passaporte · Trazer exames anteriores se existirem · Chegar 15 min antes</div>
+          <div class="srv-bottom">
+            <div class="srv-price">A partir de 15.000 Kz</div>
+            <button class="btn btn-primary" onclick="agendarEsp('Clínica Geral')">Agendar →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="esp-sec" id="sec-gine">
+      <div class="esp-sec-hdr"><div class="esp-sec-ico">👩‍⚕️</div><div><div class="esp-sec-title">Ginecologia</div><div class="esp-sec-desc">Saúde da mulher, acompanhamento ginecológico e obstétrico.</div></div></div>
+      <div class="srv-card">
+        <div class="srv-card-img" style="background-image:url('https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?auto=format&fit=crop&w=1400&q=80')"><span class="srv-badge">👩‍⚕️ Ginecologia</span></div>
+        <div class="srv-body">
+          <div class="srv-name">Consulta de Ginecologia</div>
+          <div class="srv-desc">Acompanhamento ginecológico regular, rastreios, consultas pré-natais e planeamento familiar.</div>
+          <div class="srv-meta"><span>👩‍⚕️ Médica Ginecologista</span><span>🏥 Enfermeira de obstetrícia</span></div>
+          <div class="srv-cond"><strong>Condições de acesso</strong>Marcação prévia obrigatória · Trazer últimos exames ginecológicos · Apresentar BI</div>
+          <div class="srv-bottom">
+            <div class="srv-price">A partir de 20.000 Kz</div>
+            <button class="btn btn-primary" onclick="agendarEsp('Ginecologia')">Agendar →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="esp-sec" id="sec-cardio">
+      <div class="esp-sec-hdr"><div class="esp-sec-ico">❤️</div><div><div class="esp-sec-title">Cardiologia</div><div class="esp-sec-desc">Avaliação cardiovascular, diagnóstico e acompanhamento de doenças cardíacas.</div></div></div>
+      <div class="srv-card">
+        <div class="srv-card-img" style="background-image:url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1400&q=80')"><span class="srv-badge">❤️ Cardiologia</span></div>
+        <div class="srv-body">
+          <div class="srv-name">Consulta de Cardiologia</div>
+          <div class="srv-desc">Avaliação do risco cardiovascular, interpretação de ECG, ecocardiograma e acompanhamento de hipertensão e arritmias.</div>
+          <div class="srv-meta"><span>👨‍⚕️ Médico Cardiologista</span><span>🏥 Técnico de ECG · Enfermeiro</span></div>
+          <div class="srv-cond"><strong>Condições de acesso</strong>Trazer exames cardiovasculares anteriores · Listar medicação actual · Chegar em jejum de 4h se indicado</div>
+          <div class="srv-bottom">
+            <div class="srv-price">A partir de 25.000 Kz</div>
+            <button class="btn btn-primary" onclick="agendarEsp('Cardiologia')">Agendar →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="esp-sec" id="sec-ped">
+      <div class="esp-sec-hdr"><div class="esp-sec-ico">👶</div><div><div class="esp-sec-title">Pediatria</div><div class="esp-sec-desc">Saúde infantil, desenvolvimento, vacinação e acompanhamento pediátrico.</div></div></div>
+      <div class="srv-card">
+        <div class="srv-card-img" style="background-image:url('https://images.unsplash.com/photo-1559839914-17aae19cec71?auto=format&fit=crop&w=1400&q=80')"><span class="srv-badge">👶 Pediatria</span></div>
+        <div class="srv-body">
+          <div class="srv-name">Consulta de Pediatria</div>
+          <div class="srv-desc">Acompanhamento do crescimento e desenvolvimento da criança, vacinação, doenças agudas e crónicas infantis.</div>
+          <div class="srv-meta"><span>👨‍⚕️ Médico Pediatra</span><span>🏥 Enfermeiro pediátrico</span></div>
+          <div class="srv-cond"><strong>Condições de acesso</strong>Trazer boletim de vacinas · Apresentar BI dos pais · Acompanhado de responsável legal</div>
+          <div class="srv-bottom">
+            <div class="srv-price">A partir de 15.000 Kz</div>
+            <button class="btn btn-primary" onclick="agendarEsp('Pediatria')">Agendar →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-band" style="background:linear-gradient(135deg,var(--primary),var(--primary-mid))">
+    <div class="cta-content">
+      <div class="pill-white">Marque já</div>
+      <h2 class="cta-title">Pronto para agendar a sua consulta?</h2>
+      <p class="cta-sub">A nossa equipa está disponível para si. Escolha a especialidade e marque a sua consulta hoje.</p>
+      <div class="cta-actions">
+        <button class="btn btn-accent" onclick="go('agendamento')">Agendar Consulta</button>
+        <button class="btn btn-outline" onclick="go('sobre')">Conhecer a Clínica</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ AGENDAMENTO ════════════════════════════════════ -->
+<div id="page-agendamento" class="page">
+  <div style="background:var(--bg);min-height:85vh;padding-bottom:2rem">
+    <div class="agend-wrap">
+      <div style="text-align:center;margin-bottom:1.5rem;padding-top:1rem">
+        <div class="pill">Marcações Online</div>
+        <h2 class="section-title">Agendar Consulta</h2>
+        <p class="section-sub" style="margin:0 auto">Preencha o formulário para solicitar a sua marcação. Receberá confirmação via SMS.</p>
+      </div>
+
+      <!-- TABS: Novo Pedido / Consultar Estado -->
+      <div class="tabs-row">
+        <button class="tab-btn active" id="tab-novo" onclick="switchTab('novo')">📝 Novo Pedido</button>
+        <button class="tab-btn" id="tab-estado" onclick="switchTab('estado')">🔍 Consultar Estado</button>
+      </div>
+
+      <!-- ── TAB: NOVO PEDIDO ── -->
+      <div id="tab-novo-content">
+        <div class="agend-card">
+          <div class="agend-hdr">
+            <h2>Formulário de Agendamento</h2>
+            <p>A confirmação será feita por SMS após análise do pedido.</p>
+          </div>
+
+          <!-- Step bar -->
+          <div class="steps-bar">
+            <div class="step-tab active" id="st1">1. Os seus dados</div>
+            <div class="step-tab" id="st2">2. Consulta</div>
+            <div class="step-tab" id="st3">3. Comprovativo</div>
+          </div>
+
+          <!-- STEP 1: Dados do cliente -->
+          <div class="agend-body" id="s1">
+            <div id="s1-alert"></div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nome Completo *</label>
+                <input type="text" class="form-input" id="f-nome" placeholder="Ex: Maria da Silva" maxlength="100">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Número de Telefone *</label>
+                <input type="tel" class="form-input" id="f-tel" placeholder="Ex: 944000001" maxlength="20">
+                <div class="form-hint">Receberá notificações neste número (SMS)</div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;margin-top:.5rem">
+              <button class="btn btn-primary" onclick="irStep2()">Continuar →</button>
+            </div>
+          </div>
+
+          <!-- STEP 2: Dados da consulta — carregados da API -->
+          <div class="agend-body" id="s2" style="display:none">
+            <div id="s2-alert"></div>
+            <div class="form-group">
+              <label class="form-label">Especialidade *</label>
+              <select class="form-input" id="f-esp" onchange="carregarServicos()">
+                <option value="">A carregar especialidades...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Serviço *</label>
+              <select class="form-input" id="f-srv" disabled>
+                <option value="">Seleccione a especialidade primeiro</option>
+              </select>
+              <div class="form-hint" id="srv-preco-hint" style="color:var(--teal);font-weight:600"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Data e Hora Pretendida *</label>
+              <input type="datetime-local" class="form-input" id="f-data">
+              <div class="form-hint">Horário sujeito a disponibilidade — a secretaria confirmará via SMS</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Observações</label>
+              <textarea class="form-input" id="f-obs" rows="3" placeholder="Informações adicionais (opcional)"></textarea>
+            </div>
+            <div style="display:flex;gap:.65rem;justify-content:space-between;margin-top:.5rem;flex-wrap:wrap">
+              <button class="btn btn-ghost" onclick="voltarStep1()">← Voltar</button>
+              <button class="btn btn-primary" id="btn-s2" onclick="submeterPedido()">Submeter Pedido</button>
+            </div>
+            <div class="loading-overlay" id="loading-s2">
+              <div class="spinner"></div> A enviar pedido...
+            </div>
+          </div>
+
+          <!-- STEP 3: Pedido criado → enviar comprovativo -->
+          <div class="agend-body" id="s3" style="display:none">
+            <div class="alert alert-success" style="margin-bottom:1.25rem">
+              ✅ Pedido criado com sucesso! Aguarde confirmação via SMS.
+            </div>
+            <div class="pedido-box">
+              <div class="pedido-label">Número do seu pedido</div>
+              <div class="pedido-num" id="pedido-num-display">—</div>
+              <div style="font-size:.75rem;color:var(--muted);margin-top:.35rem">Guarde este número — precisará dele para acompanhar o estado.</div>
+            </div>
+            <div class="alert alert-warn">
+              ⏳ Após a secretaria confirmar o horário, receberá um SMS com os dados bancários para pagamento. Depois tem <strong>2 horas</strong> para enviar o comprovativo.
+            </div>
+
+            <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border)">
+              <label class="form-label" style="margin-bottom:.5rem">Enviar Comprovativo de Pagamento</label>
+              <p style="font-size:.83rem;color:var(--muted);margin-bottom:.75rem">Só deverá enviar o comprovativo após receber o SMS de confirmação do horário.</p>
+              <div class="form-group">
+                <label class="form-label">Número do Pedido</label>
+                <input type="text" class="form-input" id="comp-num" placeholder="Ex: PED-2026-1234">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Ficheiro (PDF, JPG ou PNG — máx. 5MB)</label>
+                <input type="file" class="form-input" id="comp-file" accept=".pdf,.jpg,.jpeg,.png" style="padding:.5rem">
+              </div>
+              <div id="comp-alert"></div>
+              <div style="display:flex;gap:.65rem;flex-wrap:wrap">
+                <button class="btn btn-teal" id="btn-comp" onclick="enviarComprovativo()">📎 Enviar Comprovativo</button>
+                <button class="btn btn-ghost" onclick="novoPedido()">Novo Pedido</button>
+              </div>
+              <div class="loading-overlay" id="loading-comp">
+                <div class="spinner"></div> A enviar comprovativo...
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: CONSULTAR ESTADO ── -->
+      <div id="tab-estado-content" style="display:none">
+        <div class="agend-card">
+          <div class="agend-hdr">
+            <h2>Estado do Pedido</h2>
+            <p>Consulte o estado da sua marcação pelo número do pedido.</p>
+          </div>
+          <div class="agend-body">
+            <div class="form-group">
+              <label class="form-label">Número do Pedido</label>
+              <div class="estado-form">
+                <input type="text" class="form-input" id="estado-num" placeholder="Ex: PED-2026-1234">
+                <button class="btn btn-primary" onclick="consultarEstado()">Consultar</button>
+              </div>
+            </div>
+            <div class="loading-overlay" id="loading-estado">
+              <div class="spinner"></div> A consultar...
+            </div>
+            <div class="estado-result" id="estado-result" style="display:none">
+              <div class="card" style="padding:1.5rem">
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem">
+                  <div>
+                    <div style="color:var(--muted);font-size:.75rem;margin-bottom:.2rem">Número do Pedido</div>
+                    <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--primary)" id="er-num">—</div>
+                  </div>
+                  <div id="er-badge"></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;font-size:.87rem">
+                  <div><div style="color:var(--muted);font-size:.75rem;margin-bottom:.15rem">Especialidade</div><div style="font-weight:600" id="er-esp">—</div></div>
+                  <div><div style="color:var(--muted);font-size:.75rem;margin-bottom:.15rem">Horário Pretendido</div><div style="font-weight:600" id="er-horario">—</div></div>
+                  <div id="er-prazo-wrap" style="display:none"><div style="color:var(--muted);font-size:.75rem;margin-bottom:.15rem">Prazo de Pagamento</div><div style="font-weight:600;color:var(--accent)" id="er-prazo">—</div></div>
+                </div>
+                <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
+                  <div id="er-instrucao" style="font-size:.84rem;color:var(--muted)"></div>
+                </div>
+              </div>
+            </div>
+            <div id="estado-error" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand">
+      <h3>⚕ Kigramed</h3>
+      <p>Referência em cuidados de saúde especializados em Luanda, Angola. Clínica Geral, Ginecologia, Cardiologia e Pediatria — com excelência e humanidade.</p>
+    </div>
+    <div class="foot-contact">
+      <h4>Contacto</h4>
+      <p>📞 +244 9XX XXX XXX</p>
+      <p>✉️ contacto@kigramed.ao</p>
+      <p>📍 Luanda, Angola</p>
+      <p>🕐 Seg–Sex: 7h–19h | Urgências 24h</p>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2026 Kigramed. Todos os direitos reservados.</span>
+    <span>Luanda, Angola</span>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div id="toast"><span id="toast-ico">✅</span><span id="toast-msg">OK</span></div>
+
+<script src="script.js"></script>
+</body>
+</html>

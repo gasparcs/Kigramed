@@ -57,8 +57,23 @@ async function initSecretaria() {
     loadEstados()
   ]);
   await populateSecretariaSelects();
+
+  const hash = window.location.hash.substring(1);
+  if (hash && sectionLoaders[hash]) {
+    showSection(hash, document.querySelector(`[onclick*="'${hash}'"]`));
+  } else {
+    showSection('dashboard', document.querySelector(`[onclick*="'dashboard'"]`));
+  }
+
   startPolling();
 }
+
+window.addEventListener('hashchange', () => {
+  const hash = window.location.hash.substring(1);
+  if (hash && sectionLoaders[hash] && activeSectionId !== hash) {
+    showSection(hash, document.querySelector(`[onclick*="'${hash}'"]`));
+  }
+});
 
 function validateSecretariaAccess() {
   if (!token || role !== 'Secretaria') redirectToLogin();
@@ -68,6 +83,7 @@ function validateSecretariaAccess() {
 }
 
 function showSection(sectionId, button) {
+  if (window.location.hash !== '#' + sectionId) window.location.hash = sectionId;
   if (window.innerWidth <= 900) {
     document.getElementById('sidebar')?.classList.remove('open');
     document.getElementById('sidebarOverlay')?.classList.remove('open');

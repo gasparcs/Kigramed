@@ -40,6 +40,7 @@ function validateMedicoAccess() {
 }
 
 function showSection(sectionId, button) {
+  if (window.location.hash !== '#' + sectionId) window.location.hash = sectionId;
   document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
   document.getElementById(`sec-${sectionId}`)?.classList.add('active');
   document.getElementById('topbarTitle').textContent = button?.textContent.trim() || sectionId;
@@ -56,8 +57,23 @@ function showSection(sectionId, button) {
 async function initMedico() {
   validateMedicoAccess();
   await Promise.all([loadConsultas(), loadTopStats()]);
+
+  const hash = window.location.hash.substring(1);
+  if (hash && sectionLoaders[hash]) {
+    showSection(hash, document.querySelector(`[onclick*="'${hash}'"]`));
+  } else {
+    showSection('dashboard', document.querySelector(`[onclick*="'dashboard'"]`));
+  }
+
   startPolling();
 }
+
+window.addEventListener('hashchange', () => {
+  const hash = window.location.hash.substring(1);
+  if (hash && sectionLoaders[hash] && activeSectionId !== hash) {
+    showSection(hash, document.querySelector(`[onclick*="'${hash}'"]`));
+  }
+});
 
 // ─────────────────────────────────────────────
 // STATS & DASHBOARD
@@ -160,7 +176,7 @@ async function loadConsultas() {
 // EDITAR CONSULTA
 // ─────────────────────────────────────────────
 function editarConsulta(id) {
-  const item = medicoState.consultas.get(id) || {};
+  const item = medicoState.consultas.get(Number(id)) || {};
   document.getElementById('ecConsultaId').value = id;
   document.getElementById('ecPaciente').value = item.pacienteNome || item.PacienteNome || '—';
   document.getElementById('ecData').value = toDatetimeLocal(item.data_consulta || item.Data_consulta || item.DataConsulta);
@@ -176,8 +192,8 @@ async function submitEditConsulta(event) {
       method: 'PUT',
       body: {
         IdConsulta: id,
-        Id_medico_especialiade: medicoState.consultas.get(id)?.idMedicoEspecialidade
-          || medicoState.consultas.get(id)?.IdMedicoEspecialidade || 0,
+        Id_medico_especialiade: medicoState.consultas.get(Number(id))?.idMedicoEspecialidade
+          || medicoState.consultas.get(Number(id))?.IdMedicoEspecialidade || 0,
         Id_estado_consulta: parseInt(document.getElementById('ecEstado').value, 10),
         Data_consulta: document.getElementById('ecData').value
       }
@@ -186,6 +202,7 @@ async function submitEditConsulta(event) {
     closeModal('modalEditConsulta');
     await Promise.all([loadConsultas(), loadTopStats()]);
   } catch (e) {
+    console.error('Erro em submitEditConsulta:', e);
     showToast(getErrorMessage(e, 'Erro ao actualizar consulta.'), 'error');
   }
 }

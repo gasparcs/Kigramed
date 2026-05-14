@@ -183,6 +183,31 @@ async function submeterPedido(){
 
 
 
+let estadoPollingIntervalId = null;
+
+function iniciarPollingEstado(num) {
+  if (estadoPollingIntervalId) {
+    clearInterval(estadoPollingIntervalId);
+  }
+  estadoPollingIntervalId = setInterval(async () => {
+    if (document.hidden) return;
+    try {
+      const r = await fetch(`${API}/Cliente/pedido/${encodeURIComponent(num)}/estado`);
+      if (!r.ok) return;
+      const d = await r.json();
+      renderEstado(num, d);
+      
+      const estado = String(d.estado || '').trim().toLowerCase();
+      if (estado === 'confirmado' || estado === 'cancelado') {
+        clearInterval(estadoPollingIntervalId);
+        estadoPollingIntervalId = null;
+      }
+    } catch {
+      // erros de rede silenciosos
+    }
+  }, 20000);
+}
+
 /* ─── CONSULTAR ESTADO → GET /api/Cliente/pedido/{numeroPedido}/estado ─── */
 async function consultarEstado(){
   const num=document.getElementById('estado-num').value.trim();
@@ -191,11 +216,21 @@ async function consultarEstado(){
   document.getElementById('estado-result').style.display='none';
   document.getElementById('estado-error').style.display='none';
 
+  if (estadoPollingIntervalId) {
+    clearInterval(estadoPollingIntervalId);
+    estadoPollingIntervalId = null;
+  }
+
   try{
     const r=await fetch(`${API}/Cliente/pedido/${encodeURIComponent(num)}/estado`);
     if(r.status===404){throw new Error('not_found')}
     const d=await r.json();
     renderEstado(num,d);
+
+    const estadoStr = String(d.estado || '').trim().toLowerCase();
+    if (estadoStr !== 'confirmado' && estadoStr !== 'cancelado') {
+      iniciarPollingEstado(num);
+    }
   }catch(e){
     if(e.message==='not_found'){
       document.getElementById('estado-error').style.display='block';
@@ -203,6 +238,7 @@ async function consultarEstado(){
     }else{
       // Demo offline
       renderEstado(num,{numeroPedido:num,estado:'Pendente',horario:new Date(Date.now()+86400000).toISOString(),especialidade:'Clínica Geral',prazoPagamento:null});
+      iniciarPollingEstado(num);
     }
   }finally{
     document.getElementById('loading-estado').classList.remove('show');

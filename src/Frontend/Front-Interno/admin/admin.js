@@ -10,6 +10,38 @@ const adminState = {
   servicos: new Map()
 };
 
+const sectionLoaders = {
+  'dashboard': loadTopLists,
+  'consultas': loadConsultas,
+  'pacientes': loadPacientes,
+  'clientes': loadClientes,
+  'funcionarios': loadFuncionarios,
+  'especialidades': loadEspecialidades,
+  'servicos': loadServicos,
+  'pagamentos': loadPagamentos,
+  'pagamentoconsulta': loadPagamentoConsulta,
+  'sms': loadSMS,
+  'pedidos': loadPedidos
+};
+
+let activeSectionId = 'dashboard';
+let pollingIntervalId = null;
+
+function startPolling() {
+  if (pollingIntervalId) clearInterval(pollingIntervalId);
+  pollingIntervalId = setInterval(() => {
+    if (!document.hidden && activeSectionId && sectionLoaders[activeSectionId]) {
+      sectionLoaders[activeSectionId]();
+    }
+  }, 30000);
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && activeSectionId && sectionLoaders[activeSectionId]) {
+    sectionLoaders[activeSectionId]();
+  }
+});
+
 async function initAdmin() {
   validateAccess();
   // Carregamento paralelo de dados iniciais
@@ -28,6 +60,7 @@ async function initAdmin() {
     loadPedidos()
   ]);
   await populateFormSelects();
+  startPolling();
 }
 
 function validateAccess() {
@@ -48,6 +81,11 @@ function showSection(sectionId, button) {
   document.querySelectorAll('.nav-item').forEach((el) => el.classList.remove('active'));
   if (button) button.classList.add('active');
   if (window.innerWidth <= 900) sidebarToggle();
+
+  activeSectionId = sectionId;
+  if (sectionLoaders[activeSectionId]) {
+    sectionLoaders[activeSectionId]();
+  }
 }
 
 async function loadTopLists() {

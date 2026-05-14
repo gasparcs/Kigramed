@@ -8,6 +8,38 @@ const secretariaState = {
   clientes: new Map()
 };
 
+const sectionLoaders = {
+  'dashboard': loadTopStats,
+  'consultas': loadConsultas,
+  'pacientes': loadPacientes,
+  'clientes': loadClientes,
+  'especialidades': loadEspecialidades,
+  'servicos': loadServicos,
+  'medicos': loadMedicos,
+  'pagamentos': loadPagamentos,
+  'pagamentoconsulta': loadPagamentoConsulta,
+  'sms': loadSMS,
+  'pedidos': loadPedidos
+};
+
+let activeSectionId = 'dashboard';
+let pollingIntervalId = null;
+
+function startPolling() {
+  if (pollingIntervalId) clearInterval(pollingIntervalId);
+  pollingIntervalId = setInterval(() => {
+    if (!document.hidden && activeSectionId && sectionLoaders[activeSectionId]) {
+      sectionLoaders[activeSectionId]();
+    }
+  }, 30000);
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && activeSectionId && sectionLoaders[activeSectionId]) {
+    sectionLoaders[activeSectionId]();
+  }
+});
+
 async function initSecretaria() {
   validateSecretariaAccess();
   await Promise.all([
@@ -25,6 +57,7 @@ async function initSecretaria() {
     loadEstados()
   ]);
   await populateSecretariaSelects();
+  startPolling();
 }
 
 function validateSecretariaAccess() {
@@ -45,6 +78,11 @@ function showSection(sectionId, button) {
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   if (button) button.classList.add('active');
   if (window.innerWidth <= 900) sidebarToggle();
+
+  activeSectionId = sectionId;
+  if (sectionLoaders[activeSectionId]) {
+    sectionLoaders[activeSectionId]();
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

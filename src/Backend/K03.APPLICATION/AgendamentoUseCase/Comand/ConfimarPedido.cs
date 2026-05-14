@@ -44,7 +44,7 @@ public class ConfirmarPedido(IAgendamentoRepository repository, ISmsService sms)
             $"não seja efectuado dentro do prazo.\n\n" +
             $"Atenciosamente,\n" +
             $"Centro Médico Kigramed";
-        var smsEnviado = await _sms.EnviarAsync(pedido.Telefone, mensagem, "101010101010");
+        var smsEnviado = await _sms.EnviarAsync(pedido.Telefone, mensagem, "5417298387");
 
         return smsEnviado ? "sucesso" : "erro_sms";
     }

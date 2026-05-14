@@ -46,7 +46,7 @@ public class ValidarPagamento(IAgendamentoRepository repository, ISmsService sms
             $"Contamos com a sua presença.\n\n" +
             $"Atenciosamente,\n" +
             $"Centro Médico Kigramed";
-        var smsEnviado = await _sms.EnviarAsync(pedido.Telefone, mensagem, "101010101010");
+        var smsEnviado = await _sms.EnviarAsync(pedido.Telefone, mensagem, "5417298387");
 
         return smsEnviado ? "sucesso" : "erro_sms";
     }

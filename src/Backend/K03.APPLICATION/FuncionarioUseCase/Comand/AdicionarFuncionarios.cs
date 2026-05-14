@@ -87,7 +87,7 @@ ISmsService sms)
 
         if (contato is null) return "Telefone não válido";
 
-        var smsResponse = await sms.EnviarAsync(contato.Contacto, texto, "101010101010");
+        var smsResponse = await sms.EnviarAsync(contato.Contacto, texto, "5417298387");
 
        return smsResponse ? "Funcionário cadastrado e SMS enviado com sucesso!" : "Funcionário cadastrado, mas SMS falhou.";
     } 

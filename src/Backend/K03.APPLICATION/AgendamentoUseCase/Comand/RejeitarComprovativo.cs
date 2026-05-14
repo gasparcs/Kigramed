@@ -33,7 +33,7 @@ public class RejeitarComprovativo(IAgendamentoRepository repository, ISmsService
             $"Atenciosamente,\n" +
             $"Centro Médico Kigramed";
 
-        await sms.EnviarAsync(pedido.Telefone, mensagem, "101010101010");
+        await sms.EnviarAsync(pedido.Telefone, mensagem, "5417298387");
 
         return "sucesso";
     }

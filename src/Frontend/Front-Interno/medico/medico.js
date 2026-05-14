@@ -6,8 +6,8 @@ const medicoState = {
 };
 
 const sectionLoaders = {
-  'dashboard': loadTopStats,
-  'consultas': loadConsultas
+  'dashboard': () => loadTopStats(),
+  'consultas': () => loadConsultas()
 };
 
 let activeSectionId = 'dashboard';

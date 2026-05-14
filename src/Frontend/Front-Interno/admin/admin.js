@@ -11,17 +11,17 @@ const adminState = {
 };
 
 const sectionLoaders = {
-  'dashboard': loadTopLists,
-  'consultas': loadConsultas,
-  'pacientes': loadPacientes,
-  'clientes': loadClientes,
-  'funcionarios': loadFuncionarios,
-  'especialidades': loadEspecialidades,
-  'servicos': loadServicos,
-  'pagamentos': loadPagamentos,
-  'pagamentoconsulta': loadPagamentoConsulta,
-  'sms': loadSMS,
-  'pedidos': loadPedidos
+  'dashboard': () => loadTopLists(),
+  'consultas': () => loadConsultas(),
+  'pacientes': () => loadPacientes(),
+  'clientes': () => loadClientes(),
+  'funcionarios': () => loadFuncionarios(),
+  'especialidades': () => loadEspecialidades(),
+  'servicos': () => loadServicos(),
+  'pagamentos': () => loadPagamentos(),
+  'pagamentoconsulta': () => loadPagamentoConsulta(),
+  'sms': () => loadSMS(),
+  'pedidos': () => loadPedidos()
 };
 
 let activeSectionId = 'dashboard';

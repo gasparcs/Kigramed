@@ -9,17 +9,17 @@ const secretariaState = {
 };
 
 const sectionLoaders = {
-  'dashboard': loadTopStats,
-  'consultas': loadConsultas,
-  'pacientes': loadPacientes,
-  'clientes': loadClientes,
-  'especialidades': loadEspecialidades,
-  'servicos': loadServicos,
-  'medicos': loadMedicos,
-  'pagamentos': loadPagamentos,
-  'pagamentoconsulta': loadPagamentoConsulta,
-  'sms': loadSMS,
-  'pedidos': loadPedidos
+  'dashboard': () => loadTopStats(),
+  'consultas': () => loadConsultas(),
+  'pacientes': () => loadPacientes(),
+  'clientes': () => loadClientes(),
+  'especialidades': () => loadEspecialidades(),
+  'servicos': () => loadServicos(),
+  'medicos': () => loadMedicos(),
+  'pagamentos': () => loadPagamentos(),
+  'pagamentoconsulta': () => loadPagamentoConsulta(),
+  'sms': () => loadSMS(),
+  'pedidos': () => loadPedidos()
 };
 
 let activeSectionId = 'dashboard';

@@ -56,7 +56,7 @@ function showSection(sectionId, button) {
 
 async function initMedico() {
   validateMedicoAccess();
-  await Promise.all([loadConsultas(), loadTopStats()]);
+  await Promise.all([loadConsultas(), loadTopStats(), loadEstadosConsulta()]);
 
   const hash = window.location.hash.substring(1);
   if (hash && sectionLoaders[hash]) {
@@ -74,6 +74,26 @@ window.addEventListener('hashchange', () => {
     showSection(hash, document.querySelector(`[onclick*="'${hash}'"]`));
   }
 });
+
+// ─────────────────────────────────────────────
+// ESTADOS DE CONSULTA (dinâmico)
+// ─────────────────────────────────────────────
+async function loadEstadosConsulta() {
+  try {
+    const estados = await fetchJson('/Medico/estados');
+    const select = document.getElementById('ecEstado');
+    if (!select) return;
+    select.innerHTML = '<option value="">Seleccionar...</option>' +
+      estados.map(e => {
+        const id = e.id ?? e.Id ?? e.idEstadoConsulta ?? e.IdEstadoConsulta;
+        const desc = e.descricao ?? e.Descricao ?? e.estadoDescricao ?? e.EstadoDescricao ?? id;
+        return `<option value="${id}">${desc}</option>`;
+      }).join('');
+  } catch (e) {
+    console.error('Erro ao carregar estados de consulta:', e);
+    // fallback: mantém opções hardcoded se já existirem no HTML
+  }
+}
 
 // ─────────────────────────────────────────────
 // STATS & DASHBOARD
@@ -140,7 +160,7 @@ async function loadConsultas() {
     medicoState.consultas.clear();
     list.forEach((item, index) => {
       const id = item.consultaId || item.ConsultaId || index + 1;
-      medicoState.consultas.set(id, item);
+      medicoState.consultas.set(Number(id), item);
     });
 
     if (!list.length) {
@@ -180,13 +200,32 @@ function editarConsulta(id) {
   document.getElementById('ecConsultaId').value = id;
   document.getElementById('ecPaciente').value = item.pacienteNome || item.PacienteNome || '—';
   document.getElementById('ecData').value = toDatetimeLocal(item.data_consulta || item.Data_consulta || item.DataConsulta);
-  document.getElementById('ecEstado').value = item.idEstadoConsulta || item.IdEstadoConsulta || '';
+
+  // Aguarda o select estar populado antes de definir o valor
+  const select = document.getElementById('ecEstado');
+  const idEstado = item.idEstadoConsulta || item.IdEstadoConsulta || '';
+  if (select.options.length <= 1) {
+    // estados ainda não carregados, tenta carregar e depois define
+    loadEstadosConsulta().then(() => {
+      document.getElementById('ecEstado').value = idEstado;
+    });
+  } else {
+    select.value = idEstado;
+  }
+
   openModal('modalEditConsulta');
 }
 
 async function submitEditConsulta(event) {
   event.preventDefault();
   const id = parseInt(document.getElementById('ecConsultaId').value, 10);
+  const idEstado = parseInt(document.getElementById('ecEstado').value, 10);
+
+  if (!idEstado) {
+    showToast('Por favor seleccione um estado.', 'error');
+    return;
+  }
+
   try {
     await fetchJson(`/Medico/consulta/${id}`, {
       method: 'PUT',
@@ -194,7 +233,7 @@ async function submitEditConsulta(event) {
         IdConsulta: id,
         Id_medico_especialiade: medicoState.consultas.get(Number(id))?.idMedicoEspecialidade
           || medicoState.consultas.get(Number(id))?.IdMedicoEspecialidade || 0,
-        Id_estado_consulta: parseInt(document.getElementById('ecEstado').value, 10),
+        Id_estado_consulta: idEstado,
         Data_consulta: document.getElementById('ecData').value
       }
     });

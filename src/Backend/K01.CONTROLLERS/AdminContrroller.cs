@@ -589,6 +589,7 @@ namespace Backend.K01.CONTROLLERS;
 
     /// Ver comprovativo (imagem ou PDF)
     
+    [AllowAnonymous]
     [HttpGet("{id}/comprovativo")]
     public async Task<IActionResult> VerComprovativo(int id)
     {
@@ -607,6 +608,3 @@ namespace Backend.K01.CONTROLLERS;
     }
 
     }
-
-
-

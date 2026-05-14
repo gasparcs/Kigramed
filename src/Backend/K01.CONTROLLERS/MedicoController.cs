@@ -5,6 +5,7 @@ using Backend.K03.APPLICATION.ConsultaUseCase.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Backend.K03.APPLICATION.EstadoConsultaUseCase.Queries;
 
 namespace Backend.K01.CONTROLLERS;
 
@@ -13,7 +14,8 @@ namespace Backend.K01.CONTROLLERS;
 [ApiController]
 public class MedicoController(
     ListarConsultasDoMedico listarConsultasDoMedicoServices,
-    AtualizarConsulta atualizarConsultaServices)
+    AtualizarConsulta atualizarConsultaServices,
+    ListarEstadoConsulta listarEstadosServices)
     : ControllerBase
 {
     /// Lista apenas as consultas do médico autenticado.
@@ -38,21 +40,28 @@ public class MedicoController(
         });
     }
 
-    /// Atualiza o estado de uma consulta.
-    [HttpPut("consulta/{id}")]
-    public async Task<IActionResult> AtualizarConsulta(int id, [FromBody] AtualizarConsultaDTO dto)
+/// Atualiza o estado de uma consulta.
+[HttpPut("consulta/{id}")]
+public async Task<IActionResult> AtualizarConsulta(int id, [FromBody] AtualizarConsultaDTO dto)
+{
+    if (!ModelState.IsValid)
+        return StatusCode(400, ModelState);
+
+    if (id != dto.IdConsulta)
+        return StatusCode(400, new { mensagem = "ID da consulta não corresponde ao corpo da requisição." });
+
+    var resposta = await atualizarConsultaServices.ExecuteAsync(dto);
+
+    return resposta is not null
+        ? StatusCode(200, new { mensagem = "Consulta actualizada com sucesso.", detalhes = resposta })
+        : StatusCode(400, new { mensagem = "Erro ao actualizar consulta." });
+}
+    /// Lista os estados de consulta disponíveis
+    [HttpGet("estados")]
+    public async Task<IActionResult> ListarEstados()
     {
-        if (!ModelState.IsValid)
-            return StatusCode(400, ModelState);
-
-        if (id != dto.IdConsulta)
-            return StatusCode(400, new { mensagem = "ID da consulta não corresponde ao corpo da requisição." });
-
-        var resposta = await atualizarConsultaServices.ExecuteAsync(dto);
-
-        return resposta.Contains("sucesso")
-            ? StatusCode(200, new { mensagem = "Consulta atualizada com sucesso.", detalhes = resposta })
-            : StatusCode(400, new { mensagem = "Erro ao atualizar consulta.", detalhes = resposta });
+        var resposta = await listarEstadosServices.ExecuteAsync();
+        return Ok(resposta);
     }
 
     /// Verifica se a API do médico está operacional.

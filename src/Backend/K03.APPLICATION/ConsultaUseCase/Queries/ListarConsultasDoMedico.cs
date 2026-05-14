@@ -16,14 +16,16 @@ public class ListarConsultasDoMedico(IListarConsultaPorMedicoRepository reposito
 
         return consultas.Select(c => new LeituraConsultaDTO
         {
-            ConsultaId       = c.Id,
-            Data_consulta    = c.Data_consulta,
-            EstadoDescricao  = c.EstadoConsulta?.Descricao       ?? string.Empty,
-            ServicoNome      = c.Servico?.Nome                   ?? string.Empty,
-            PacienteNome     = c.Paciente?.Nome                  ?? string.Empty,
-            ClienteNome      = c.Paciente?.Cliente?.Nome         ?? string.Empty,
-            MedicoNome       = c.MedicoEspecialidade?.Funcionario?.Nome ?? string.Empty,
-            Especialidade    = c.MedicoEspecialidade?.Especialidade?.Nome ?? string.Empty,
+            ConsultaId              = c.Id,
+            Data_consulta           = c.Data_consulta,
+            EstadoDescricao         = c.EstadoConsulta?.Descricao              ?? string.Empty,
+            ServicoNome             = c.Servico?.Nome                          ?? string.Empty,
+            PacienteNome            = c.Paciente?.Nome                         ?? string.Empty,
+            ClienteNome             = c.Paciente?.Cliente?.Nome                ?? string.Empty,
+            MedicoNome              = c.MedicoEspecialidade?.Funcionario?.Nome ?? string.Empty,
+            Especialidade           = c.MedicoEspecialidade?.Especialidade?.Nome ?? string.Empty,
+            IdEstadoConsulta        = c.Id_estado_consulta,
+            IdMedicoEspecialidade   = c.Id_medico_especialiade,
         });
     }
 }

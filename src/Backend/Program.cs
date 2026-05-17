@@ -1,4 +1,5 @@
 using Backend.K02.INFRA.Data;
+using Backend.K02.INFRA.Servico.AgendamentoService;
 using Backend.K02.INFRA.Repository.Auth;
 using Backend.K02.INFRA.Repository.Cliente;
 using Backend.K02.INFRA.Repository.Consulta;
@@ -261,7 +262,7 @@ builder.Services.AddTransient<RejeitarComprovativoConsulta>();
 builder.Services.AddTransient<ListarConsultasPendentes>();
 
 // Background service que cancela pedidos com prazo expirado (verifica a cada 5 minutos)
-// builder.Services.AddHostedService<PrazoAgendamentoService>();
+builder.Services.AddHostedService<PrazoAgendamentoService>();
 
 // Permitir upload de ficheiros até 5MB
 builder.Services.Configure<FormOptions>(o => o.MultipartBodyLengthLimit = 5_000_000);

@@ -13,8 +13,8 @@ public class RejeitarComprovativoConsulta(KigramedDbContext context, ISmsService
     {
         var consulta = await context.Tabelatb15_consulta
             .Include(c => c.Paciente)
-            .ThenInclude(p => p.Cliente)
-            .ThenInclude(cl => cl.Contactos)
+                .ThenInclude(p => p.Cliente)
+                .ThenInclude(cl => cl.Contactos)
             .FirstOrDefaultAsync(c => c.Id == id);
 
         if (consulta == null)
@@ -30,10 +30,26 @@ public class RejeitarComprovativoConsulta(KigramedDbContext context, ISmsService
         consulta.CaminhoComprovativo = null;
         await context.SaveChangesAsync();
 
-        string telefone = consulta.Paciente?.Cliente?.Contactos?.FirstOrDefault()?.Contacto ?? "";
-        string mensagem = $"KIGRAMED: O comprovativo para o pedido {consulta.NumeroPedido} foi rejeitado. Por favor, envie novamente.";
-        bool smsEnviado = await smsService.EnviarAsync(telefone, mensagem, "5417298387");
+        string telefone = consulta.Paciente?.Cliente?.Contactos?.FirstOrDefault()?.Contacto ?? string.Empty;
 
-        return "sucesso";
+        var mensagem =
+            $"Estimado(a) {consulta.Paciente?.Nome ?? "Cliente"},\n\n" +
+            $"Informamos que o comprovativo de pagamento submetido para o seu " +
+            $"pedido não foi aceite pela nossa equipa.\n\n" +
+            $"Detalhes do pedido:\n" +
+            $"  • Número do Pedido: {consulta.NumeroPedido}\n\n" +
+            $"Possíveis motivos para a rejeição:\n" +
+            $"  • Documento ilegível ou de qualidade insuficiente\n" +
+            $"  • Valor transferido incorrecto\n" +
+            $"  • Referência de pagamento em falta ou errada\n\n" +
+            $"Por favor submeta um novo comprovativo válido através do portal " +
+            $"www.kigramed.com para que a sua consulta possa ser confirmada.\n\n" +
+            $"Para qualquer esclarecimento, a nossa equipa está ao seu dispor.\n\n" +
+            $"Atenciosamente,\n" +
+            $"Centro Médico Kigramed";
+
+        bool smsEnviado = await smsService.EnviarAsync(telefone, mensagem, "5417298387");
+        
+        return "sucesso"; 
     }
 }

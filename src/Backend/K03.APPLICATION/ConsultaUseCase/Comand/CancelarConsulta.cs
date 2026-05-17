@@ -13,8 +13,8 @@ public class CancelarConsulta(KigramedDbContext context, ISmsService smsService)
     {
         var consulta = await context.Tabelatb15_consulta
             .Include(c => c.Paciente)
-            .ThenInclude(p => p.Cliente)
-            .ThenInclude(cl => cl.Contactos)
+                .ThenInclude(p => p.Cliente)
+                .ThenInclude(cl => cl.Contactos)
             .FirstOrDefaultAsync(c => c.Id == id);
 
         if (consulta == null)
@@ -29,8 +29,21 @@ public class CancelarConsulta(KigramedDbContext context, ISmsService smsService)
         consulta.Id_estado_consulta = estadoCancelada.Id;
         await context.SaveChangesAsync();
 
-        string telefone = consulta.Paciente?.Cliente?.Contactos?.FirstOrDefault()?.Contacto ?? "";
-        string mensagem = $"KIGRAMED: O seu pedido {consulta.NumeroPedido} foi cancelado.";
+        string telefone = consulta.Paciente?.Cliente?.Contactos?.FirstOrDefault()?.Contacto ?? string.Empty;
+
+        var mensagem =
+            $"Estimado(a) {consulta.Paciente?.Nome ?? "Cliente"},\n\n" +
+            $"Informamos que o seu pedido de agendamento foi cancelado.\n\n" +
+            $"Detalhes do pedido cancelado:\n" +
+            $"  • Número do Pedido: {consulta.NumeroPedido}\n" +
+            $"  • Data e Hora: {consulta.Data_consulta.ToLocalTime():dd/MM/yyyy 'às' HH:mm}\n\n" +
+            $"Se o cancelamento foi inesperado ou deseja efectuar um novo " +
+            $"agendamento, convidamo-lo(a) a aceder ao nosso portal em " +
+            $"www.kigramed.com ou a contactar-nos directamente.\n\n" +
+            $"Pedimos desculpa por qualquer inconveniente causado.\n\n" +
+            $"Atenciosamente,\n" +
+            $"Centro Médico Kigramed";
+
         bool smsEnviado = await smsService.EnviarAsync(telefone, mensagem, "5417298387");
 
         return smsEnviado ? "sucesso" : "erro_sms";

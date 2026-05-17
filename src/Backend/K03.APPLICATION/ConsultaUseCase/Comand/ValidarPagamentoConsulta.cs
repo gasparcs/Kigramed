@@ -13,8 +13,8 @@ public class ValidarPagamentoConsulta(KigramedDbContext context, ISmsService sms
     {
         var consulta = await context.Tabelatb15_consulta
             .Include(c => c.Paciente)
-            .ThenInclude(p => p.Cliente)
-            .ThenInclude(cl => cl.Contactos)
+                .ThenInclude(p => p.Cliente)
+                .ThenInclude(cl => cl.Contactos)
             .Include(c => c.EstadoConsulta)
             .FirstOrDefaultAsync(c => c.Id == id);
 
@@ -44,8 +44,21 @@ public class ValidarPagamentoConsulta(KigramedDbContext context, ISmsService sms
         consulta.Id_estado_consulta = estadoConfirmada.Id;
         await context.SaveChangesAsync();
 
-        string telefone = consulta.Paciente?.Cliente?.Contactos?.FirstOrDefault()?.Contacto ?? "";
-        string mensagem = $"KIGRAMED: Pagamento validado! Consulta {consulta.NumeroPedido} confirmada para {consulta.Data_consulta:dd/MM/yyyy HH:mm}.";
+        string telefone = consulta.Paciente?.Cliente?.Contactos?.FirstOrDefault()?.Contacto ?? string.Empty;
+
+        var mensagem =
+            $"Estimado(a) {consulta.Paciente?.Nome ?? "Cliente"},\n\n" +
+            $"Temos o prazer de informar que o seu pagamento foi validado " +
+            $"com sucesso e a sua consulta está oficialmente confirmada.\n\n" +
+            $"Detalhes da consulta:\n" +
+            $"  • Número do Pedido: {consulta.NumeroPedido}\n" +
+            $"  • Data e Hora: {consulta.Data_consulta.ToLocalTime():dd/MM/yyyy 'às' HH:mm}\n\n" +
+            $"Recomendamos que se apresente com 10 minutos de antecedência " +
+            $"munido do seu documento de identificação.\n\n" +
+            $"Contamos com a sua presença.\n\n" +
+            $"Atenciosamente,\n" +
+            $"Centro Médico Kigramed";
+
         bool smsEnviado = await smsService.EnviarAsync(telefone, mensagem, "5417298387");
 
         return smsEnviado ? "sucesso" : "erro_sms";

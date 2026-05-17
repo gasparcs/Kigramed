@@ -13,8 +13,8 @@ public class ConfirmarConsulta(KigramedDbContext context, ISmsService smsService
     {
         var consulta = await context.Tabelatb15_consulta
             .Include(c => c.Paciente)
-            .ThenInclude(p => p.Cliente)
-            .ThenInclude(cl => cl.Contactos)
+                .ThenInclude(p => p.Cliente)
+                .ThenInclude(cl => cl.Contactos)
             .Include(c => c.EstadoConsulta)
             .FirstOrDefaultAsync(c => c.Id == id);
 
@@ -24,16 +24,18 @@ public class ConfirmarConsulta(KigramedDbContext context, ISmsService smsService
         if (consulta.EstadoConsulta.Descricao != "Pendente")
             return $"estado_invalido_confirmar:{consulta.EstadoConsulta.Descricao}";
 
-        var estadoCancelada = await context.Tabelatb13_estado_consulta
-            .FirstOrDefaultAsync(e => e.Descricao == "Cancelada");
+        var idEstadoCancelada = await context.Tabelatb13_estado_consulta
+            .Where(e => e.Descricao == "Cancelada")
+            .Select(e => e.Id)
+            .FirstOrDefaultAsync();
 
-        if (estadoCancelada == null)
+        if (idEstadoCancelada == 0)
             return "Erro: Estado 'Cancelada' não configurado.";
 
         bool conflito = await context.Tabelatb15_consulta.AnyAsync(c =>
             c.Id_medico_especialiade == consulta.Id_medico_especialiade &&
             c.Data_consulta == consulta.Data_consulta &&
-            c.Id_estado_consulta != estadoCancelada.Id &&
+            c.Id_estado_consulta != idEstadoCancelada &&
             c.Id != consulta.Id);
 
         if (conflito)
@@ -49,8 +51,29 @@ public class ConfirmarConsulta(KigramedDbContext context, ISmsService smsService
         consulta.PrazoPagamento = DateTime.UtcNow.AddMinutes(30);
         await context.SaveChangesAsync();
 
-        string telefone = consulta.Paciente?.Cliente?.Contactos?.FirstOrDefault()?.Contacto ?? "";
-        string mensagem = $"KIGRAMED: Pedido {consulta.NumeroPedido} confirmado. Por favor pague em 30 min. IBAN: AO06.0000.0000.0000.0000.0000.0";
+        string telefone = consulta.Paciente?.Cliente?.Contactos?.FirstOrDefault()?.Contacto ?? string.Empty;
+
+        var deadline = consulta.PrazoPagamento?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") 
+                       ?? DateTime.UtcNow.AddMinutes(30).ToLocalTime().ToString("dd/MM/yyyy HH:mm");
+
+        var mensagem =
+            $"Estimado(a) {consulta.Paciente?.Nome ?? "Cliente"},\n\n" +
+            $"O seu pedido de agendamento foi recebido e aceite com sucesso.\n\n" +
+            $"Detalhes do pedido:\n" +
+            $"  • Número do Pedido: {consulta.NumeroPedido}\n" +
+            $"  • Data e Hora: {consulta.Data_consulta.ToLocalTime():dd/MM/yyyy 'às' HH:mm}\n" +
+            $"  • Prazo para pagamento: {deadline}\n\n" +
+            $"Para confirmar a sua consulta, efectue o pagamento dentro do prazo " +
+            $"indicado e envie o comprovativo através do portal.\n\n" +
+            $"Dados bancários para transferência:\n" +
+            $"  • Banco: [NOME DO BANCO]\n" +
+            $"  • IBAN: [IBAN DA CLÍNICA]\n" +
+            $"  • Referência: {consulta.NumeroPedido}\n\n" +
+            $"Atenção: o pedido será cancelado automaticamente caso o pagamento " +
+            $"não seja efectuado dentro do prazo.\n\n" +
+            $"Atenciosamente,\n" +
+            $"Centro Médico Kigramed";
+
         bool smsEnviado = await smsService.EnviarAsync(telefone, mensagem, "5417298387");
 
         return smsEnviado ? "sucesso" : "erro_sms";

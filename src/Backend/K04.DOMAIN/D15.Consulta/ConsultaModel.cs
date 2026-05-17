@@ -7,7 +7,7 @@ using Backend.K04.DOMAIN.D12.Paciente;
 using Backend.K04.DOMAIN.D13.EstadoConsulta;
 using Backend.K04.DOMAIN.D18.PagamentoConsulta;
 using Backend.K04.DOMAIN.D19.MedicoConsulta;
-using Backend.K04.DOMAIN.D21.Agendamento;
+
 
 namespace Backend.K04.DOMAIN.D15.Consulta;
 
@@ -25,7 +25,7 @@ public class ConsultaModel
     public int Id_servico{ get; set; }
 
     [Column("id_paciente")]
-    public int Id_paciente{ get; set; }
+    public int? Id_paciente{ get; set; }
 
     [Column("id_estado")]
     public int Id_estado_consulta{ get; set; }
@@ -37,7 +37,7 @@ public class ConsultaModel
 
     public ServicosModel Servico{ get; set; }=null!;
 
-    public PacienteModel Paciente{ get; set; }=null!;
+    public PacienteModel? Paciente{ get; set; }
 
     public EstadoConsultaModel EstadoConsulta{ get; set; }=null!;
 
@@ -45,6 +45,18 @@ public class ConsultaModel
 
     public MedicoEspecilidadeModel MedicoEspecialidade{get;set;}=null!;
 
-    public AgendamentoModel Agendamento {get;set;}=null!;
+    [Column("numero_pedido")]
+    public string NumeroPedido { get; set; } = string.Empty;
 
+    [Column("observacoes")]
+    public string? Observacoes { get; set; }
+
+    [Column("prazo_pagamento")]
+    public DateTime? PrazoPagamento { get; set; }
+
+    [Column("caminho_comprovativo")]
+    public string? CaminhoComprovativo { get; set; }
+
+    [Column("criado_em")]
+    public DateTime CriadoEm { get; set; }
 }

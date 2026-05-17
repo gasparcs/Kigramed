@@ -1,7 +1,7 @@
 using System;
 using Backend.K02.INFRA.Repository.EstadoConsulta;
-using Backend.K03.APPLICATION.AgendamentoUseCase.Comand;
-using Backend.K03.APPLICATION.AgendamentoUseCase.Queries;
+// using Backend.K03.APPLICATION.AgendamentoUseCase.Comand;
+// using Backend.K03.APPLICATION.AgendamentoUseCase.Queries;
 using Backend.K03.APPLICATION.ClienteUseCase.comand;
 using Backend.K03.APPLICATION.ClienteUseCase.DTO;
 using Backend.K03.APPLICATION.ClienteUseCase.Queries;
@@ -97,13 +97,13 @@ namespace Backend.K01.CONTROLLERS;
         PegarServicoPeloId pegarservicosidServices,
         PegarServicoPeloTexto pegarservicostextoServices,
 
-         ConfirmarPedido confirmarPedido,
-    CancelarPedido cancelarPedido,
-    ValidarPagamento validarPagamento,
-    RejeitarComprovativo rejeitarComprovativo,
-    ListarPedidos listarPedidos,
-    IAgendamentoRepository repository
-
+        CriarConsulta criarConsulta,
+        ConfirmarConsulta confirmarConsulta,
+        CancelarConsulta cancelarConsulta,
+        ValidarPagamentoConsulta validarPagamentoConsulta,
+        RejeitarComprovativoConsulta rejeitarComprovativoConsulta,
+        ListarConsultasPendentes listarConsultasPendentes,
+        Backend.K02.INFRA.Data.KigramedDbContext context
       )
       : ControllerBase
     {
@@ -527,11 +527,11 @@ namespace Backend.K01.CONTROLLERS;
             return Ok(resposta);
         }
 
-         /// Lista todos os pedidos
+    /// Lista todas as consultas pendentes
     [HttpGet("pedidos")]
     public async Task<IActionResult> ListarPedidos()
     {
-        var resposta = await listarPedidos.ExecuteAsync();
+        var resposta = await listarConsultasPendentes.ExecuteAsync();
         return Ok(new { mensagem = "sucesso", dados = resposta });
     }
 
@@ -539,7 +539,7 @@ namespace Backend.K01.CONTROLLERS;
     [HttpPut("{id}/confirmar")]
     public async Task<IActionResult> Confirmar(int id)
     {
-        var resposta = await confirmarPedido.ExecuteAsync(id);
+        var resposta = await confirmarConsulta.ExecuteAsync(id);
         return resposta switch
         {
             "sucesso"  => Ok(new { mensagem = "Horário confirmado. SMS enviado ao cliente com dados bancários. Prazo de pagamento: 30 minutos." }),
@@ -554,7 +554,7 @@ namespace Backend.K01.CONTROLLERS;
     [HttpPut("{id}/cancelar")]
     public async Task<IActionResult> Cancelar(int id)
     {
-        var resposta = await cancelarPedido.ExecuteAsync(id);
+        var resposta = await cancelarConsulta.ExecuteAsync(id);
         return resposta.Contains("sucesso")
             ? Ok(new { mensagem = "Pedido cancelado. SMS enviado ao cliente." })
             : StatusCode(404, new { mensagem = resposta });
@@ -564,13 +564,15 @@ namespace Backend.K01.CONTROLLERS;
     [HttpPut("{id}/validar")]
     public async Task<IActionResult> Validar(int id)
     {
-        var resposta = await validarPagamento.ExecuteAsync(id);
+        var resposta = await validarPagamentoConsulta.ExecuteAsync(id);
         if (resposta == "sucesso")
             return Ok(new { mensagem = "Pagamento validado. Consulta registada com sucesso. SMS de confirmação enviado ao cliente." });
         else if (resposta == "erro_sms")
             return Ok(new { mensagem = "Pagamento validado. Consulta registada com sucesso. Erro ao enviar SMS de confirmação." });
         else if (resposta == "nao_encontrado")
             return StatusCode(404, new { mensagem = "Pedido não encontrado." });
+        else if (resposta == "prazo_expirado")
+            return StatusCode(400, new { mensagem = "O prazo de pagamento expirou. O pedido foi cancelado." });
         else if (resposta.StartsWith("estado_invalido_validar:"))
             return StatusCode(409, new { mensagem = $"Não é possível validar pedido no estado atual: {resposta.Split(':', 2)[1]}." });
         else
@@ -581,23 +583,22 @@ namespace Backend.K01.CONTROLLERS;
     [HttpPut("{id}/rejeitar")]
     public async Task<IActionResult> Rejeitar(int id)
     {
-        var resposta = await rejeitarComprovativo.ExecuteAsync(id);
+        var resposta = await rejeitarComprovativoConsulta.ExecuteAsync(id);
         return resposta.Contains("sucesso")
             ? Ok(new { mensagem = "Comprovativo rejeitado. SMS enviado ao cliente a pedir novo comprovativo." })
             : StatusCode(404, new { mensagem = resposta });
     }
 
     /// Ver comprovativo (imagem ou PDF)
-    
     [AllowAnonymous]
     [HttpGet("{id}/comprovativo")]
     public async Task<IActionResult> VerComprovativo(int id)
     {
-        var pedido = await repository.BuscarPorIdAsync(id);
-        if (pedido is null || string.IsNullOrEmpty(pedido.CaminhoComprovativo))
+        var consulta = await context.Tabelatb15_consulta.FindAsync(id);
+        if (consulta is null || string.IsNullOrEmpty(consulta.CaminhoComprovativo))
             return StatusCode(404, new { mensagem = "Comprovativo não encontrado." });
 
-        var caminho = Path.Combine(Directory.GetCurrentDirectory(), pedido.CaminhoComprovativo);
+        var caminho = Path.Combine(Directory.GetCurrentDirectory(), consulta.CaminhoComprovativo);
         if (!System.IO.File.Exists(caminho))
             return StatusCode(404, new { mensagem = "Ficheiro não encontrado no servidor." });
 

@@ -19,7 +19,6 @@ using Backend.K04.DOMAIN.D17.PerfilPermissao;
 using Backend.K04.DOMAIN.D18.PagamentoConsulta;
 using Backend.K04.DOMAIN.D19.MedicoConsulta;
 using Backend.K04.DOMAIN.D20.SMS;
-using Backend.K04.DOMAIN.D21.Agendamento;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.K02.INFRA.Data;
@@ -46,7 +45,7 @@ public class KigramedDbContext(DbContextOptions<KigramedDbContext> options) : Db
     public DbSet<PagamentoConsultaModel> Tabelatb18_pagamento_consulta{get;set;}
     public DbSet<MedicoConsultaModel> Tabelatb19_medico_consulta{get;set;}
     public DbSet<SMSModel> Tabelatb20_sms{get;set;}
-    public DbSet<AgendamentoModel> Tabelatb21_agendamento {get;set;}
+
     
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -89,7 +88,7 @@ public class KigramedDbContext(DbContextOptions<KigramedDbContext> options) : Db
             entity.HasMany(e => e.MedicoEspecialidades).WithOne(me => me.Especialidade).HasForeignKey(fk => fk.Id_especialidade);
 
             entity.HasMany(e => e.Servicos).WithOne(s => s.Especialidade).HasForeignKey(fk => fk.Id_especialidade);
-            entity.HasMany(e => e.Agendamentos).WithOne(s => s.Especialidade).HasForeignKey(fk => fk.IdEspecialidade);
+
 
        });
 
@@ -104,7 +103,7 @@ public class KigramedDbContext(DbContextOptions<KigramedDbContext> options) : Db
        {
             entity.HasMany(s => s.Consultas).WithOne(c => c.Servico).HasForeignKey(fk => fk.Id_servico);
 
-            entity.HasMany(s => s.Agendamento).WithOne(c => c.Servico).HasForeignKey(fk => fk.Id_Servico);
+
        });
 
 
@@ -135,6 +134,15 @@ public class KigramedDbContext(DbContextOptions<KigramedDbContext> options) : Db
           modelBuilder.Entity<EstadoConsultaModel>( entity =>
         {
              entity.HasMany(ec => ec.Consultas).WithOne(c => c.EstadoConsulta).HasForeignKey(fk => fk.Id_estado_consulta);
+             
+             entity.HasData(
+                 new EstadoConsultaModel { Id = 1, Descricao = "Pendente" },
+                 new EstadoConsultaModel { Id = 2, Descricao = "Aguarda Pagamento" },
+                 new EstadoConsultaModel { Id = 3, Descricao = "Comprovativo Enviado" },
+                 new EstadoConsultaModel { Id = 4, Descricao = "Confirmada" },
+                 new EstadoConsultaModel { Id = 5, Descricao = "Cancelada" },
+                 new EstadoConsultaModel { Id = 6, Descricao = "Finalizada" }
+             );
         });
 
           modelBuilder.Entity<PagamentoModel>( entity =>
@@ -157,9 +165,6 @@ public class KigramedDbContext(DbContextOptions<KigramedDbContext> options) : Db
                  entity.HasOne(mc => mc.Consulta).WithOne(c => c.MedicoConsulta).HasForeignKey<MedicoConsultaModel>(fk => fk.Id_consulta);
         });
 
-        modelBuilder.Entity<AgendamentoModel>( entity =>
-        {
-                 entity.HasOne(mc => mc.Consulta).WithOne(c => c.Agendamento).HasForeignKey<AgendamentoModel>(fk => fk.IdConsulta);
-        });
+
     }
 }

@@ -32,4 +32,7 @@ public class PagamentoModel
 
     public ICollection<PagamentoConsultaModel> PagamentoConsultas { get; set; } = [];
     
-    }
+    [Column("caminho_comprovativo")]
+    public string? CaminhoComprovativo { get; set; }
+
+}

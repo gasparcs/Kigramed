@@ -428,8 +428,9 @@
           <!-- Step bar -->
           <div class="steps-bar">
             <div class="step-tab active" id="st1">1. Os seus dados</div>
-            <div class="step-tab" id="st2">2. Consulta</div>
-            <div class="step-tab" id="st3">3. Comprovativo</div>
+            <div class="step-tab" id="st2">2. Paciente</div>
+            <div class="step-tab" id="st3">3. Consulta</div>
+            <div class="step-tab" id="st4">4. Pedido</div>
           </div>
 
           <!-- STEP 1: Dados do cliente -->
@@ -437,21 +438,38 @@
             <div id="s1-alert"></div>
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label">Nome Completo *</label>
-                <input type="text" class="form-input" id="f-nome" placeholder="Ex: Maria da Silva" maxlength="100">
+                <label class="form-label">NIF do Cliente *</label>
+                <input type="text" class="form-input" id="f-nif" placeholder="Ex: 123456789" maxlength="15">
               </div>
               <div class="form-group">
-                <label class="form-label">Número de Telefone *</label>
-                <input type="tel" class="form-input" id="f-tel" placeholder="Ex: 944000001" maxlength="20">
-                <div class="form-hint">Receberá notificações neste número (SMS)</div>
+                <label class="form-label">Nome do Paciente *</label>
+                <input type="text" class="form-input" id="f-nome" placeholder="Ex: Maria da Silva" maxlength="100">
               </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Data de Nascimento *</label>
+                <input type="date" class="form-input" id="f-nascimento">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Sexo *</label>
+                <select class="form-input" id="f-genero">
+                  <option value="">Seleccione o género</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Relação com o paciente *</label>
+              <select class="form-input" id="f-relacao">
+                <option value="">Seleccione</option>
+              </select>
             </div>
             <div style="display:flex;justify-content:flex-end;margin-top:.5rem">
               <button class="btn btn-primary" onclick="irStep2()">Continuar →</button>
             </div>
           </div>
 
-          <!-- STEP 2: Dados da consulta — carregados da API -->
+          <!-- STEP 2: Dados do paciente -->
           <div class="agend-body" id="s2" style="display:none">
             <div id="s2-alert"></div>
             <div class="form-group">
@@ -478,15 +496,38 @@
             </div>
             <div style="display:flex;gap:.65rem;justify-content:space-between;margin-top:.5rem;flex-wrap:wrap">
               <button class="btn btn-ghost" onclick="voltarStep1()">← Voltar</button>
-              <button class="btn btn-primary" id="btn-s2" onclick="submeterPedido()">Submeter Pedido</button>
+              <button class="btn btn-primary" onclick="irStep3()">Continuar →</button>
             </div>
-            <div class="loading-overlay" id="loading-s2">
+          </div>
+
+          <!-- STEP 3: Revisão do pedido -->
+          <div class="agend-body" id="s3" style="display:none">
+            <div id="s3-alert"></div>
+            <div class="pedido-box" style="margin-bottom:1rem">
+              <div class="pedido-label">Resumo do Pedido</div>
+              <div class="pedido-content" id="pedido-resumo">
+                <p><strong>Cliente NIF:</strong> <span id="res-nif">—</span></p>
+                <p><strong>Paciente:</strong> <span id="res-nome">—</span></p>
+                <p><strong>Data de Nascimento:</strong> <span id="res-nasc">—</span></p>
+                <p><strong>Género:</strong> <span id="res-genero">—</span></p>
+                <p><strong>Relação:</strong> <span id="res-relacao">—</span></p>
+                <p><strong>Especialidade:</strong> <span id="res-esp">—</span></p>
+                <p><strong>Serviço:</strong> <span id="res-srv">—</span></p>
+                <p><strong>Horário:</strong> <span id="res-data">—</span></p>
+                <p><strong>Observações:</strong> <span id="res-obs">—</span></p>
+              </div>
+            </div>
+            <div style="display:flex;gap:.65rem;justify-content:space-between;margin-top:.5rem;flex-wrap:wrap">
+              <button class="btn btn-ghost" onclick="voltarStep2()">← Voltar</button>
+              <button class="btn btn-primary" id="btn-s3" onclick="submeterPedido()">Enviar Pedido</button>
+            </div>
+            <div class="loading-overlay" id="loading-s3">
               <div class="spinner"></div> A enviar pedido...
             </div>
           </div>
 
-          <!-- STEP 3: Pedido criado → enviar comprovativo -->
-          <div class="agend-body" id="s3" style="display:none">
+          <!-- STEP 4: Pedido criado -->
+          <div class="agend-body" id="s4" style="display:none">
             <div class="alert alert-success" style="margin-bottom:1.25rem">
               ✅ Pedido criado com sucesso! Aguarde confirmação via SMS.
             </div>
@@ -494,9 +535,6 @@
               <div class="pedido-label">Número do seu pedido</div>
               <div class="pedido-num" id="pedido-num-display">—</div>
               <div style="font-size:.75rem;color:var(--muted);margin-top:.35rem">Guarde este número — precisará dele para acompanhar o estado.</div>
-            </div>
-            <div class="alert alert-warn">
-              ⏳ Após a secretaria confirmar o horário, receberá um SMS com os dados bancários. Acompanhe o estado do pedido no separador "Consultar Estado".
             </div>
             <button class="btn btn-primary" onclick="irParaConsulta()">
               🔍 Consultar Estado do Pedido

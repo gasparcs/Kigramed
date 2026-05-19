@@ -37,18 +37,116 @@ function switchTab(t) {
 
 /* ─── ESTADO VISÍVEL DOS STEPS ─── */
 function setStep(n) {
-  ['s1', 's2', 's3'].forEach((id, i) => document.getElementById(id).style.display = i + 1 === n ? 'block' : 'none');
-  ['st1', 'st2', 'st3'].forEach((id, i) => {
+  ['s1', 's2', 's3', 's4'].forEach((id, i) => document.getElementById(id).style.display = i + 1 === n ? 'block' : 'none');
+  ['st1', 'st2', 'st3', 'st4'].forEach((id, i) => {
     const el = document.getElementById(id);
     el.classList.remove('active', 'done');
     if (i + 1 === n) el.classList.add('active');
     else if (i + 1 < n) el.classList.add('done');
   });
 }
-
-/* ─── CARREGAR ESPECIALIDADES DA API ─── */
 let especialidades = [];
 let servicos = [];
+let generos = [];
+let relacoes = [];
+
+async function initAgendamento() {
+  setStep(1);
+  document.getElementById('s1-alert').innerHTML = '';
+  document.getElementById('s2-alert').innerHTML = '';
+  document.getElementById('s3-alert').innerHTML = '';
+  document.getElementById('s4').style.display = 'none';
+  await Promise.all([carregarEspecialidades(), carregarGeneros(), carregarRelacoes()]);
+  const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  document.getElementById('f-data').min = now.toISOString().slice(0, 16);
+}
+
+async function carregarGeneros() {
+  const sel = document.getElementById('f-genero');
+  try {
+    const r = await fetch(`${API}/Cliente/genero`, { signal: AbortSignal.timeout(4000) });
+    if (!r.ok) throw new Error('status ' + r.status);
+    generos = await r.json();
+    sel.innerHTML = '<option value="">Seleccione o género</option>' + generos.map(g => `<option value="${g.id}">${g.nome || g.Descricao || g.nomeGenero || g.Nome}</option>`).join('');
+  } catch {
+    generos = [
+      { id: 1, nome: 'Masculino' },
+      { id: 2, nome: 'Feminino' },
+      { id: 3, nome: 'Outro' }
+    ];
+    sel.innerHTML = '<option value="">Seleccione o género</option>' + generos.map(g => `<option value="${g.id}">${g.nome}</option>`).join('');
+  }
+}
+
+async function carregarRelacoes() {
+  const sel = document.getElementById('f-relacao');
+  try {
+    const r = await fetch(`${API}/Cliente/cliente-paciente`, { signal: AbortSignal.timeout(4000) });
+    if (!r.ok) throw new Error('status ' + r.status);
+    relacoes = await r.json();
+    sel.innerHTML = '<option value="">Seleccione</option>' + relacoes.map(r => `<option value="${r.id}">${r.descricao || r.Descricao || r.nome || r.Nome}</option>`).join('');
+  } catch {
+    relacoes = [
+      { id: 1, descricao: 'Paciente próprio' },
+      { id: 2, descricao: 'Cônjuge' },
+      { id: 3, descricao: 'Filho(a)' },
+      { id: 4, descricao: 'Outro familiar' }
+    ];
+    sel.innerHTML = '<option value="">Seleccione</option>' + relacoes.map(r => `<option value="${r.id}">${r.descricao}</option>`).join('');
+  }
+}
+
+function irStep2() {
+  const nif = document.getElementById('f-nif').value.trim();
+  const nome = document.getElementById('f-nome').value.trim();
+  const nasc = document.getElementById('f-nascimento').value;
+  const genero = document.getElementById('f-genero').value;
+  const relacao = document.getElementById('f-relacao').value;
+  const alerta = document.getElementById('s1-alert');
+  if (!nif || !nome || !nasc || !genero || !relacao) {
+    alerta.innerHTML = '<div class="alert alert-danger">⚠️ Por favor, preencha todos os dados do cliente e do paciente.</div>';
+    return;
+  }
+  alerta.innerHTML = '';
+  setStep(2);
+}
+
+function irStep3() {
+  const esp = document.getElementById('f-esp').value;
+  const srv = document.getElementById('f-srv').value;
+  const dataVal = document.getElementById('f-data').value;
+  const alerta = document.getElementById('s2-alert');
+  if (!esp || !srv || !dataVal) {
+    alerta.innerHTML = '<div class="alert alert-danger">⚠️ Selecione especialidade, serviço e horário pretendidos.</div>';
+    return;
+  }
+  alerta.innerHTML = '';
+  renderResumo();
+  setStep(3);
+}
+
+function voltarStep2() { setStep(2) }
+
+function renderResumo() {
+  const nif = document.getElementById('f-nif').value.trim();
+  const nome = document.getElementById('f-nome').value.trim();
+  const nasc = document.getElementById('f-nascimento').value;
+  const esp = document.getElementById('f-esp').selectedOptions[0]?.textContent || '—';
+  const srv = document.getElementById('f-srv').selectedOptions[0]?.textContent || '—';
+  const dataVal = document.getElementById('f-data').value;
+  const obs = document.getElementById('f-obs').value.trim() || 'Nenhuma observação';
+  document.getElementById('res-nif').textContent = nif;
+  document.getElementById('res-nome').textContent = nome;
+  document.getElementById('res-nasc').textContent = new Date(nasc).toLocaleDateString('pt-PT');
+  document.getElementById('res-genero').textContent = document.getElementById('f-genero').selectedOptions[0]?.textContent || '—';
+  document.getElementById('res-relacao').textContent = document.getElementById('f-relacao').selectedOptions[0]?.textContent || '—';
+  document.getElementById('res-esp').textContent = esp;
+  document.getElementById('res-srv').textContent = srv;
+  document.getElementById('res-data').textContent = new Date(dataVal).toLocaleDateString('pt-PT', { dateStyle: 'short', timeStyle: 'short' });
+  document.getElementById('res-obs').textContent = obs;
+}
+
+/* ─── CARREGAR ESPECIALIDADES DA API ─── */
 async function carregarEspecialidades() {
   const sel = document.getElementById('f-esp');
   try {
@@ -127,21 +225,27 @@ function voltarStep1() { setStep(1) }
 
 /* ─── SUBMETER PEDIDO → POST /api/Cliente/pedido ─── */
 async function submeterPedido() {
-  const nome = document.getElementById('f-nome').value.trim();
-  const tel = document.getElementById('f-tel').value.trim();
+  const nifCliente = document.getElementById('f-nif').value.trim();
+  const nomePaciente = document.getElementById('f-nome').value.trim();
+  const dataNascimentoPaciente = document.getElementById('f-nascimento').value;
+  const idGeneroPaciente = parseInt(document.getElementById('f-genero').value);
+  const idClientePaciente = parseInt(document.getElementById('f-relacao').value);
   const idEsp = parseInt(document.getElementById('f-esp').value);
   const idSrv = parseInt(document.getElementById('f-srv').value);
   const dataVal = document.getElementById('f-data').value;
   const obs = document.getElementById('f-obs').value.trim();
-  const alerta = document.getElementById('s2-alert');
+  const alerta = document.getElementById('s3-alert');
 
-  if (!idEsp || !idSrv || !dataVal) {
-    alerta.innerHTML = '<div class="alert alert-danger">⚠️ Preencha a especialidade, o serviço e a data pretendida.</div>'; return;
+  if (!nifCliente || !nomePaciente || !dataNascimentoPaciente || !idGeneroPaciente || !idClientePaciente || !idEsp || !idSrv || !dataVal) {
+    alerta.innerHTML = '<div class="alert alert-danger">⚠️ Preencha todos os dados necessários antes de enviar o pedido.</div>'; return;
   }
 
   const payload = {
-    nomeCliente: nome,
-    telefone: tel,
+    nifCliente,
+    nomePaciente,
+    dataNascimentoPaciente,
+    idGeneroPaciente,
+    idClientePaciente,
     idEspecialidade: idEsp,
     idServico: idSrv,
     horarioPreferencial: new Date(dataVal).toISOString(),
@@ -149,8 +253,8 @@ async function submeterPedido() {
   };
 
   alerta.innerHTML = '';
-  document.getElementById('btn-s2').disabled = true;
-  document.getElementById('loading-s2').classList.add('show');
+  document.getElementById('btn-s3').disabled = true;
+  document.getElementById('loading-s3').classList.add('show');
 
   try {
     const r = await fetch(`${API}/Cliente/pedido`, {
@@ -162,22 +266,21 @@ async function submeterPedido() {
     if (r.status === 201) {
       const numPedido = data.numeroPedido || 'PED-????-????';
       document.getElementById('pedido-num-display').textContent = numPedido;
-      setStep(3);
+      setStep(4);
       document.getElementById('estado-num').value = numPedido;
       toast('✅', 'Pedido criado! Número: ' + numPedido);
     } else {
       alerta.innerHTML = `<div class="alert alert-danger">❌ ${data.mensagem || JSON.stringify(data)}</div>`;
     }
   } catch (err) {
-    // Demo offline: simular sucesso
     const fake = 'PED-2026-' + Math.floor(1000 + Math.random() * 9000);
     document.getElementById('pedido-num-display').textContent = fake;
-    setStep(3);
+    setStep(4);
     document.getElementById('estado-num').value = fake;
     toast('✅', 'Pedido criado (demo): ' + fake);
   } finally {
-    document.getElementById('btn-s2').disabled = false;
-    document.getElementById('loading-s2').classList.remove('show');
+    document.getElementById('btn-s3').disabled = false;
+    document.getElementById('loading-s3').classList.remove('show');
   }
 }
 

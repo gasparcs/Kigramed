@@ -22,22 +22,60 @@ namespace Backend.K01.CONTROLLERS
 
         /// Cliente cria pedido de agendamento
         [AllowAnonymous]
-        [HttpPost("agendamento")]
-        public async Task<IActionResult> CriarPedidoConsulta([FromBody] CriarConsultaDTO dto)
+        [HttpPost("pedido")]
+        public async Task<IActionResult> CriarPedido([FromBody] CriarConsultaDTO dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var resposta = await criarConsulta.ExecuteAsync(
-                dto.IdPaciente, 
-                dto.IdEspecialidade, 
-                dto.IdServico, 
-                dto.HorarioPreferencial, 
-                dto.Observacoes);
+            var resposta = await criarConsulta.ExecuteAsync(dto);
 
             return resposta.mensagem.Contains("sucesso")
                 ? StatusCode(201, new { numeroPedido = resposta.numeroPedido, mensagem = resposta.mensagem })
                 : StatusCode(400, new { mensagem = resposta.mensagem });
+        }
+
+        [AllowAnonymous]
+        [HttpGet("pedido/{numeroPedido}/estado")]
+        public async Task<IActionResult> ConsultarEstado(string numeroPedido)
+        {
+            var consulta = await context.Tabelatb15_consulta
+                .Include(c => c.EstadoConsulta)
+                .Include(c => c.Servico).ThenInclude(s => s.Especialidade)
+                .FirstOrDefaultAsync(c => c.NumeroPedido == numeroPedido);
+
+            if (consulta is null)
+                return NotFound(new { mensagem = "Pedido não encontrado." });
+
+            return Ok(new {
+                numeroPedido = consulta.NumeroPedido,
+                estado = consulta.EstadoConsulta.Descricao,
+                horario = consulta.Data_consulta,
+                especialidade = consulta.Servico?.Especialidade?.Nome ?? "—",
+                servico = consulta.Servico?.Nome ?? "—",
+                prazoPagamento = consulta.PrazoPagamento,
+                observacoes = consulta.Observacoes
+            });
+        }
+
+        [AllowAnonymous]
+        [HttpGet("cliente-paciente")]
+        public async Task<IActionResult> ListarClientePaciente()
+        {
+            var items = await context.Tabelatb11_cliente_paciente
+                .Select(cp => new { id = cp.Id, descricao = cp.Descricao })
+                .ToListAsync();
+            return Ok(items);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("genero")]
+        public async Task<IActionResult> ListarGeneros()
+        {
+            var items = await context.Tabelatb10_genero
+                .Select(g => new { id = g.Id, nome = g.Nome })
+                .ToListAsync();
+            return Ok(items);
         }
 
         /// Cliente envia comprovativo de pagamento

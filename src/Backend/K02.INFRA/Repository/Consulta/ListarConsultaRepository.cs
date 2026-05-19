@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Backend.K02.INFRA.Data;
 using Backend.K04.DOMAIN.D15.Consulta;
 using Backend.K04.DOMAIN.Interfaces;
@@ -12,23 +13,20 @@ public class ListarConsultaRepository(KigramedDbContext context) : IlistagemRepo
     {
         try
         {
-        var consultas = await context.Tabelatb15_consulta
-        .Include(me => me.MedicoEspecialidade).ThenInclude(me => me.Funcionario)
-        .Include(me => me.MedicoEspecialidade).ThenInclude(me => me.Especialidade)
-        .Include(s => s.Servico)
-        .Include(p => p.Paciente).ThenInclude(c => c.Cliente)
-        .Include(e => e.EstadoConsulta)
-        .OrderByDescending(c => c.Id)
-        .ToListAsync();
-        return consultas;
+            var consultas = await context.Tabelatb15_consulta
+                .Include(me => me.MedicoEspecialidade).ThenInclude(me => me.Funcionario)
+                .Include(me => me.MedicoEspecialidade).ThenInclude(me => me.Especialidade)
+                .Include(s => s.Servico)
+                .Include(p => p.Paciente!).ThenInclude(c => c.Cliente)
+                .Include(e => e.EstadoConsulta)
+                .OrderByDescending(c => c.Id)
+                .ToListAsync();
+
+            return consultas;
         }
         catch
         {
-            return [];
+            return Enumerable.Empty<ConsultaModel>();
         }
-        
-    
-        
-       
     }
 }

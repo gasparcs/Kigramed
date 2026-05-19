@@ -37,7 +37,18 @@
         </div>
         <div class="section" id="sec-consultas">
           <div class="page-header"><div><div class="page-title">Consultas</div><div class="page-sub">Gestão de todas as consultas</div></div><button class="btn btn-primary" onclick="openModal('modalConsulta')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nova Consulta</button></div>
-          <div class="card"><div class="search-bar"><div class="search-wrap"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Pesquisar..." oninput="filterTable(this,'tblConsultas')"/></div></div><div class="table-wrap"><table id="tblConsultas"><thead><tr><th>#</th><th>Paciente</th><th>Médico</th><th>Serviço</th><th>Data</th><th>Estado</th><th>Ações</th></tr></thead><tbody id="bodyConsultas"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">A carregar...</td></tr></tbody></table></div></div>
+          <div class="card"><div class="search-bar"><div class="search-wrap"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Pesquisar..." oninput="filterTable(this,'tblConsultas')"/></div></div>
+            <div class="filter-row" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px;">
+              <span style="font-weight:600;color:var(--muted);">Filtrar por estado:</span>
+              <button class="btn btn-sm btn-outline" onclick="filtrarConsultasPorEstado(null)">Todos</button>
+              <button class="btn btn-sm btn-outline" onclick="filtrarConsultasPorEstado('Pendente')">Pendente</button>
+              <button class="btn btn-sm btn-outline" onclick="filtrarConsultasPorEstado('Aguarda Pagamento')">Aguarda Pagamento</button>
+              <button class="btn btn-sm btn-outline" onclick="filtrarConsultasPorEstado('Comprovativo Enviado')">Comprovativo Enviado</button>
+              <button class="btn btn-sm btn-outline" onclick="filtrarConsultasPorEstado('Rejeitado')">Rejeitado</button>
+              <button class="btn btn-sm btn-outline" onclick="filtrarConsultasPorEstado('Confirmada')">Confirmada</button>
+              <button class="btn btn-sm btn-outline" onclick="filtrarConsultasPorEstado('Cancelada')">Cancelada</button>
+            </div>
+          <div class="table-wrap"><table id="tblConsultas"><thead><tr><th>#</th><th>Paciente</th><th>Médico</th><th>Serviço</th><th>Data</th><th>Estado</th><th>Ações</th></tr></thead><tbody id="bodyConsultas"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">A carregar...</td></tr></tbody></table></div></div>
         </div>
         <div class="section" id="sec-pacientes">
           <div class="page-header"><div><div class="page-title">Pacientes</div><div class="page-sub">Registo de pacientes</div></div><button class="btn btn-primary" onclick="openModal('modalPaciente')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo Paciente</button></div>
@@ -73,7 +84,7 @@
         </div>
         <div class="section" id="sec-pedidos">
           <div class="page-header"><div><div class="page-title">Pedidos</div><div class="page-sub">Pedido de marcação e comprovativos</div></div></div>
-          <div class="card"><div class="table-wrap"><table id="tblPedidos"><thead><tr><th>#</th><th>Cliente</th><th>Serviço</th><th>Horario</th><th>Estado</th><th>Ações</th></tr></thead><tbody id="bodyPedidos"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">A carregar...</td></tr></tbody></table></div></div>
+          <div class="card"><div class="table-wrap"><table id="tblPedidos"><thead><tr><th>Nº Pedido</th><th>Paciente</th><th>Especialidade</th><th>Serviço</th><th>Data Consulta</th><th>Prazo Pagamento</th><th>Estado</th><th>Ações</th></tr></thead><tbody id="bodyPedidos"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">A carregar...</td></tr></tbody></table></div></div>
         </div>
       </div>
     </main>

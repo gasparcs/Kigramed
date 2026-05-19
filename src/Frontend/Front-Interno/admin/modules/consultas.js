@@ -2,12 +2,15 @@
 // CONSULTAS
 // ─────────────────────────────────────────────────────────────────────────────
 
+let estadoFiltroActivo = null;
+
 async function loadConsultas() {
   const body = document.getElementById('bodyConsultas');
   const dashBody = document.getElementById('dashConsultas');
   if (!body && !dashBody) return;
   try {
-    const items = await fetchJson('/Admin/consulta');
+    const url = estadoFiltroActivo ? `/Admin/consulta?estado=${encodeURIComponent(estadoFiltroActivo)}` : '/Admin/consulta';
+    const items = await fetchJson(url);
     const list = items || [];
 
     adminState.consultas.clear();
@@ -57,6 +60,11 @@ async function loadConsultas() {
     if (body) body.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--danger);padding:24px">Erro ao carregar consultas.</td></tr>';
     if (dashBody) dashBody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--danger);padding:24px">Erro ao carregar consultas.</td></tr>';
   }
+}
+
+function filtrarConsultasPorEstado(estado) {
+  estadoFiltroActivo = estado;
+  loadConsultas();
 }
 
 async function submitConsulta(event) {

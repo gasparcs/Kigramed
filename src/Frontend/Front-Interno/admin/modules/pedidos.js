@@ -10,11 +10,11 @@ async function loadPedidos() {
     const items = res?.dados || [];
     body.innerHTML = items.length
       ? items.map((item) => {
-          const id = item.id || item.Id || '—';
-          const cliente = item.nomeCliente || item.NomeCliente || item.clienteNome || item.ClienteNome || '—';
-          const servico = item.servico || item.Servico || item.servicoNome || item.ServicoNome || '—';
+          const id = item.id || item.Id || item.consultaId || item.ConsultaId || '—';
+          const cliente = item.nomeCliente || item.NomeCliente || item.clienteNome || item.ClienteNome || item.PacienteNome || item.pacienteNome || '—';
+          const servico = item.servico || item.Servico || item.servicoNome || item.ServicoNome || item.Servico?.Nome || item.servico?.Nome || '—';
           const horario = item.horarioPreferencial || item.HorarioPreferencial || item.data_consulta || item.Data_consulta || item.DataConsulta;
-          const estado = normalizePedidoEstado(item.estado || item.Estado || '—');
+          const estado = normalizePedidoEstado(item.estado || item.Estado || item.estadoDescricao || item.EstadoDescricao || '—');
           const actions = renderPedidoActions(id, estado);
           return `<tr>
             <td>${id}</td>

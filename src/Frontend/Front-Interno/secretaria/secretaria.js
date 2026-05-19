@@ -147,11 +147,23 @@ async function loadEstados() {
   } catch { }
 }
 
+let estadoFiltroActivo = null;
+
+async function filtrarConsultasPorEstado(estado, btn) {
+  estadoFiltroActivo = estado;
+  document.querySelectorAll('.estado-filter').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  await loadConsultas();
+}
+
 async function loadConsultas() {
   const body = document.getElementById('bodyConsultas');
   if (!body) return;
   try {
-    const items = await fetchJson('/Secretaria/consulta');
+    const url = estadoFiltroActivo
+      ? `/Secretaria/consulta?estado=${encodeURIComponent(estadoFiltroActivo)}`
+      : '/Secretaria/consulta';
+    const items = await fetchJson(url);
     const list = items || [];
 
     secretariaState.consultas.clear();
@@ -336,23 +348,32 @@ async function loadPedidos() {
   try {
     const res = await fetchJson('/Secretaria/pedidos');
     const items = res?.dados || [];
-    body.innerHTML = items.length ? items.map((item) => {
-      const id = item.id || item.Id || '—';
-      const cliente = item.nomeCliente || item.NomeCliente || item.clienteNome || item.ClienteNome || '—';
-      const servico = item.servico || item.Servico || item.servicoNome || item.ServicoNome || '—';
-      const horario = item.horarioPreferencial || item.HorarioPreferencial || item.data_consulta || item.DataConsulta;
-      const estado = normalizePedidoEstado(item.estado || item.Estado || '—');
-      const actions = renderPedidoActions(id, estado);
-      return `<tr>
-        <td>${id}</td>
-        <td>${cliente}</td>
-        <td>${servico}</td>
-        <td>${formatDate(horario)}</td>
-        <td>${badgeEstadoConsulta(estado)}</td>
-        <td style="display:flex;gap:6px;flex-wrap:wrap;">${actions || '—'}</td>
-      </tr>`;
-    }).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">Nenhum pedido encontrado.</td></tr>';
-  } catch { }
+    body.innerHTML = items.length
+      ? items.map((item) => {
+          const id            = item.id ?? '—';
+          const numeroPedido  = item.numeroPedido || '—';
+          const paciente      = item.nomePaciente || '—';
+          const especialidade = item.especialidade || '—';
+          const servico       = item.servico || '—';
+          const horario       = item.dataConsulta;
+          const prazo         = item.prazoPagamento;
+          const estado        = item.estado || '—';
+          const actions       = renderPedidoActions(id, estado, item.caminhoComprovativo);
+          return `<tr>
+            <td>${numeroPedido}</td>
+            <td>${paciente}</td>
+            <td>${especialidade}</td>
+            <td>${servico}</td>
+            <td>${formatDate(horario)}</td>
+            <td>${prazo ? formatDate(prazo) : '—'}</td>
+            <td>${badgeEstadoPedido(estado)}</td>
+            <td style="display:flex;gap:6px;flex-wrap:wrap;">${actions || '<span style="color:var(--muted)">—</span>'}</td>
+          </tr>`;
+        }).join('')
+      : '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px">Nenhum pedido encontrado.</td></tr>';
+  } catch {
+    body.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--danger);padding:24px">Erro ao carregar pedidos.</td></tr>';
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -614,28 +635,44 @@ async function handlePedidoAction(id, action) {
   } catch (e) { showToast(getErrorMessage(e), 'error'); }
 }
 
-function normalizePedidoEstado(rawEstado) {
-  const estado = String(rawEstado || '').trim().toLowerCase();
-  if (estado === 'pendente') return 'Pendente';
-  if (estado === 'comprovativo enviado' || estado === 'pagamento enviado') return 'Pagamento Enviado';
-  if (estado === 'confirmado' || estado === 'validado') return 'Validado';
-  if (estado === 'cancelado') return 'Cancelado';
-  if (estado === 'rejeitado') return 'Rejeitado';
-  return rawEstado || '—';
+function badgeEstadoPedido(estado) {
+  const norm = String(estado || '').trim().toLowerCase();
+  const map = {
+    'pendente':              'badge-amber',
+    'aguarda pagamento':     'badge-blue',
+    'comprovativo enviado':  'badge-blue',
+    'rejeitado':             'badge-red',
+    'confirmada':            'badge-green',
+    'cancelada':             'badge-red',
+  };
+  return `<span class="badge ${map[norm] || 'badge-gray'}">${estado}</span>`;
 }
 
-function renderPedidoActions(id, estadoNormalizado) {
-  if (estadoNormalizado === 'Pendente') {
-    return `<button class="btn btn-sm btn-success" onclick="handlePedidoAction(${id}, 'confirmar')">Confirmar</button>
-            <button class="btn btn-sm btn-outline" onclick="handlePedidoAction(${id}, 'cancelar')">Cancelar</button>`;
+function renderPedidoActions(id, estado, caminhoComprovativo) {
+  const norm = String(estado || '').trim().toLowerCase();
+  if (norm === 'pendente') {
+    return `
+      <button class="btn btn-sm btn-success" onclick="handlePedidoAction(${id}, 'confirmar')">Confirmar</button>
+      <button class="btn btn-sm btn-outline" onclick="handlePedidoAction(${id}, 'cancelar')">Cancelar</button>`;
   }
-  if (estadoNormalizado === 'Pagamento Enviado') {
-    return `<button class="btn btn-sm btn-primary" onclick="handlePedidoAction(${id}, 'validar')">Validar</button>
-            <button class="btn btn-sm btn-danger" onclick="handlePedidoAction(${id}, 'rejeitar')">Rejeitar</button>
-            <button class="btn btn-sm btn-outline" onclick="openComprovativo(${id})">Comprovativo</button>`;
+  if (norm === 'aguarda pagamento') {
+    return `
+      <button class="btn btn-sm btn-outline" onclick="handlePedidoAction(${id}, 'cancelar')">Cancelar</button>`;
   }
-  if (estadoNormalizado === 'Validado') {
-    return `<button class="btn btn-sm btn-outline" onclick="openComprovativo(${id})">Comprovativo</button>`;
+  if (norm === 'comprovativo enviado') {
+    return `
+      <button class="btn btn-sm btn-primary" onclick="handlePedidoAction(${id}, 'validar')">Validar</button>
+      <button class="btn btn-sm btn-danger"  onclick="handlePedidoAction(${id}, 'rejeitar')">Rejeitar</button>
+      <button class="btn btn-sm btn-outline" onclick="openComprovativo(${id})">Ver Comprovativo</button>`;
+  }
+  if (norm === 'rejeitado') {
+    return `
+      <button class="btn btn-sm btn-outline" onclick="handlePedidoAction(${id}, 'cancelar')">Cancelar</button>`;
+  }
+  if (norm === 'confirmada' || norm === 'cancelada') {
+    return caminhoComprovativo
+      ? `<button class="btn btn-sm btn-outline" onclick="openComprovativo(${id})">Ver Comprovativo</button>`
+      : '';
   }
   return '';
 }
@@ -675,7 +712,7 @@ function openComprovativoFromPath(path) {
 }
 
 function openComprovativo(id) {
-  window.open(`http://localhost:5290/api/Secretaria/${id}/comprovativo`, '_blank');
+  window.open(`http://localhost:5290/api/Admin/${id}/comprovativo`, '_blank');
 }
 
 window.addEventListener('load', initSecretaria);

@@ -97,7 +97,6 @@ namespace Backend.K01.CONTROLLERS;
         PegarServicoPeloId pegarservicosidServices,
         PegarServicoPeloTexto pegarservicostextoServices,
 
-        CriarConsulta criarConsulta,
         ConfirmarConsulta confirmarConsulta,
         CancelarConsulta cancelarConsulta,
         ValidarPagamentoConsulta validarPagamentoConsulta,
@@ -180,9 +179,9 @@ namespace Backend.K01.CONTROLLERS;
         }
 
         [HttpGet("consulta")]
-        public async Task<IActionResult> ListarConsultas()
+        public async Task<IActionResult> ListarConsultas([FromQuery] string? estado = null)
         {
-            var resposta = await listarconsultaServices.ExecuteAsync();
+            var resposta = await listarconsultaServices.ExecuteAsync(estado);
             return Ok(resposta);
         }
 

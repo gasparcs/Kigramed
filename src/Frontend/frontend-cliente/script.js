@@ -44,6 +44,32 @@ function scrollTo(id) {
 let preEsp = '';
 function agendarEsp(esp) { preEsp = esp; go('agendamento'); }
 
+function getPhoneDigits(value) {
+  return String(value || '').replace(/\D/g, '');
+}
+
+function formatPhoneForDisplay(value) {
+  const digits = getPhoneDigits(value);
+  if (!digits) return '';
+  if (digits.startsWith('351') && digits.length >= 12) {
+    const rest = digits.slice(3);
+    return `+351 ${rest.slice(0, 3)} ${rest.slice(3, 6)} ${rest.slice(6, 9)}`.trim();
+  }
+  if (digits.length === 9) {
+    return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 9)}`;
+  }
+  return value;
+}
+
+function validatePhoneNumber(value) {
+  const digits = getPhoneDigits(value);
+  return digits.length === 9 || (digits.length === 12 && digits.startsWith('351'));
+}
+
+function handlePhoneMask(input) {
+  input.value = formatPhoneForDisplay(input.value);
+}
+
 /* ─── TABS ─── */
 function switchTab(t) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -173,14 +199,19 @@ async function carregarServicos() {
 
 /* ─── STEP 1 → STEP 2 ─── */
 function irStep2() {
-  const nif     = document.getElementById('f-nif').value.trim();
-  const nome    = document.getElementById('f-nome').value.trim();
-  const nasc    = document.getElementById('f-nascimento').value;
-  const genero  = document.getElementById('f-genero').value;
-  const relacao = document.getElementById('f-relacao').value;
-  const alerta  = document.getElementById('s1-alert');
-  if (!nif || !nome || !nasc || !genero || !relacao) {
+  const nif      = document.getElementById('f-nif').value.trim();
+  const nome     = document.getElementById('f-nome').value.trim();
+  const telefone = document.getElementById('f-telefone').value.trim();
+  const nasc     = document.getElementById('f-nascimento').value;
+  const genero   = document.getElementById('f-genero').value;
+  const relacao  = document.getElementById('f-relacao').value;
+  const alerta   = document.getElementById('s1-alert');
+  if (!nif || !nome || !telefone || !nasc || !genero || !relacao) {
     alerta.innerHTML = '<div class="alert alert-danger">⚠️ Por favor, preencha todos os dados do cliente e do paciente.</div>';
+    return;
+  }
+  if (!validatePhoneNumber(telefone)) {
+    alerta.innerHTML = '<div class="alert alert-danger">⚠️ Introduza um telefone/WhatsApp válido.</div>';
     return;
   }
   alerta.innerHTML = '';
@@ -213,6 +244,7 @@ function renderResumo() {
   document.getElementById('res-nasc').textContent    = new Date(document.getElementById('f-nascimento').value).toLocaleDateString('pt-PT');
   document.getElementById('res-genero').textContent  = document.getElementById('f-genero').selectedOptions[0]?.textContent || '—';
   document.getElementById('res-relacao').textContent = document.getElementById('f-relacao').selectedOptions[0]?.textContent || '—';
+  document.getElementById('res-tel').textContent     = document.getElementById('f-telefone').value.trim() || '—';
   document.getElementById('res-esp').textContent     = document.getElementById('f-esp').selectedOptions[0]?.textContent || '—';
   document.getElementById('res-srv').textContent     = document.getElementById('f-srv').selectedOptions[0]?.textContent || '—';
   document.getElementById('res-data').textContent    = new Date(document.getElementById('f-data').value).toLocaleString('pt-PT', { dateStyle: 'short', timeStyle: 'short' });
@@ -237,9 +269,11 @@ async function submeterPedido() {
     return;
   }
 
+  const telefone = document.getElementById('f-telefone').value.trim();
   const payload = {
     nifCliente:              nif,
     nomePaciente:            nome,
+    telefoneCliente:         telefone,
     dataNascimentoPaciente:  new Date(nasc).toISOString(),
     idGeneroPaciente:        genero,
     idClientePaciente:       relacao,

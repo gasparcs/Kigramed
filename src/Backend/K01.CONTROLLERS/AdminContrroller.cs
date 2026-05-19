@@ -271,7 +271,7 @@ namespace Backend.K01.CONTROLLERS;
         }
 
         //--------------- funcionario --------------//
-      
+        
         [HttpPost("funcionario")]
         public async Task<IActionResult> AdicionarFuncionario(AdicionarFuncionarioDTO dto)
         {

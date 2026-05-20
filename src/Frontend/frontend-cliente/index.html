@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="agendamento.css">
 </head>
 <body>
 
@@ -402,235 +403,282 @@
 </div>
 
 <!-- ════════════════════════════════════ AGENDAMENTO ════════════════════════════════════ -->
+<!-- AGENDAMENTO SECTION — substitui apenas o conteúdo de id="page-agendamento" -->
 <div id="page-agendamento" class="page">
-  <div style="background:var(--bg);min-height:85vh;padding-bottom:2rem">
-    <div class="agend-wrap">
-      <div style="text-align:center;margin-bottom:1.5rem;padding-top:1rem">
-        <div class="pill">Marcações Online</div>
-        <h2 class="section-title">Agendar Consulta</h2>
-        <p class="section-sub" style="margin:0 auto">Preencha o formulário para solicitar a sua marcação. Receberá confirmação via SMS.</p>
-      </div>
-
-      <!-- TABS: Novo Pedido / Consultar Estado -->
-      <div class="tabs-row">
-        <button class="tab-btn active" id="tab-novo" onclick="switchTab('novo')">📝 Novo Pedido</button>
-        <button class="tab-btn" id="tab-estado" onclick="switchTab('estado')">🔍 Consultar Estado</button>
-      </div>
-
-      <!-- ── TAB: NOVO PEDIDO ── -->
-      <div id="tab-novo-content">
-        <div class="agend-card">
-          <div class="agend-hdr">
-            <h2>Formulário de Agendamento</h2>
-            <p>A confirmação será feita por SMS após análise do pedido.</p>
-          </div>
-
-          <!-- Step bar -->
-          <div class="steps-bar">
-            <div class="step-tab active" id="st1">1. Os seus dados</div>
-            <div class="step-tab" id="st2">2. Paciente</div>
-            <div class="step-tab" id="st3">3. Consulta</div>
-            <div class="step-tab" id="st4">4. Pedido</div>
-          </div>
-
-          <!-- STEP 1: Dados do cliente -->
-          <div class="agend-body" id="s1">
-            <div id="s1-alert"></div>
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">NIF do Cliente *</label>
-                <div style="display:flex;gap:8px;align-items:center;">
-                  <input type="text" class="form-input" id="f-nif" placeholder="Ex: 123456789" maxlength="15" style="flex:1;">
-                  <button type="button" class="btn btn-outline" onclick="buscarClientePorNif()" title="Verificar NIF" style="white-space:nowrap;padding:10px 14px;">Verificar</button>
-                </div>
-                <div id="nif-feedback" style="font-size:12px;margin-top:4px;"></div>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Nome do Cliente *</label>
-                <input type="text" class="form-input" id="f-nome-cliente" placeholder="Ex: João Silva" maxlength="100">
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Nome do Paciente *</label>
-                <input type="text" class="form-input" id="f-nome" placeholder="Ex: Maria da Silva (se for outra pessoa)" maxlength="100">
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Telefone *</label>
-                <input type="tel" class="form-input" id="f-telefone" placeholder="+244 912 345 678" maxlength="20" inputmode="tel" autocomplete="tel" required pattern="^(\+351\s?)?\d{3}\s?\d{3}\s?\d{3}$" oninput="handlePhoneMask(this)">
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Data de Nascimento *</label>
-                <input type="date" class="form-input" id="f-nascimento">
-              </div>
-              <div class="form-group">
-                <label class="form-label">Sexo *</label>
-                <select class="form-input" id="f-genero">
-                  <option value="">Seleccione o género</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Relação com o paciente *</label>
-              <select class="form-input" id="f-relacao">
-                <option value="">Seleccione</option>
-              </select>
-            </div>
-            <div style="display:flex;justify-content:flex-end;margin-top:.5rem">
-              <button class="btn btn-primary" onclick="irStep2()">Continuar →</button>
-            </div>
-          </div>
-
-          <!-- STEP 2: Dados do paciente -->
-          <div class="agend-body" id="s2" style="display:none">
-            <div id="s2-alert"></div>
-            <div class="form-group">
-              <label class="form-label">Especialidade *</label>
-              <select class="form-input" id="f-esp" onchange="carregarServicos()">
-                <option value="">A carregar especialidades...</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Serviço *</label>
-              <select class="form-input" id="f-srv" disabled>
-                <option value="">Seleccione a especialidade primeiro</option>
-              </select>
-              <div class="form-hint" id="srv-preco-hint" style="color:var(--teal);font-weight:600"></div>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Data e Hora Pretendida *</label>
-              <input type="datetime-local" class="form-input" id="f-data">
-              <div class="form-hint">Horário sujeito a disponibilidade — a secretaria confirmará via SMS</div>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Observações</label>
-              <textarea class="form-input" id="f-obs" rows="3" placeholder="Informações adicionais (opcional)"></textarea>
-            </div>
-            <div style="display:flex;gap:.65rem;justify-content:space-between;margin-top:.5rem;flex-wrap:wrap">
-              <button class="btn btn-ghost" onclick="voltarStep1()">← Voltar</button>
-              <button class="btn btn-primary" onclick="irStep3()">Continuar →</button>
-            </div>
-          </div>
-
-          <!-- STEP 3: Revisão do pedido -->
-          <div class="agend-body" id="s3" style="display:none">
-            <div id="s3-alert"></div>
-            <div class="pedido-box" style="margin-bottom:1rem">
-              <div class="pedido-label">Resumo do Pedido</div>
-              <div class="pedido-content" id="pedido-resumo">
-                <p><strong>Cliente NIF:</strong> <span id="res-nif">—</span></p>
-                <p><strong>Cliente Nome:</strong> <span id="res-nome-cliente">—</span></p>
-                <p><strong>Paciente:</strong> <span id="res-nome">—</span></p>
-                <p><strong>Data de Nascimento:</strong> <span id="res-nasc">—</span></p>
-                <p><strong>Género:</strong> <span id="res-genero">—</span></p>
-                <p><strong>Relação:</strong> <span id="res-relacao">—</span></p>
-                <p><strong>Telefone / WhatsApp:</strong> <span id="res-tel">—</span></p>
-                <p><strong>Especialidade:</strong> <span id="res-esp">—</span></p>
-                <p><strong>Serviço:</strong> <span id="res-srv">—</span></p>
-                <p><strong>Horário:</strong> <span id="res-data">—</span></p>
-                <p><strong>Observações:</strong> <span id="res-obs">—</span></p>
-              </div>
-            </div>
-            <div style="display:flex;gap:.65rem;justify-content:space-between;margin-top:.5rem;flex-wrap:wrap">
-              <button class="btn btn-ghost" onclick="voltarStep2()">← Voltar</button>
-              <button class="btn btn-primary" id="btn-s3" onclick="submeterPedido()">Enviar Pedido</button>
-            </div>
-            <div class="loading-overlay" id="loading-s3">
-              <div class="spinner"></div> A enviar pedido...
-            </div>
-          </div>
-
-          <!-- STEP 4: Pedido criado -->
-          <div class="agend-body" id="s4" style="display:none">
-            <div class="alert alert-success" style="margin-bottom:1.25rem">
-              ✅ Pedido criado com sucesso! Aguarde confirmação via SMS.
-            </div>
-            <div class="pedido-box">
-              <div class="pedido-label">Número do seu pedido</div>
-              <div class="pedido-num" id="pedido-num-display">—</div>
-              <div style="font-size:.75rem;color:var(--muted);margin-top:.35rem">Guarde este número — precisará dele para acompanhar o estado.</div>
-            </div>
-            <button class="btn btn-primary" onclick="irParaConsulta()">
-              🔍 Consultar Estado do Pedido
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── TAB: CONSULTAR ESTADO ── -->
-      <div id="tab-estado-content" style="display:none">
-        <div class="agend-card">
-          <div class="agend-hdr">
-            <h2>Estado do Pedido</h2>
-            <p>Consulte o estado da sua marcação pelo número do pedido.</p>
-          </div>
-          <div class="agend-body">
-            <div class="form-group">
-              <label class="form-label">Número do Pedido</label>
-              <div class="estado-form">
-                <input type="text" class="form-input" id="estado-num" placeholder="Ex: PED-2026-1234">
-                <button class="btn btn-primary" onclick="consultarEstado()">Consultar</button>
-              </div>
-            </div>
-            <div class="loading-overlay" id="loading-estado">
-              <div class="spinner"></div> A consultar...
-            </div>
-            <div class="estado-result" id="estado-result" style="display:none">
-              <div class="card" style="padding:1.5rem">
-                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem">
-                  <div>
-                    <div style="color:var(--muted);font-size:.75rem;margin-bottom:.2rem">Número do Pedido</div>
-                    <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--primary)" id="er-num">—</div>
-                  </div>
-                  <div id="er-badge"></div>
-                </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;font-size:.87rem">
-                  <div><div style="color:var(--muted);font-size:.75rem;margin-bottom:.15rem">Especialidade</div><div style="font-weight:600" id="er-esp">—</div></div>
-                  <div><div style="color:var(--muted);font-size:.75rem;margin-bottom:.15rem">Horário Pretendido</div><div style="font-weight:600" id="er-horario">—</div></div>
-                  <div id="er-prazo-wrap" style="display:none"><div style="color:var(--muted);font-size:.75rem;margin-bottom:.15rem">Prazo de Pagamento</div><div style="font-weight:600;color:var(--accent)" id="er-prazo">—</div></div>
-                </div>
-                <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
-                  <div id="er-instrucao" style="font-size:.84rem;color:var(--muted)"></div>
-                  <div id="comp-section" style="display:none;margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border)">
-                    <label class="form-label" style="margin-bottom:.5rem">
-                      Enviar Comprovativo de Pagamento
-                    </label>
-                    <p style="font-size:.83rem;color:var(--muted);margin-bottom:.75rem">
-                      Efectue a transferência bancária e envie o comprovativo abaixo. Tem 30 minutos após a confirmação do horário.
-                    </p>
-                    <div class="form-group">
-                      <label class="form-label">Ficheiro (PDF, JPG ou PNG — máx. 5MB)</label>
-                      <div class="file-picker">
-                        <input type="file" id="comp-file" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="atualizarFicheiro(this)">
-                        <button type="button" class="btn btn-ghost file-btn" onclick="document.getElementById('comp-file').click()">
-                          📎 Escolher ficheiro
-                        </button>
-                        <span class="file-name" id="file-name-label">Nenhum ficheiro seleccionado</span>
-                      </div>
-                    </div>
-                    <div id="comp-alert"></div>
-                    <div class="loading-overlay" id="loading-comp">
-                      <div class="spinner"></div> A enviar comprovativo...
-                    </div>
-                    <button class="btn btn-teal" id="btn-comp" onclick="enviarComprovatioEstado()">
-                      📎 Enviar Comprovativo
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="estado-error" style="display:none"></div>
-          </div>
-        </div>
-      </div>
-
+  <div class="ag-hero">
+    <div class="ag-hero-inner">
+      <span class="ag-hero-badge">Marcações Online</span>
+      <h1 class="ag-hero-title">Agende a sua consulta</h1>
+      <p class="ag-hero-sub">Rápido, seguro e confirmado por SMS. Sem filas, sem esperas.</p>
     </div>
   </div>
+
+  <div class="ag-outer">
+    <!-- TABS -->
+    <div class="ag-tabs">
+      <button class="ag-tab active" id="tab-novo" onclick="switchTab('novo')">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Novo Pedido
+      </button>
+      <button class="ag-tab" id="tab-estado" onclick="switchTab('estado')">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Consultar Estado
+      </button>
+    </div>
+
+    <!-- ══ TAB NOVO PEDIDO ══ -->
+    <div id="tab-novo-content">
+      <div class="ag-card">
+
+        <!-- STEPPER -->
+        <div class="ag-stepper">
+          <div class="ag-step active" id="st1">
+            <div class="ag-step-circle">1</div>
+            <span class="ag-step-label">Identificação</span>
+          </div>
+          <div class="ag-step-line"></div>
+          <div class="ag-step" id="st2">
+            <div class="ag-step-circle">2</div>
+            <span class="ag-step-label">Para quem?</span>
+          </div>
+          <div class="ag-step-line"></div>
+          <div class="ag-step" id="st3">
+            <div class="ag-step-circle">3</div>
+            <span class="ag-step-label">Dados & Consulta</span>
+          </div>
+          <div class="ag-step-line"></div>
+          <div class="ag-step" id="st4">
+            <div class="ag-step-circle">4</div>
+            <span class="ag-step-label">Confirmação</span>
+          </div>
+        </div>
+
+        <!-- ── STEP 1: IDENTIFICAÇÃO ── -->
+        <div class="ag-body" id="s1">
+          <div class="ag-body-hdr">
+            <div class="ag-body-ico">🪪</div>
+            <div>
+              <h3>Identificação do cliente</h3>
+              <p>Introduza o seu NIF para verificar os seus dados no sistema.</p>
+            </div>
+          </div>
+          <div id="s1-alert"></div>
+          <div class="ag-field-group">
+            <label class="ag-label">NIF do cliente <span class="ag-req">*</span></label>
+            <div class="ag-input-row">
+              <input type="text" class="ag-input" id="f-nif" placeholder="Ex: 006123456AB123" maxlength="15" oninput="onNifInput()" autocomplete="off">
+              <button type="button" class="ag-btn-verify" onclick="buscarClientePorNif()">Verificar</button>
+            </div>
+            <div id="nif-feedback" class="ag-feedback"></div>
+          </div>
+          <div class="ag-field-group" id="nome-cliente-group">
+            <label class="ag-label">Nome do titular <span class="ag-req">*</span></label>
+            <input type="text" class="ag-input" id="f-nome-cliente" placeholder="Ex: João Manuel da Silva" maxlength="100">
+            <span class="ag-hint">Preencha o nome se é um novo cliente</span>
+          </div>
+          <div class="ag-field-group">
+            <label class="ag-label">Telefone / WhatsApp <span class="ag-req">*</span></label>
+            <div class="ag-tel-wrap">
+              <span class="ag-tel-flag">🇦🇴 +244</span>
+              <input type="tel" class="ag-input ag-input-tel" id="f-telefone" placeholder="9XX XXX XXX" maxlength="20" inputmode="tel" oninput="handlePhoneMask(this)">
+            </div>
+            <span class="ag-hint">Receberá notificações de confirmação neste número</span>
+          </div>
+          <div class="ag-actions">
+            <button class="ag-btn-primary" onclick="irStep2()">Continuar <span class="ag-arrow">→</span></button>
+          </div>
+        </div>
+
+        <!-- ── STEP 2: PARA QUEM? ── -->
+        <div class="ag-body" id="s2" style="display:none">
+          <div class="ag-body-hdr">
+            <div class="ag-body-ico">👤</div>
+            <div>
+              <h3>A consulta é para quem?</h3>
+              <p>Indique se a consulta é para si ou para outra pessoa.</p>
+            </div>
+          </div>
+          <div id="s2-alert"></div>
+          <div class="ag-quem-btns">
+            <button class="ag-quem-btn" id="btn-eumesmo" onclick="selecionarQuem('eumesmo')">
+              <span class="ag-quem-ico">🙋</span>
+              <span>Eu mesmo</span>
+            </button>
+            <button class="ag-quem-btn" id="btn-outra" onclick="selecionarQuem('outra')">
+              <span class="ag-quem-ico">👥</span>
+              <span>Outra pessoa</span>
+            </button>
+          </div>
+          <div id="parentesco-group" class="ag-field-group" style="display:none;margin-top:1.25rem">
+            <label class="ag-label">Grau de parentesco <span class="ag-req">*</span></label>
+            <select class="ag-input" id="f-relacao-select">
+              <option value="">Seleccione...</option>
+            </select>
+          </div>
+          <div class="ag-actions ag-actions-between" style="margin-top:1.5rem">
+            <button class="ag-btn-ghost" onclick="voltarStep1()">← Voltar</button>
+            <button class="ag-btn-primary" onclick="irStep3()">Próximo →</button>
+          </div>
+        </div>
+
+        <!-- ── STEP 3: DADOS DO PACIENTE + CONSULTA ── -->
+        <div class="ag-body" id="s3" style="display:none">
+          <div id="s3-alert"></div>
+          <div class="ag-two-col">
+            <!-- coluna esquerda: dados paciente -->
+            <div class="ag-col">
+              <div class="ag-col-title">
+                <span class="ag-col-ico">🧑‍⚕️</span> Dados do paciente
+              </div>
+              <div class="ag-field-group">
+                <label class="ag-label">Nome completo do paciente <span class="ag-req">*</span></label>
+                <input type="text" class="ag-input" id="f-nome" placeholder="Ex: Maria da Silva" maxlength="100">
+              </div>
+              <div class="ag-row-2">
+                <div class="ag-field-group">
+                  <label class="ag-label">Data de nascimento <span class="ag-req">*</span></label>
+                  <input type="date" class="ag-input" id="f-nascimento">
+                </div>
+                <div class="ag-field-group">
+                  <label class="ag-label">Género <span class="ag-req">*</span></label>
+                  <select class="ag-input" id="f-genero">
+                    <option value="">Seleccionar</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- coluna direita: dados consulta -->
+            <div class="ag-col">
+              <div class="ag-col-title">
+                <span class="ag-col-ico">📅</span> Dados da consulta
+              </div>
+              <div class="ag-field-group">
+                <label class="ag-label">Especialidade <span class="ag-req">*</span></label>
+                <select class="ag-input" id="f-esp" onchange="carregarServicos()">
+                  <option value="">A carregar...</option>
+                </select>
+              </div>
+              <div class="ag-field-group">
+                <label class="ag-label">Serviço <span class="ag-req">*</span></label>
+                <select class="ag-input" id="f-srv" disabled>
+                  <option value="">Seleccione a especialidade primeiro</option>
+                </select>
+                <div class="ag-preco" id="srv-preco-hint"></div>
+              </div>
+              <div class="ag-field-group">
+                <label class="ag-label">Data e hora pretendida <span class="ag-req">*</span></label>
+                <input type="datetime-local" class="ag-input" id="f-data">
+                <span class="ag-hint">Sujeito a disponibilidade — confirmação via SMS</span>
+              </div>
+              <div class="ag-field-group">
+                <label class="ag-label">Observações <span class="ag-opt">(opcional)</span></label>
+                <textarea class="ag-input ag-textarea" id="f-obs" rows="3" placeholder="Alergias, medicação, sintomas relevantes..."></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="ag-actions ag-actions-between">
+            <button class="ag-btn-ghost" onclick="voltarStep2()">← Voltar</button>
+            <button class="ag-btn-primary" id="btn-s3" onclick="submeterPedido()">
+              <span id="btn-s3-label">Enviar Pedido</span>
+              <div class="ag-btn-spinner" id="btn-s3-spinner" style="display:none"></div>
+            </button>
+          </div>
+          <div class="ag-loading" id="loading-s3" style="display:none">
+            <div class="ag-spinner"></div> A submeter pedido...
+          </div>
+        </div>
+
+        <!-- ── STEP 4: CONFIRMAÇÃO ── -->
+        <div class="ag-body" id="s4" style="display:none">
+          <div class="ag-success">
+            <div class="ag-success-ico">✅</div>
+            <h3>Pedido enviado com sucesso!</h3>
+            <p>A secretaria irá analisar e confirmar o horário via SMS em breve.</p>
+            <div class="ag-pedido-box">
+              <span class="ag-pedido-label">Número do seu pedido</span>
+              <span class="ag-pedido-num" id="pedido-num-display">—</span>
+              <span class="ag-pedido-hint">Guarde este número — precisará dele para acompanhar o estado</span>
+            </div>
+            <div class="ag-info-box">
+              ⏳ Após confirmação do horário, receberá um SMS com os dados bancários para pagamento.
+            </div>
+            <div class="ag-success-btns">
+              <button class="ag-btn-primary" onclick="irParaConsulta()">🔍 Acompanhar estado</button>
+              <button class="ag-btn-ghost" onclick="novoPedido()">Novo pedido</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /ag-card -->
+    </div><!-- /tab-novo-content -->
+
+    <!-- ══ TAB CONSULTAR ESTADO ══ -->
+    <div id="tab-estado-content" style="display:none">
+      <div class="ag-card">
+        <div class="ag-body">
+          <div class="ag-body-hdr">
+            <div class="ag-body-ico">🔍</div>
+            <div>
+              <h3>Estado do pedido</h3>
+              <p>Consulte a situação da sua marcação a qualquer momento.</p>
+            </div>
+          </div>
+          <div class="ag-estado-search">
+            <input type="text" class="ag-input" id="estado-num" placeholder="Ex: PED-2026-AB12" oninput="this.value=this.value.toUpperCase()">
+            <button class="ag-btn-primary" onclick="consultarEstado()">Consultar</button>
+          </div>
+          <div class="ag-loading" id="loading-estado" style="display:none">
+            <div class="ag-spinner"></div> A consultar...
+          </div>
+          <div id="estado-result" style="display:none">
+            <div class="ag-estado-card">
+              <div class="ag-estado-top">
+                <div>
+                  <div class="ag-estado-num-label">Número do pedido</div>
+                  <div class="ag-estado-num" id="er-num">—</div>
+                </div>
+                <div id="er-badge"></div>
+              </div>
+              <div class="ag-estado-grid">
+                <div class="ag-estado-item">
+                  <span class="ag-estado-item-label">Especialidade</span>
+                  <span class="ag-estado-item-val" id="er-esp">—</span>
+                </div>
+                <div class="ag-estado-item">
+                  <span class="ag-estado-item-label">Horário pretendido</span>
+                  <span class="ag-estado-item-val" id="er-horario">—</span>
+                </div>
+                <div class="ag-estado-item" id="er-prazo-wrap" style="display:none">
+                  <span class="ag-estado-item-label">Prazo de pagamento</span>
+                  <span class="ag-estado-item-val ag-prazo-val" id="er-prazo">—</span>
+                </div>
+              </div>
+              <div class="ag-estado-instrucao" id="er-instrucao"></div>
+              <div id="comp-section" style="display:none">
+                <div class="ag-comp-title">Enviar comprovativo de pagamento</div>
+                <p class="ag-comp-sub">Efectue a transferência e envie o comprovativo. Formatos aceites: PDF, JPG, PNG (máx. 5MB).</p>
+                <div class="ag-file-area" onclick="document.getElementById('comp-file').click()">
+                  <input type="file" id="comp-file" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="atualizarFicheiro(this)">
+                  <div class="ag-file-ico">📎</div>
+                  <div class="ag-file-label" id="file-name-label">Clique para seleccionar ficheiro</div>
+                  <div class="ag-file-hint">PDF, JPG ou PNG — máx. 5MB</div>
+                </div>
+                <div id="comp-alert"></div>
+                <div class="ag-loading" id="loading-comp" style="display:none">
+                  <div class="ag-spinner"></div> A enviar comprovativo...
+                </div>
+                <button class="ag-btn-teal" id="btn-comp" onclick="enviarComprovatioEstado()">Enviar comprovativo</button>
+              </div>
+            </div>
+          </div>
+          <div id="estado-error"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /ag-outer -->
 </div>
+
 
 <!-- ─── FOOTER ─── -->
 <footer>

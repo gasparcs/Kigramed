@@ -1,6 +1,35 @@
-/* ─── CONFIG ─── */
+﻿/* ─── CONFIG ─── */
 const API = 'http://localhost:5290/api';
 
+/* ─── LOOKUP NIF → GET /api/Cliente/nif/{nif} ─── */
+async function buscarClientePorNif() {
+  const nif = document.getElementById('f-nif').value.trim();
+  const feedback = document.getElementById('nif-feedback');
+  if (!nif) { feedback.textContent = ''; return; }
+  feedback.style.color = 'var(--muted)';
+  feedback.textContent = 'A verificar...';
+  try {
+    const r = await fetch(`${API}/Cliente/nif/${encodeURIComponent(nif)}`, {
+      signal: AbortSignal.timeout(5000)
+    });
+    if (r.status === 200) {
+      const d = await r.json();
+      document.getElementById('f-nome-cliente').value = d.nome || '';
+      feedback.style.color = 'green';
+      feedback.textContent = '✓ Cliente encontrado — dados preenchidos automaticamente.';
+    } else if (r.status === 404) {
+      document.getElementById('f-nome-cliente').value = '';
+      feedback.style.color = 'var(--muted)';
+      feedback.textContent = 'Novo cliente — preencha o nome abaixo.';
+    } else {
+      feedback.style.color = 'orange';
+      feedback.textContent = 'Não foi possível verificar o NIF neste momento.';
+    }
+  } catch {
+    feedback.style.color = 'var(--muted)';
+    feedback.textContent = '';
+  }
+}
 /* ─── NAVEGAÇÃO ─── */
 function go(pg) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -199,14 +228,15 @@ async function carregarServicos() {
 
 /* ─── STEP 1 → STEP 2 ─── */
 function irStep2() {
-  const nif      = document.getElementById('f-nif').value.trim();
-  const nome     = document.getElementById('f-nome').value.trim();
-  const telefone = document.getElementById('f-telefone').value.trim();
-  const nasc     = document.getElementById('f-nascimento').value;
-  const genero   = document.getElementById('f-genero').value;
-  const relacao  = document.getElementById('f-relacao').value;
-  const alerta   = document.getElementById('s1-alert');
-  if (!nif || !nome || !telefone || !nasc || !genero || !relacao) {
+  const nif         = document.getElementById('f-nif').value.trim();
+  const nomeCliente = document.getElementById('f-nome-cliente').value.trim();
+  const nome        = document.getElementById('f-nome').value.trim();
+  const telefone    = document.getElementById('f-telefone').value.trim();
+  const nasc        = document.getElementById('f-nascimento').value;
+  const genero      = document.getElementById('f-genero').value;
+  const relacao     = document.getElementById('f-relacao').value;
+  const alerta      = document.getElementById('s1-alert');
+  if (!nif || !nomeCliente || !nome || !telefone || !nasc || !genero || !relacao) {
     alerta.innerHTML = '<div class="alert alert-danger">⚠️ Por favor, preencha todos os dados do cliente e do paciente.</div>';
     return;
   }
@@ -239,10 +269,11 @@ function voltarStep2() { setStep(2); }
 
 /* ─── RESUMO ─── */
 function renderResumo() {
-  document.getElementById('res-nif').textContent     = document.getElementById('f-nif').value.trim();
-  document.getElementById('res-nome').textContent    = document.getElementById('f-nome').value.trim();
-  document.getElementById('res-nasc').textContent    = new Date(document.getElementById('f-nascimento').value).toLocaleDateString('pt-PT');
-  document.getElementById('res-genero').textContent  = document.getElementById('f-genero').selectedOptions[0]?.textContent || '—';
+  document.getElementById('res-nif').textContent          = document.getElementById('f-nif').value.trim();
+  document.getElementById('res-nome-cliente').textContent = document.getElementById('f-nome-cliente').value.trim();
+  document.getElementById('res-nome').textContent         = document.getElementById('f-nome').value.trim();
+  document.getElementById('res-nasc').textContent         = new Date(document.getElementById('f-nascimento').value).toLocaleDateString('pt-PT');
+  document.getElementById('res-genero').textContent       = document.getElementById('f-genero').selectedOptions[0]?.textContent || '—';
   document.getElementById('res-relacao').textContent = document.getElementById('f-relacao').selectedOptions[0]?.textContent || '—';
   document.getElementById('res-tel').textContent     = document.getElementById('f-telefone').value.trim() || '—';
   document.getElementById('res-esp').textContent     = document.getElementById('f-esp').selectedOptions[0]?.textContent || '—';
@@ -253,18 +284,19 @@ function renderResumo() {
 
 /* ─── SUBMETER PEDIDO → POST /api/Cliente/pedido ─── */
 async function submeterPedido() {
-  const nif      = document.getElementById('f-nif').value.trim();
-  const nome     = document.getElementById('f-nome').value.trim();
-  const nasc     = document.getElementById('f-nascimento').value;
-  const genero   = parseInt(document.getElementById('f-genero').value);
-  const relacao  = parseInt(document.getElementById('f-relacao').value);
-  const idEsp    = parseInt(document.getElementById('f-esp').value);
-  const idSrv    = parseInt(document.getElementById('f-srv').value);
-  const data     = document.getElementById('f-data').value;
-  const obs      = document.getElementById('f-obs').value.trim();
-  const alerta   = document.getElementById('s3-alert');
+  const nif         = document.getElementById('f-nif').value.trim();
+  const nomeCliente = document.getElementById('f-nome-cliente').value.trim();
+  const nome        = document.getElementById('f-nome').value.trim();
+  const nasc        = document.getElementById('f-nascimento').value;
+  const genero      = parseInt(document.getElementById('f-genero').value);
+  const relacao     = parseInt(document.getElementById('f-relacao').value);
+  const idEsp       = parseInt(document.getElementById('f-esp').value);
+  const idSrv       = parseInt(document.getElementById('f-srv').value);
+  const data        = document.getElementById('f-data').value;
+  const obs         = document.getElementById('f-obs').value.trim();
+  const alerta      = document.getElementById('s3-alert');
 
-  if (!nif || !nome || !nasc || !genero || !relacao || !idEsp || !idSrv || !data) {
+  if (!nif || !nomeCliente || !nome || !nasc || !genero || !relacao || !idEsp || !idSrv || !data) {
     alerta.innerHTML = '<div class="alert alert-danger">⚠️ Preencha todos os dados antes de enviar.</div>';
     return;
   }
@@ -272,6 +304,7 @@ async function submeterPedido() {
   const telefone = document.getElementById('f-telefone').value.trim();
   const payload = {
     nifCliente:              nif,
+    nomeCliente:             nomeCliente,
     nomePaciente:            nome,
     telefoneCliente:         telefone,
     dataNascimentoPaciente:  new Date(nasc).toISOString(),
@@ -304,11 +337,7 @@ async function submeterPedido() {
       alerta.innerHTML = `<div class="alert alert-danger">❌ ${data2.mensagem || JSON.stringify(data2)}</div>`;
     }
   } catch {
-    const fake = 'PED-2026-' + Math.floor(1000 + Math.random() * 9000);
-    document.getElementById('pedido-num-display').textContent = fake;
-    document.getElementById('estado-num').value = fake;
-    setStep(4);
-    toast('✅', 'Pedido criado (demo): ' + fake);
+    alerta.innerHTML = '<div class="alert alert-danger">❌ Não foi possível ligar ao servidor. Verifique a sua ligação e tente novamente.</div>';
   } finally {
     document.getElementById('btn-s3').disabled = false;
     document.getElementById('loading-s3').classList.remove('show');
@@ -453,7 +482,7 @@ function atualizarFicheiro(input) {
 
 /* ─── NOVO PEDIDO ─── */
 function novoPedido() {
-  ['f-nif', 'f-nome', 'f-nascimento', 'f-data', 'f-obs'].forEach(id =>
+  ['f-nif', 'f-nome-cliente', 'f-nome', 'f-nascimento', 'f-data', 'f-obs'].forEach(id =>
     document.getElementById(id).value = ''
   );
   document.getElementById('f-genero').value  = '';
@@ -490,3 +519,6 @@ function toast(ico, msg) {
 
 /* ─── INIT ─── */
 go('home');
+
+
+

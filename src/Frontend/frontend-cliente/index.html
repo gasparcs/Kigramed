@@ -439,11 +439,21 @@
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">NIF do Cliente *</label>
-                <input type="text" class="form-input" id="f-nif" placeholder="Ex: 123456789" maxlength="15">
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <input type="text" class="form-input" id="f-nif" placeholder="Ex: 123456789" maxlength="15" style="flex:1;">
+                  <button type="button" class="btn btn-outline" onclick="buscarClientePorNif()" title="Verificar NIF" style="white-space:nowrap;padding:10px 14px;">Verificar</button>
+                </div>
+                <div id="nif-feedback" style="font-size:12px;margin-top:4px;"></div>
               </div>
               <div class="form-group">
+                <label class="form-label">Nome do Cliente *</label>
+                <input type="text" class="form-input" id="f-nome-cliente" placeholder="Ex: João Silva" maxlength="100">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
                 <label class="form-label">Nome do Paciente *</label>
-                <input type="text" class="form-input" id="f-nome" placeholder="Ex: Maria da Silva" maxlength="100">
+                <input type="text" class="form-input" id="f-nome" placeholder="Ex: Maria da Silva (se for outra pessoa)" maxlength="100">
               </div>
             </div>
             <div class="form-row">
@@ -513,6 +523,7 @@
               <div class="pedido-label">Resumo do Pedido</div>
               <div class="pedido-content" id="pedido-resumo">
                 <p><strong>Cliente NIF:</strong> <span id="res-nif">—</span></p>
+                <p><strong>Cliente Nome:</strong> <span id="res-nome-cliente">—</span></p>
                 <p><strong>Paciente:</strong> <span id="res-nome">—</span></p>
                 <p><strong>Data de Nascimento:</strong> <span id="res-nasc">—</span></p>
                 <p><strong>Género:</strong> <span id="res-genero">—</span></p>

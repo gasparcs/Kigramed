@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Backend.K02.INFRA.Data;
@@ -12,7 +12,7 @@ public class ConfirmarConsulta(KigramedDbContext context, ISmsService smsService
     public async Task<string> ExecuteAsync(int id)
     {
         var consulta = await context.Tabelatb15_consulta
-            .Include(c => c.Paciente)
+            .Include(c => c.Paciente!)
                 .ThenInclude(p => p.Cliente)
                 .ThenInclude(cl => cl.Contactos)
             .Include(c => c.EstadoConsulta)
@@ -30,7 +30,7 @@ public class ConfirmarConsulta(KigramedDbContext context, ISmsService smsService
             .FirstOrDefaultAsync();
 
         if (idEstadoCancelada == 0)
-            return "Erro: Estado 'Cancelada' não configurado.";
+            return "Erro: Estado 'Cancelada' nÃ£o configurado.";
 
         bool conflito = await context.Tabelatb15_consulta.AnyAsync(c =>
             c.Id_medico_especialiade == consulta.Id_medico_especialiade &&
@@ -45,13 +45,16 @@ public class ConfirmarConsulta(KigramedDbContext context, ISmsService smsService
             .FirstOrDefaultAsync(e => e.Descricao == "Aguarda Pagamento");
 
         if (estadoAguarda == null)
-            return "Erro: Estado 'Aguarda Pagamento' não configurado.";
+            return "Erro: Estado 'Aguarda Pagamento' nÃ£o configurado.";
 
         consulta.Id_estado_consulta = estadoAguarda.Id;
-        consulta.PrazoPagamento = DateTime.UtcNow.AddMinutes(30);
+        consulta.PrazoPagamento = DateTime.UtcNow.AddHours(48);
         await context.SaveChangesAsync();
 
-        string telefone = consulta.Paciente?.Cliente?.Contactos?.FirstOrDefault()?.Contacto ?? string.Empty;
+        string telefone = consulta.Paciente?.Cliente?.Contactos?
+            .Select(c => c.Contacto)
+            .FirstOrDefault(c => !string.IsNullOrWhiteSpace(c) && c.Any(char.IsDigit))
+            ?? string.Empty;
 
         var deadline = consulta.PrazoPagamento?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") 
                        ?? DateTime.UtcNow.AddMinutes(30).ToLocalTime().ToString("dd/MM/yyyy HH:mm");
@@ -60,22 +63,23 @@ public class ConfirmarConsulta(KigramedDbContext context, ISmsService smsService
             $"Estimado(a) {consulta.Paciente?.Nome ?? "Cliente"},\n\n" +
             $"O seu pedido de agendamento foi recebido e aceite com sucesso.\n\n" +
             $"Detalhes do pedido:\n" +
-            $"  • Número do Pedido: {consulta.NumeroPedido}\n" +
-            $"  • Data e Hora: {consulta.Data_consulta.ToLocalTime():dd/MM/yyyy 'às' HH:mm}\n" +
-            $"  • Prazo para pagamento: {deadline}\n\n" +
+            $"  â€¢ NÃºmero do Pedido: {consulta.NumeroPedido}\n" +
+            $"  â€¢ Data e Hora: {consulta.Data_consulta.ToLocalTime():dd/MM/yyyy 'Ã s' HH:mm}\n" +
+            $"  â€¢ Prazo para pagamento: {deadline}\n\n" +
             $"Para confirmar a sua consulta, efectue o pagamento dentro do prazo " +
-            $"indicado e envie o comprovativo através do portal.\n\n" +
-            $"Dados bancários para transferência:\n" +
-            $"  • Banco: [NOME DO BANCO]\n" +
-            $"  • IBAN: [IBAN DA CLÍNICA]\n" +
-            $"  • Referência: {consulta.NumeroPedido}\n\n" +
-            $"Atenção: o pedido será cancelado automaticamente caso o pagamento " +
-            $"não seja efectuado dentro do prazo.\n\n" +
+            $"indicado e envie o comprovativo atravÃ©s do portal.\n\n" +
+            $"Dados bancÃ¡rios para transferÃªncia:\n" +
+            $"  â€¢ Banco: [NOME DO BANCO]\n" +
+            $"  â€¢ IBAN: [IBAN DA CLÃNICA]\n" +
+            $"  â€¢ ReferÃªncia: {consulta.NumeroPedido}\n\n" +
+            $"AtenÃ§Ã£o: o pedido serÃ¡ cancelado automaticamente caso o pagamento " +
+            $"nÃ£o seja efectuado dentro do prazo.\n\n" +
             $"Atenciosamente,\n" +
-            $"Centro Médico Kigramed";
+            $"Centro MÃ©dico Kigramed";
 
         bool smsEnviado = await smsService.EnviarAsync(telefone, mensagem, "5417298387");
 
         return smsEnviado ? "sucesso" : "erro_sms";
     }
 }
+

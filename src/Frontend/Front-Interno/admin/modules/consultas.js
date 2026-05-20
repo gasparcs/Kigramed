@@ -1,8 +1,26 @@
-// ─────────────────────────────────────────────────────────────────────────────
+﻿// -----------------------------------------------------------------------------
 // CONSULTAS
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 let estadoFiltroActivo = null;
+
+const CONSULTA_ACTION_LABELS = {
+  confirmar: { text: 'Confirmar', className: 'btn btn-sm btn-success' },
+  cancelar: { text: 'Cancelar', className: 'btn btn-sm btn-outline' },
+  validar: { text: 'Validar', className: 'btn btn-sm btn-primary' },
+  verComprovativo: { text: 'Ver Comprovativo', className: 'btn btn-sm btn-outline' },
+  editar: { text: 'Editar', className: 'btn btn-sm btn-outline' },
+  remover: { text: 'Remover', className: 'btn btn-sm btn-danger' }
+};
+
+const CONSULTA_ACTIONS_BY_STATE = {
+  'pendente': ['confirmar', 'cancelar'],
+  'aguarda pagamento': [],
+  'aguardar pagamento': [],
+  'comprovativo enviado': ['validar', 'verComprovativo', 'remover'],
+  'confirmado': ['editar', 'remover'],
+  'confirmada': ['editar', 'remover']
+};
 
 async function loadConsultas() {
   const body = document.getElementById('bodyConsultas');
@@ -22,23 +40,16 @@ async function loadConsultas() {
     if (body) {
       body.innerHTML = list.length
         ? list.map((item, i) => {
-            const estadoDesc = (item.estadoDescricao || item.EstadoDescricao || '').trim().toLowerCase();
-            const finalizada = estadoDesc === 'finalizada';
             const consultaId = item.consultaId || item.ConsultaId || i + 1;
+            const estadoDesc = item.estadoDescricao || item.EstadoDescricao || '';
             return `<tr>
               <td>${consultaId}</td>
               <td>${item.pacienteNome || item.PacienteNome || '—'}</td>
               <td>${item.medicoNome || item.MedicoNome || '—'}</td>
               <td>${item.servicoNome || item.ServicoNome || '—'}</td>
               <td>${formatDate(item.data_consulta || item.Data_consulta || item.DataConsulta)}</td>
-              <td>${badgeEstadoConsulta(item.estadoDescricao || item.EstadoDescricao || '—')}</td>
-              <td>
-                ${finalizada
-                  ? `<button class="btn btn-sm btn-outline" disabled title="Consulta finalizada — não é possível editar" style="opacity:0.45;cursor:not-allowed;">Editar</button>`
-                  : `<button class="btn btn-sm btn-outline" onclick="editarConsulta(${consultaId})">Editar</button>`
-                }
-                <button class="btn btn-sm btn-danger" onclick="removerConsulta(${consultaId})">Remover</button>
-              </td>
+              <td>${badgeEstadoConsulta(estadoDesc || '—')}</td>
+              <td style="display:flex;gap:6px;flex-wrap:wrap;">${renderConsultaActions(consultaId, estadoDesc)}</td>
             </tr>`;
           }).join('')
         : '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">Nenhuma consulta encontrada.</td></tr>';
@@ -65,6 +76,56 @@ async function loadConsultas() {
 function filtrarConsultasPorEstado(estado) {
   estadoFiltroActivo = estado;
   loadConsultas();
+}
+
+function normalizeConsultaEstado(estado) {
+  return String(estado || '').trim().toLowerCase();
+}
+
+function getConsultaActionsByEstado(estado) {
+  const norm = normalizeConsultaEstado(estado);
+  return CONSULTA_ACTIONS_BY_STATE[norm] ?? [];
+}
+
+function renderConsultaActions(id, estado) {
+  const actions = getConsultaActionsByEstado(estado);
+  if (!actions.length) return '<span style="color:var(--muted)">—</span>';
+  return actions.map((action) => {
+    const def = CONSULTA_ACTION_LABELS[action];
+    if (!def) return '';
+    return `<button class="${def.className}" onclick="handleConsultaAction(${id}, '${action}')">${def.text}</button>`;
+  }).join('');
+}
+
+async function handleConsultaAction(id, action) {
+  if (action === 'editar') {
+    await editarConsulta(id);
+    return;
+  }
+  if (action === 'remover') {
+    await removerConsulta(id);
+    return;
+  }
+  if (action === 'verComprovativo') {
+    openComprovativoConsulta(id);
+    return;
+  }
+
+  const mapping = { confirmar: 'confirmar', cancelar: 'cancelar', validar: 'validar' };
+  const endpoint = mapping[action];
+  if (!endpoint) return;
+
+  try {
+    const result = await fetchJson(`/Admin/${id}/${endpoint}`, { method: 'PUT' });
+    showToast(result?.mensagem || 'Operação concluída.', 'success');
+    await Promise.all([loadConsultas(), loadTopLists()]);
+  } catch (e) {
+    showToast(getErrorMessage(e), 'error');
+  }
+}
+
+function openComprovativoConsulta(id) {
+  window.open(`http://localhost:5290/api/Admin/${id}/comprovativo`, '_blank');
 }
 
 async function submitConsulta(event) {
@@ -141,7 +202,10 @@ function badgeEstadoConsulta(estado) {
     'cancelado':   'badge-red',
     'rejeitada':   'badge-red',
     'rejeitado':   'badge-red',
-    'pendente':    'badge-amber'
+    'pendente':    'badge-amber',
+    'aguarda pagamento': 'badge-blue',
+    'comprovativo enviado': 'badge-blue',
+    'confirmado': 'badge-green'
   };
   return `<span class="badge ${map[norm] || 'badge-gray'}">${texto}</span>`;
 }

@@ -563,7 +563,8 @@ namespace Backend.K01.CONTROLLERS;
     [HttpPut("{id}/validar")]
     public async Task<IActionResult> Validar(int id)
     {
-        var resposta = await validarPagamentoConsulta.ExecuteAsync(id);
+        var nifSecretaria = User?.Claims?.FirstOrDefault(c => c.Type == "nif")?.Value;
+        var resposta = await validarPagamentoConsulta.ExecuteAsync(id, nifSecretaria);
         if (resposta == "sucesso")
             return Ok(new { mensagem = "Pagamento validado. Consulta registada com sucesso. SMS de confirmação enviado ao cliente." });
         else if (resposta == "erro_sms")

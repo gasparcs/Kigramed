@@ -1,6 +1,6 @@
-// ─────────────────────────────────────────────────────────────────────────────
+﻿// -----------------------------------------------------------------------------
 // SECRETARIA CORE - GESTÃO DE ESTADO E INICIALIZAÇÃO
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 const secretariaState = {
   consultas: new Map(),
@@ -18,8 +18,7 @@ const sectionLoaders = {
   'medicos': () => loadMedicos(),
   'pagamentos': () => loadPagamentos(),
   'pagamentoconsulta': () => loadPagamentoConsulta(),
-  'sms': () => loadSMS(),
-  'pedidos': () => loadPedidos()
+  'sms': () => loadSMS()
 };
 
 let activeSectionId = 'dashboard';
@@ -53,7 +52,6 @@ async function initSecretaria() {
     loadPagamentos(),
     loadPagamentoConsulta(),
     loadSMS(),
-    loadPedidos(),
     loadEstados()
   ]);
   await populateSecretariaSelects();
@@ -101,9 +99,9 @@ function showSection(sectionId, button) {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // DASHBOARD & STATS
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 async function loadTopStats() {
   try {
@@ -135,9 +133,9 @@ function renderDashboardConsultas(consultas) {
     </tr>`).join('');
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // LOADERS
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 async function loadEstados() {
   try {
@@ -148,6 +146,24 @@ async function loadEstados() {
 }
 
 let estadoFiltroActivo = null;
+
+const CONSULTA_ACTION_LABELS = {
+  confirmar: { text: 'Confirmar', className: 'btn btn-sm btn-success' },
+  cancelar: { text: 'Cancelar', className: 'btn btn-sm btn-outline' },
+  validar: { text: 'Validar', className: 'btn btn-sm btn-primary' },
+  verComprovativo: { text: 'Ver Comprovativo', className: 'btn btn-sm btn-outline' },
+  editar: { text: 'Editar', className: 'btn btn-sm btn-outline' },
+  remover: { text: 'Remover', className: 'btn btn-sm btn-danger' }
+};
+
+const CONSULTA_ACTIONS_BY_STATE = {
+  'pendente': ['confirmar', 'cancelar'],
+  'aguarda pagamento': [],
+  'aguardar pagamento': [],
+  'comprovativo enviado': ['validar', 'verComprovativo', 'remover'],
+  'confirmado': ['editar', 'remover'],
+  'confirmada': ['editar', 'remover']
+};
 
 async function filtrarConsultasPorEstado(estado, btn) {
   estadoFiltroActivo = estado;
@@ -174,26 +190,65 @@ async function loadConsultas() {
 
     body.innerHTML = list.length ? list.map((item, index) => {
       const id = item.consultaId || item.id || index + 1;
-      const estadoDesc = (item.estadoDescricao || item.EstadoDescricao || '').trim().toLowerCase();
-      const finalizada = estadoDesc === 'finalizada';
+      const estadoDesc = item.estadoDescricao || item.EstadoDescricao || '';
       return `<tr>
         <td>${id}</td>
         <td>${item.pacienteNome || item.PacienteNome || '—'}</td>
         <td>${item.medicoNome || item.MedicoNome || '—'}</td>
         <td>${item.servicoNome || item.ServicoNome || '—'}</td>
         <td>${formatDate(item.data_consulta || item.Data_consulta)}</td>
-        <td>${badgeEstadoConsulta(item.estadoDescricao || item.EstadoDescricao)}</td>
-        <td style="display:flex;gap:6px;flex-wrap:wrap;">
-          ${finalizada
-            ? `<button class="btn btn-sm btn-outline" disabled title="Consulta finalizada" style="opacity:0.45;cursor:not-allowed;">Editar</button>`
-            : `<button class="btn btn-sm btn-outline" onclick="editarConsulta(${id})">Editar</button>`
-          }
-          <button class="btn btn-sm btn-danger" onclick="removerConsulta(${id})">Remover</button>
-        </td>
+        <td>${badgeEstadoConsulta(estadoDesc)}</td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap;">${renderConsultaActions(id, estadoDesc)}</td>
       </tr>`;
     }).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">Nenhuma consulta encontrada.</td></tr>';
   } catch {
     body.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--danger);padding:24px">Erro ao carregar consultas.</td></tr>';
+  }
+}
+
+function normalizeConsultaEstado(estado) {
+  return String(estado || '').trim().toLowerCase();
+}
+
+function getConsultaActionsByEstado(estado) {
+  const norm = normalizeConsultaEstado(estado);
+  return CONSULTA_ACTIONS_BY_STATE[norm] ?? [];
+}
+
+function renderConsultaActions(id, estado) {
+  const actions = getConsultaActionsByEstado(estado);
+  if (!actions.length) return '<span style="color:var(--muted)">—</span>';
+  return actions.map((action) => {
+    const def = CONSULTA_ACTION_LABELS[action];
+    if (!def) return '';
+    return `<button class="${def.className}" onclick="handleConsultaAction(${id}, '${action}')">${def.text}</button>`;
+  }).join('');
+}
+
+async function handleConsultaAction(id, action) {
+  if (action === 'editar') {
+    await editarConsulta(id);
+    return;
+  }
+  if (action === 'remover') {
+    await removerConsulta(id);
+    return;
+  }
+  if (action === 'verComprovativo') {
+    openComprovativo(id);
+    return;
+  }
+
+  const mapping = { confirmar: 'confirmar', cancelar: 'cancelar', validar: 'validar' };
+  const endpoint = mapping[action];
+  if (!endpoint) return;
+
+  try {
+    const result = await fetchJson(`/Secretaria/${id}/${endpoint}`, { method: 'PUT' });
+    showToast(result?.mensagem || 'Operação concluída.', 'success');
+    await Promise.all([loadConsultas(), loadTopStats()]);
+  } catch (e) {
+    showToast(getErrorMessage(e), 'error');
   }
 }
 
@@ -376,9 +431,9 @@ async function loadPedidos() {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // ACTIONS & SUBMITS
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 function abrirNovaConsultaComServico(servicoId) {
   openModal('modalConsulta');
@@ -621,9 +676,9 @@ async function removerCliente(nif) {
   });
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // PEDIDOS & UTILS
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 async function handlePedidoAction(id, action) {
   const mapping = { confirmar: 'confirmar', cancelar: 'cancelar', validar: 'validar', rejeitar: 'rejeitar' };
@@ -716,3 +771,5 @@ function openComprovativo(id) {
 }
 
 window.addEventListener('load', initSecretaria);
+
+

@@ -20,8 +20,7 @@ const sectionLoaders = {
   'servicos': () => loadServicos(),
   'pagamentos': () => loadPagamentos(),
   'pagamentoconsulta': () => loadPagamentoConsulta(),
-  'sms': () => loadSMS(),
-  'pedidos': () => loadPedidos()
+  'sms': () => loadSMS()
 };
 
 let activeSectionId = 'dashboard';
@@ -56,8 +55,7 @@ async function initAdmin() {
     loadServicos(),
     loadPagamentos(),
     loadPagamentoConsulta(),
-    loadSMS(),
-    loadPedidos()
+    loadSMS()
   ]);
   await populateFormSelects();
 

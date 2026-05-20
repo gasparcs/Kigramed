@@ -6,6 +6,8 @@ namespace Backend.K03.APPLICATION.ConsultaUseCase.DTO;
 public class CriarConsultaDTO
 {
     [Required] public string NifCliente { get; set; } = string.Empty;
+    [Required] public string NomeCliente { get; set; } = string.Empty;
+    public string? TelefoneCliente { get; set; }
     [Required] public string NomePaciente { get; set; } = string.Empty;
     [Required] public DateTime DataNascimentoPaciente { get; set; }
     [Required] public int IdGeneroPaciente { get; set; }

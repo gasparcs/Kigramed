@@ -59,6 +59,24 @@ namespace Backend.K01.CONTROLLERS
         }
 
         [AllowAnonymous]
+        [HttpGet("nif/{nif}")]
+        public async Task<IActionResult> BuscarClientePorNif(string nif)
+        {
+            if (string.IsNullOrWhiteSpace(nif))
+                return BadRequest(new { mensagem = "NIF inválido." });
+
+            var cliente = await context.Tabelatb09_cliente
+                .Where(c => c.Nif_cliente == nif.Trim())
+                .Select(c => new { nif = c.Nif_cliente, nome = c.Nome })
+                .FirstOrDefaultAsync();
+
+            if (cliente is null)
+                return NotFound(new { mensagem = "Cliente não encontrado." });
+
+            return Ok(cliente);
+        }
+
+        [AllowAnonymous]
         [HttpGet("cliente-paciente")]
         public async Task<IActionResult> ListarClientePaciente()
         {

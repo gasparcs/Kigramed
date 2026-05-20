@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text.Json.Serialization;
 using Backend.K03.APPLICATION.Servico.ISmsService;
 
@@ -10,14 +11,36 @@ public class SmsService(HttpClient httpClient) : ISmsService
 
     public async Task<bool> EnviarAsync(string telefone, string mensagemTexto, string nif)
     {
+        var telefoneNormalizado = NormalizarTelefone(telefone);
+        if (string.IsNullOrWhiteSpace(telefoneNormalizado) || string.IsNullOrWhiteSpace(mensagemTexto))
+            return false;
+
         var request = new SmsRequest
         {
-            Mensagem = [new SmsItem { Telefone = telefone, MensagemTexto = mensagemTexto }],
+            Mensagem = [new SmsItem { Telefone = telefoneNormalizado, MensagemTexto = mensagemTexto }],
             Nif = nif
         };
 
         var response = await httpClient.PostAsJsonAsync(Endpoint, request);
         return response.IsSuccessStatusCode;
+    }
+
+    private static string NormalizarTelefone(string telefone)
+    {
+        var digits = new string((telefone ?? string.Empty).Where(char.IsDigit).ToArray());
+        if (string.IsNullOrWhiteSpace(digits))
+            return string.Empty;
+
+        if (digits.StartsWith("244") && digits.Length == 12)
+            return digits;
+
+        if (digits.Length == 9)
+            return "244" + digits;
+
+        if (digits.StartsWith("0") && digits.Length == 10)
+            return "244" + digits[1..];
+
+        return digits;
     }
 
     private sealed class SmsRequest

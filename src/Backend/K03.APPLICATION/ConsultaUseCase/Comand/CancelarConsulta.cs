@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Backend.K02.INFRA.Data;
@@ -24,28 +24,32 @@ public class CancelarConsulta(KigramedDbContext context, ISmsService smsService)
             .FirstOrDefaultAsync(e => e.Descricao == "Cancelada");
 
         if (estadoCancelada == null)
-            return "Erro: Estado 'Cancelada' não configurado.";
+            return "Erro: Estado 'Cancelada' nÃ£o configurado.";
 
         consulta.Id_estado_consulta = estadoCancelada.Id;
         await context.SaveChangesAsync();
 
-        string telefone = consulta.Paciente?.Cliente?.Contactos?.FirstOrDefault()?.Contacto ?? string.Empty;
+        string telefone = consulta.Paciente?.Cliente?.Contactos?
+            .Select(c => c.Contacto)
+            .FirstOrDefault(c => !string.IsNullOrWhiteSpace(c) && c.Any(char.IsDigit))
+            ?? string.Empty;
 
         var mensagem =
             $"Estimado(a) {consulta.Paciente?.Nome ?? "Cliente"},\n\n" +
             $"Informamos que o seu pedido de agendamento foi cancelado.\n\n" +
             $"Detalhes do pedido cancelado:\n" +
-            $"  • Número do Pedido: {consulta.NumeroPedido}\n" +
-            $"  • Data e Hora: {consulta.Data_consulta.ToLocalTime():dd/MM/yyyy 'às' HH:mm}\n\n" +
+            $"  â€¢ NÃºmero do Pedido: {consulta.NumeroPedido}\n" +
+            $"  â€¢ Data e Hora: {consulta.Data_consulta.ToLocalTime():dd/MM/yyyy 'Ã s' HH:mm}\n\n" +
             $"Se o cancelamento foi inesperado ou deseja efectuar um novo " +
             $"agendamento, convidamo-lo(a) a aceder ao nosso portal em " +
             $"www.kigramed.com ou a contactar-nos directamente.\n\n" +
             $"Pedimos desculpa por qualquer inconveniente causado.\n\n" +
             $"Atenciosamente,\n" +
-            $"Centro Médico Kigramed";
+            $"Centro MÃ©dico Kigramed";
 
         bool smsEnviado = await smsService.EnviarAsync(telefone, mensagem, "5417298387");
 
         return smsEnviado ? "sucesso" : "erro_sms";
     }
 }
+

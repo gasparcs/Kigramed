@@ -1,6 +1,6 @@
-// ─────────────────────────────────────────────
+﻿// ---------------------------------------------
 // ESTADO LOCAL
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 const medicoState = {
   consultas: new Map()
 };
@@ -28,9 +28,9 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 // INICIALIZAÇÃO
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function validateMedicoAccess() {
   const roleNorm = String(role || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   if (!token || roleNorm !== 'medico') redirectToLogin();
@@ -75,9 +75,9 @@ window.addEventListener('hashchange', () => {
   }
 });
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 // ESTADOS DE CONSULTA (dinâmico)
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 async function loadEstadosConsulta() {
   try {
     const estados = await fetchJson('/Medico/estados');
@@ -95,9 +95,9 @@ async function loadEstadosConsulta() {
   }
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 // STATS & DASHBOARD
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 async function loadTopStats() {
   try {
     const res = await fetchJson('/Medico/consultas');
@@ -147,9 +147,9 @@ function renderDashboardConsultas(consultas) {
     </tr>`).join('');
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 // CARREGAR CONSULTAS
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 async function loadConsultas() {
   const body = document.getElementById('bodyConsultas');
   if (!body) return;
@@ -192,9 +192,9 @@ async function loadConsultas() {
   }
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 // EDITAR CONSULTA
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function editarConsulta(id) {
   const item = medicoState.consultas.get(Number(id)) || {};
   document.getElementById('ecConsultaId').value = id;
@@ -237,18 +237,18 @@ async function submitEditConsulta(event) {
         Data_consulta: document.getElementById('ecData').value
       }
     });
-    showToast('Consulta actualizada com sucesso.', 'success');
+    showToast('Consulta atualizada com sucesso.', 'success');
     closeModal('modalEditConsulta');
     await Promise.all([loadConsultas(), loadTopStats()]);
   } catch (e) {
     console.error('Erro em submitEditConsulta:', e);
-    showToast(getErrorMessage(e, 'Erro ao actualizar consulta.'), 'error');
+    showToast(getErrorMessage(e, 'Erro ao atualizar consulta.'), 'error');
   }
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 // BADGE DE ESTADO
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function badgeEstadoConsulta(estado) {
   const texto = estado || '—';
   const norm = String(texto).trim().toLowerCase();
@@ -265,7 +265,7 @@ function badgeEstadoConsulta(estado) {
   return `<span class="badge ${map[norm] || 'badge-gray'}">${texto}</span>`;
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 // ARRANQUE
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 window.addEventListener('load', initMedico);

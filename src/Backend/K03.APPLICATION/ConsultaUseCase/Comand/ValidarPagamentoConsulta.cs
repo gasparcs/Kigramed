@@ -15,7 +15,7 @@ public class ValidarPagamentoConsulta(KigramedDbContext context, ISmsService sms
     public async Task<string> ExecuteAsync(int id, string? nifSecretaria = null)
     {
         var consulta = await context.Tabelatb15_consulta
-            .Include(c => c.Paciente)
+            .Include(c => c.Paciente!)
                 .ThenInclude(p => p.Cliente)
                 .ThenInclude(cl => cl.Contactos)
             .Include(c => c.EstadoConsulta)

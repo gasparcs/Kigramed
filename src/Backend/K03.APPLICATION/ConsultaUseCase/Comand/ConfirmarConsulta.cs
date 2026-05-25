@@ -48,7 +48,7 @@ public class ConfirmarConsulta(KigramedDbContext context, ISmsService smsService
             return "Erro: Estado 'Aguarda Pagamento' nÃ£o configurado.";
 
         consulta.Id_estado_consulta = estadoAguarda.Id;
-        consulta.PrazoPagamento = DateTime.UtcNow.AddHours(48);
+        consulta.PrazoPagamento = DateTime.Now.AddMinutes(30);
         await context.SaveChangesAsync();
 
         string telefone = consulta.Paciente?.Cliente?.Contactos?
@@ -56,15 +56,15 @@ public class ConfirmarConsulta(KigramedDbContext context, ISmsService smsService
             .FirstOrDefault(c => !string.IsNullOrWhiteSpace(c) && c.Any(char.IsDigit))
             ?? string.Empty;
 
-        var deadline = consulta.PrazoPagamento?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") 
-                       ?? DateTime.UtcNow.AddMinutes(30).ToLocalTime().ToString("dd/MM/yyyy HH:mm");
+        var deadline = consulta.PrazoPagamento?.ToString("dd/MM/yyyy HH:mm") 
+                       ?? DateTime.Now.AddMinutes(30).ToString("dd/MM/yyyy HH:mm");
 
         var mensagem =
             $"Estimado(a) {consulta.Paciente?.Nome ?? "Cliente"},\n\n" +
             $"O seu pedido de agendamento foi recebido e aceite com sucesso.\n\n" +
             $"Detalhes do pedido:\n" +
             $"  â€¢ NÃºmero do Pedido: {consulta.NumeroPedido}\n" +
-            $"  â€¢ Data e Hora: {consulta.Data_consulta.ToLocalTime():dd/MM/yyyy 'Ã s' HH:mm}\n" +
+            $"  â€¢ Data e Hora: {consulta.Data_consulta:dd/MM/yyyy 'Ã s' HH:mm}\n" +
             $"  â€¢ Prazo para pagamento: {deadline}\n\n" +
             $"Para confirmar a sua consulta, efectue o pagamento dentro do prazo " +
             $"indicado e envie o comprovativo atravÃ©s do portal.\n\n" +

@@ -126,11 +126,11 @@ public class CriarConsulta(KigramedDbContext context)
             Id_medico_especialiade = medicoEspecialidade.Id,
             Id_servico           = dto.IdServico,
             Id_estado_consulta   = idEstadoPendente,
-            Data_consulta        = dto.HorarioPreferencial,
+            Data_consulta        = DateTime.SpecifyKind(dto.HorarioPreferencial.ToLocalTime(), DateTimeKind.Unspecified),
             NumeroPedido         = numeroPedido,
             Observacoes          = dto.Observacoes,
             PrazoPagamento       = null,
-            CriadoEm             = DateTime.UtcNow
+            CriadoEm             = DateTime.Now
         };
 
         context.Tabelatb15_consulta.Add(consulta);

@@ -39,7 +39,7 @@ public class CancelarConsulta(KigramedDbContext context, ISmsService smsService)
             $"Informamos que o seu pedido de agendamento foi cancelado.\n\n" +
             $"Detalhes do pedido cancelado:\n" +
             $"  â€¢ NÃºmero do Pedido: {consulta.NumeroPedido}\n" +
-            $"  â€¢ Data e Hora: {consulta.Data_consulta.ToLocalTime():dd/MM/yyyy 'Ã s' HH:mm}\n\n" +
+            $"  â€¢ Data e Hora: {consulta.Data_consulta:dd/MM/yyyy 'Ã s' HH:mm}\n\n" +
             $"Se o cancelamento foi inesperado ou deseja efectuar um novo " +
             $"agendamento, convidamo-lo(a) a aceder ao nosso portal em " +
             $"www.kigramed.com ou a contactar-nos directamente.\n\n" +

@@ -28,7 +28,7 @@ public class ValidarPagamentoConsulta(KigramedDbContext context, ISmsService sms
             consulta.EstadoConsulta.Descricao != "Pagamento Enviado")
             return $"estado_invalido_validar:{consulta.EstadoConsulta.Descricao}";
 
-        if (consulta.PrazoPagamento.HasValue && consulta.PrazoPagamento.Value < DateTime.UtcNow)
+        if (consulta.PrazoPagamento.HasValue && consulta.PrazoPagamento.Value < DateTime.Now)
         {
             var estadoCancelada = await context.Tabelatb13_estado_consulta
                 .FirstOrDefaultAsync(e => e.Descricao == "Cancelada");
@@ -72,7 +72,7 @@ public class ValidarPagamentoConsulta(KigramedDbContext context, ISmsService sms
                 Id_cliente = nifCliente,
                 Nif_funcionario = nifResponsavel,
                 Comprovativo = string.IsNullOrWhiteSpace(comprovativoNome) ? $"Comprovativo {consulta.NumeroPedido}" : comprovativoNome,
-                Data_envio = DateTime.UtcNow,
+                Data_envio = DateTime.Now,
                 CaminhoComprovativo = consulta.CaminhoComprovativo
             };
 
@@ -109,7 +109,7 @@ public class ValidarPagamentoConsulta(KigramedDbContext context, ISmsService sms
             $"com sucesso e a sua consulta está oficialmente confirmada.\n\n" +
             $"Detalhes da consulta:\n" +
             $"  • Número do Pedido: {consulta.NumeroPedido}\n" +
-            $"  • Data e Hora: {consulta.Data_consulta.ToLocalTime():dd/MM/yyyy 'às' HH:mm}\n\n" +
+            $"  • Data e Hora: {consulta.Data_consulta:dd/MM/yyyy 'às' HH:mm}\n\n" +
             $"Recomendamos que se apresente com 10 minutos de antecedência " +
             $"munido do seu documento de identificação.\n\n" +
             $"Contamos com a sua presença.\n\n" +

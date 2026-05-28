@@ -63,19 +63,20 @@ public class ConfirmarConsulta(KigramedDbContext context, ISmsService smsService
             $"Estimado(a) {consulta.Paciente?.Nome ?? "Cliente"},\n\n" +
             $"O seu pedido de agendamento foi recebido e aceite com sucesso.\n\n" +
             $"Detalhes do pedido:\n" +
-            $"  â€¢ NÃºmero do Pedido: {consulta.NumeroPedido}\n" +
-            $"  â€¢ Data e Hora: {consulta.Data_consulta:dd/MM/yyyy 'Ã s' HH:mm}\n" +
-            $"  â€¢ Prazo para pagamento: {deadline}\n\n" +
+            $"Número do Pedido: {consulta.NumeroPedido}\n" +
+            $"Data e Hora: {consulta.Data_consulta:dd/MM/yyyy 'ás' HH:mm}\n" +
+            $"Prazo para pagamento: {deadline}\n\n" +
             $"Para confirmar a sua consulta, efectue o pagamento dentro do prazo " +
-            $"indicado e envie o comprovativo atravÃ©s do portal.\n\n" +
-            $"Dados bancÃ¡rios para transferÃªncia:\n" +
-            $"  â€¢ Banco: [NOME DO BANCO]\n" +
-            $"  â€¢ IBAN: [IBAN DA CLÃNICA]\n" +
-            $"  â€¢ ReferÃªncia: {consulta.NumeroPedido}\n\n" +
-            $"AtenÃ§Ã£o: o pedido serÃ¡ cancelado automaticamente caso o pagamento " +
-            $"nÃ£o seja efectuado dentro do prazo.\n\n" +
+            $"indicado e envie o comprovativo através do portal.\n\n" +
+            $"Dados bancários para transferência:\n" +
+            $"    Banco: [NOME DO BANCO]\n" +
+            $"    IBAN: [IBAN DA CLÍNICA]\n" +
+            $" Referência: {consulta.NumeroPedido}\n\n" +
+            $"Atenção: o pedido será cancelado automaticamente caso o pagamento " +
+            $"não seja efectuado dentro do prazo.\n\n" +
             $"Atenciosamente,\n" +
-            $"Centro MÃ©dico Kigramed";
+            $"Centro Médico Kigramed";
+
 
         bool smsEnviado = await smsService.EnviarAsync(telefone, mensagem, "5417298387");
 

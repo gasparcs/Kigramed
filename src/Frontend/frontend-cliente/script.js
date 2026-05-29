@@ -1,6 +1,18 @@
 ﻿/* ─── CONFIG ─── */
 const API = 'http://localhost:5290/api';
 
+/* ─── INPUT NIF → validação em tempo real ─── */
+function onNifInput() {
+  const nif = document.getElementById('f-nif').value.trim();
+  const feedback = document.getElementById('nif-feedback');
+  if (nif.length >= 15) {
+    // Auto busca quando completa o NIF
+    buscarClientePorNif();
+  } else {
+    feedback.textContent = '';
+  }
+}
+
 /* ─── LOOKUP NIF → GET /api/Cliente/nif/{nif} ─── */
 async function buscarClientePorNif() {
   const nif = document.getElementById('f-nif').value.trim();
@@ -143,10 +155,25 @@ async function carregarGeneros() {
   }
 }
 
+/* ─── SELEÇÃO PASSO 2: EU MESMO OU OUTRA PESSOA ─── */
+let quemConsulta = 'eumesmo';
+function selecionarQuem(opcao) {
+  quemConsulta = opcao;
+  document.getElementById('btn-eumesmo').classList.toggle('selected', opcao === 'eumesmo');
+  document.getElementById('btn-outra').classList.toggle('selected', opcao === 'outra');
+  const parentescoGroup = document.getElementById('parentesco-group');
+  if (opcao === 'outra') {
+    parentescoGroup.style.display = 'block';
+  } else {
+    parentescoGroup.style.display = 'none';
+    document.getElementById('f-relacao-select').value = '1'; // "Eu mesmo"
+  }
+}
+
 /* ─── CARREGAR RELAÇÕES → GET /api/Cliente/cliente-paciente ─── */
 let relacoes = [];
 async function carregarRelacoes() {
-  const sel = document.getElementById('f-relacao');
+  const sel = document.getElementById('f-relacao-select');
   try {
     const r = await fetch(`${API}/Cliente/cliente-paciente`, { signal: AbortSignal.timeout(4000) });
     if (!r.ok) throw new Error();
@@ -236,27 +263,21 @@ async function carregarServicos() {
 function irStep2() {
   const nif         = document.getElementById('f-nif').value.trim();
   const nomeCliente = document.getElementById('f-nome-cliente').value.trim();
-  const nome        = document.getElementById('f-nome').value.trim();
   const telefone    = document.getElementById('f-telefone').value.trim();
-  const nasc        = document.getElementById('f-nascimento').value;
-  const genero      = document.getElementById('f-genero').value;
-  const relacao     = document.getElementById('f-relacao').value;
   const alerta      = document.getElementById('s1-alert');
-  if (!nif || !nomeCliente || !nome || !telefone || !nasc || !genero || !relacao) {
-    alerta.innerHTML = '<div class="alert alert-danger">⚠️ Por favor, preencha todos os dados do cliente e do paciente.</div>';
+  
+  // Step 1 só valida: NIF, Nome do cliente e Telefone
+  if (!nif || !nomeCliente || !telefone) {
+    alerta.innerHTML = '<div class="alert alert-danger">⚠️ Por favor, preencha o NIF, nome do cliente e telefone.</div>';
     return;
   }
   if (!validatePhoneNumber(telefone)) {
     alerta.innerHTML = '<div class="alert alert-danger">⚠️ Introduza um telefone/WhatsApp válido.</div>';
     return;
   }
-  // Validar que a data de nascimento é anterior a hoje
-  const hoje = new Date().toISOString().slice(0, 10);
-  if (nasc >= hoje) {
-    alerta.innerHTML = '<div class="alert alert-danger">⚠️ A data de nascimento deve ser anterior à data de hoje.</div>';
-    return;
-  }
   alerta.innerHTML = '';
+  quemConsulta = 'eumesmo';
+  selecionarQuem('eumesmo'); // Pre-seleciona "Eu mesmo" por defeito
   setStep(2);
   const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
   document.getElementById('f-data').min = now.toISOString().slice(0, 16);
@@ -265,34 +286,19 @@ function voltarStep1() { setStep(1); }
 
 /* ─── STEP 2 → STEP 3 ─── */
 function irStep3() {
-  const esp   = document.getElementById('f-esp').value;
-  const srv   = document.getElementById('f-srv').value;
-  const data  = document.getElementById('f-data').value;
+  const relacao = document.getElementById('f-relacao-select').value;
   const alerta = document.getElementById('s2-alert');
-  if (!esp || !srv || !data) {
-    alerta.innerHTML = '<div class="alert alert-danger">⚠️ Selecione especialidade, serviço e horário pretendidos.</div>';
+  
+  // Se é "outra pessoa", valida a relação
+  if (quemConsulta === 'outra' && !relacao) {
+    alerta.innerHTML = '<div class="alert alert-danger">⚠️ Selecione o grau de parentesco.</div>';
     return;
   }
+  
   alerta.innerHTML = '';
-  renderResumo();
   setStep(3);
 }
 function voltarStep2() { setStep(2); }
-
-/* ─── RESUMO ─── */
-function renderResumo() {
-  document.getElementById('res-nif').textContent          = document.getElementById('f-nif').value.trim();
-  document.getElementById('res-nome-cliente').textContent = document.getElementById('f-nome-cliente').value.trim();
-  document.getElementById('res-nome').textContent         = document.getElementById('f-nome').value.trim();
-  document.getElementById('res-nasc').textContent         = new Date(document.getElementById('f-nascimento').value).toLocaleDateString('pt-PT');
-  document.getElementById('res-genero').textContent       = document.getElementById('f-genero').selectedOptions[0]?.textContent || '—';
-  document.getElementById('res-relacao').textContent = document.getElementById('f-relacao').selectedOptions[0]?.textContent || '—';
-  document.getElementById('res-tel').textContent     = document.getElementById('f-telefone').value.trim() || '—';
-  document.getElementById('res-esp').textContent     = document.getElementById('f-esp').selectedOptions[0]?.textContent || '—';
-  document.getElementById('res-srv').textContent     = document.getElementById('f-srv').selectedOptions[0]?.textContent || '—';
-  document.getElementById('res-data').textContent    = new Date(document.getElementById('f-data').value).toLocaleString('pt-PT', { dateStyle: 'short', timeStyle: 'short' });
-  document.getElementById('res-obs').textContent     = document.getElementById('f-obs').value.trim() || 'Nenhuma observação';
-}
 
 /* ─── SUBMETER PEDIDO → POST /api/Cliente/pedido ─── */
 async function submeterPedido() {
@@ -301,7 +307,7 @@ async function submeterPedido() {
   const nome        = document.getElementById('f-nome').value.trim();
   const nasc        = document.getElementById('f-nascimento').value;
   const genero      = parseInt(document.getElementById('f-genero').value);
-  const relacao     = parseInt(document.getElementById('f-relacao').value);
+  const relacao     = parseInt(document.getElementById('f-relacao-select').value);
   const idEsp       = parseInt(document.getElementById('f-esp').value);
   const idSrv       = parseInt(document.getElementById('f-srv').value);
   const data        = document.getElementById('f-data').value;

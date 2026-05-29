@@ -12,16 +12,16 @@ public class SMSModel
   public int Id { get; set;}
 
   [Column("nif_funcionario")]
-  public string Nif_funcionario = string.Empty;
+  public string Nif_funcionario { get; set; } = string.Empty;
 
   [Column("id_cliente")]
-  public string Nif_cliente = string.Empty;
+  public string Nif_cliente { get; set; } = string.Empty;
 
   [Column("data_envio")]
   public DateTime Data_envio {get; set;}
 
   [Column("mensagem")]
-  public string Mensagem = string.Empty;
+  public string Mensagem { get; set; } = string.Empty;
 
   [Column("estado")]
   public bool Estado {get;set;}

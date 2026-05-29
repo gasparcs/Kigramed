@@ -16,6 +16,7 @@ public class ConfirmarConsulta(KigramedDbContext context, ISmsService smsService
                 .ThenInclude(p => p.Cliente)
                 .ThenInclude(cl => cl.Contactos)
             .Include(c => c.EstadoConsulta)
+            .Include(c => c.Servico)
             .FirstOrDefaultAsync(c => c.Id == id);
 
         if (consulta == null)
@@ -69,9 +70,11 @@ public class ConfirmarConsulta(KigramedDbContext context, ISmsService smsService
             $"Para confirmar a sua consulta, efectue o pagamento dentro do prazo " +
             $"indicado e envie o comprovativo através do portal.\n\n" +
             $"Dados bancários para transferência:\n" +
-            $"    Banco: [NOME DO BANCO]\n" +
-            $"    IBAN: [IBAN DA CLÍNICA]\n" +
-            $" Referência: {consulta.NumeroPedido}\n\n" +
+            $"    Banco: [BANCO DE FOMENTO ANGOLA]\n" +
+            $"    IBAN: [000600005478810630119]\n" +
+            $"    NÚMERO DE EXPRESS: 930279569\n" +
+            $"  • Valor a pagar: {consulta.Servico?.Preco:N2} Kz\n" +
+            $"Referência: {consulta.NumeroPedido}\n\n" +
             $"Atenção: o pedido será cancelado automaticamente caso o pagamento " +
             $"não seja efectuado dentro do prazo.\n\n" +
             $"Atenciosamente,\n" +

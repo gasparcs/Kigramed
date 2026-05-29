@@ -22,7 +22,7 @@ public class AdicionarPagamentoRepository(KigramedDbContext context) : ICadastra
         catch (DbUpdateException ex)
         {
             
-            return(ex.ToString());
+            return("ERRO: "+ex.ToString());
         }
 
     }

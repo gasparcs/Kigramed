@@ -12,7 +12,7 @@ public class RejeitarComprovativoConsulta(KigramedDbContext context, ISmsService
     public async Task<string> ExecuteAsync(int id)
     {
         var consulta = await context.Tabelatb15_consulta
-            .Include(c => c.Paciente)
+            .Include(c => c.Paciente!)
                 .ThenInclude(p => p.Cliente)
                 .ThenInclude(cl => cl.Contactos)
             .Include(c => c.EstadoConsulta)
@@ -43,18 +43,18 @@ public class RejeitarComprovativoConsulta(KigramedDbContext context, ISmsService
         var mensagem =
             $"Estimado(a) {consulta.Paciente?.Nome ?? "Cliente"},\n\n" +
             $"Informamos que o comprovativo de pagamento submetido para o seu " +
-            $"pedido nÃ£o foi aceite pela nossa equipa.\n\n" +
+            $"pedido não foi aceite pela nossa equipa.\n\n" +
             $"Detalhes do pedido:\n" +
-            $"  â€¢ NÃºmero do Pedido: {consulta.NumeroPedido}\n\n" +
-            $"PossÃ­veis motivos para a rejeiÃ§Ã£o:\n" +
-            $"  â€¢ Documento ilegÃ­vel ou de qualidade insuficiente\n" +
-            $"  â€¢ Valor transferido incorrecto\n" +
-            $"  â€¢ ReferÃªncia de pagamento em falta ou errada\n\n" +
-            $"Por favor submeta um novo comprovativo vÃ¡lido atravÃ©s do portal " +
+            $"Número do Pedido: {consulta.NumeroPedido}\n\n" +
+            $"Possíveis motivos para a rejeição:\n" +
+            $"Documento ilegível ou de qualidade insuficiente\n" +
+            $"Valor transferido incorrecto\n" +
+            $"Referência de pagamento em falta ou errada\n\n" +
+            $"Por favor submeta um novo comprovativo válido através do portal " +
             $"www.kigramed.com para que a sua consulta possa ser confirmada.\n\n" +
-            $"Para qualquer esclarecimento, a nossa equipa estÃ¡ ao seu dispor.\n\n" +
+            $"Para qualquer esclarecimento, a nossa equipa está ao seu dispor.\n\n" +
             $"Atenciosamente,\n" +
-            $"Centro MÃ©dico Kigramed";
+            $"Centro Médico Kigramed";
 
         bool smsEnviado = await smsService.EnviarAsync(telefone, mensagem, "5417298387");
 

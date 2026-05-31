@@ -83,8 +83,14 @@ async function loadEstadosConsulta() {
     const estados = await fetchJson('/Medico/estados');
     const select = document.getElementById('ecEstado');
     if (!select) return;
+    const permitidos = ['a decorrer', 'finalizada'];
+    const estadosFiltrados = estados.filter(e => {
+      const desc = String(e.descricao ?? e.Descricao ?? '')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+      return permitidos.includes(desc);
+    });
     select.innerHTML = '<option value="">Seleccionar...</option>' +
-      estados.map(e => {
+      estadosFiltrados.map(e => {
         const id = e.id ?? e.Id ?? e.idEstadoConsulta ?? e.IdEstadoConsulta;
         const desc = e.descricao ?? e.Descricao ?? e.estadoDescricao ?? e.EstadoDescricao ?? id;
         return `<option value="${id}">${desc}</option>`;
@@ -171,7 +177,7 @@ async function loadConsultas() {
     body.innerHTML = list.map((item, index) => {
       const id = item.consultaId || item.ConsultaId || index + 1;
       const estadoDesc = String(item.estadoDescricao || item.EstadoDescricao || '').trim().toLowerCase();
-      const finalizada = estadoDesc === 'finalizada' || estadoDesc === 'concluída' || estadoDesc === 'concluida';
+      const podeEditar = estadoDesc === 'confirmada';
       return `<tr>
         <td>${id}</td>
         <td>${item.pacienteNome || item.PacienteNome || '—'}</td>
@@ -179,12 +185,7 @@ async function loadConsultas() {
         <td>${item.especialidade || item.Especialidade || '—'}</td>
         <td>${formatDate(item.data_consulta || item.Data_consulta || item.DataConsulta)}</td>
         <td>${badgeEstadoConsulta(item.estadoDescricao || item.EstadoDescricao)}</td>
-        <td style="display:flex;gap:6px;flex-wrap:wrap;">
-          ${finalizada
-            ? `<button class="btn btn-sm btn-outline" disabled title="Consulta finalizada" style="opacity:0.45;cursor:not-allowed;">Editar</button>`
-            : `<button class="btn btn-sm btn-outline" onclick="editarConsulta(${id})">Editar</button>`
-          }
-        </td>
+        <td>${podeEditar ? `<button class="btn btn-sm btn-outline" onclick="editarConsulta(${id})">Editar</button>` : '—'}</td>
       </tr>`;
     }).join('');
   } catch {

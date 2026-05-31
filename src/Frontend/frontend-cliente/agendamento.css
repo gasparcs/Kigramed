@@ -393,6 +393,49 @@
   padding: 1rem 1.5rem; font-size: .87rem; color: var(--muted); line-height: 1.6;
 }
 
+.ag-cancelar-section {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem 1.25rem;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.ag-cancelar-section p {
+  margin: 0;
+  font-size: .82rem;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 320px;
+}
+
+.ag-btn-cancelar {
+  flex-shrink: 0;
+  padding: .65rem 1.25rem;
+  border-radius: 10px;
+  border: 1.5px solid #DC2626;
+  background: transparent;
+  color: #DC2626;
+  font-size: .87rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .15s, color .15s, transform .15s;
+}
+
+.ag-btn-cancelar:hover {
+  background: #DC2626;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.ag-btn-cancelar:active {
+  transform: translateY(0);
+}
+
 /* Status badges */
 .status-badge {
   display: inline-flex; align-items: center;

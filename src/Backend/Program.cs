@@ -219,6 +219,7 @@ builder.Services.AddTransient<AtualizarConsulta>();
 builder.Services.AddTransient<ListarConsultas>();
 builder.Services.AddTransient<ListarConsultasDoMedico>();
 builder.Services.AddTransient<RemoverConsulta>();
+builder.Services.AddTransient<CancelarConsultaCliente>();
 builder.Services.AddTransient<PegarConsultaPeloId>();
 //casos de uso especialidade
 builder.Services.AddTransient<AdicionarEspecialidade>();

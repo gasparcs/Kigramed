@@ -16,6 +16,7 @@ namespace Backend.K01.CONTROLLERS
     [ApiController]
     public class ClienteController(
         CriarConsulta criarConsulta,
+        CancelarConsultaCliente cancelarConsultaCliente,
         KigramedDbContext context) : ControllerBase
     { 
         // ─── PÚBLICO ────────────────────────────────────────────────────────────
@@ -151,6 +152,16 @@ namespace Backend.K01.CONTROLLERS
             await context.SaveChangesAsync();
 
             return Ok(new { mensagem = "Comprovativo enviado com sucesso." });
+        }
+
+        [AllowAnonymous]
+        [HttpPut("consulta/{numeroPedido}/cancelar")]
+        public async Task<IActionResult> CancelarConsulta(string numeroPedido)
+        {
+            var resposta = await cancelarConsultaCliente.ExecuteAsync(numeroPedido);
+            return resposta.Contains("sucesso")
+                ? StatusCode(200, new { mensagem = resposta })
+                : StatusCode(400, new { mensagem = resposta });
         }
     }
 }

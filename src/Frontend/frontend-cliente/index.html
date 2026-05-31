@@ -654,6 +654,12 @@
                 </div>
               </div>
               <div class="ag-estado-instrucao" id="er-instrucao"></div>
+              <div class="ag-cancelar-section" id="cancelar-section">
+                <p>Se precisar de cancelar, pode fazê-lo agora.<br>Esta acção não pode ser desfeita.</p>
+                <button class="ag-btn-cancelar" onclick="cancelarConsultaCliente(window._numeroPedidoActivo)">
+                  Cancelar consulta
+                </button>
+              </div>
               <div id="comp-section" style="display:none">
                 <div class="ag-comp-title">Enviar comprovativo de pagamento</div>
                 <p class="ag-comp-sub">Efectue a transferência e envie o comprovativo. Formatos aceites: PDF, JPG, PNG (máx. 5MB).</p>
@@ -703,6 +709,24 @@
 
 <!-- TOAST -->
 <div id="toast"><span id="toast-ico">✅</span><span id="toast-msg">OK</span></div>
+
+<div id="modal-cancelar-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;padding:2rem;width:100%;max-width:380px;margin:1rem;box-shadow:0 20px 60px rgba(0,0,0,.2);font-family:var(--font-body);">
+    <div style="width:44px;height:44px;border-radius:50%;background:#FEF2F2;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </div>
+    <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:#111;margin-bottom:.5rem;">Cancelar consulta</div>
+    <p style="font-size:.87rem;color:var(--muted);line-height:1.6;margin:0 0 1.5rem;">Tem a certeza que deseja cancelar esta consulta? Esta acção não pode ser desfeita.</p>
+    <div style="display:flex;gap:.75rem;justify-content:flex-end;">
+      <button onclick="fecharModalCancelar()" style="padding:.65rem 1.25rem;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:.87rem;font-weight:600;font-family:var(--font-body);cursor:pointer;">
+        Voltar
+      </button>
+      <button id="btn-confirmar-cancelar" style="padding:.65rem 1.25rem;border-radius:10px;border:none;background:#DC2626;color:#fff;font-size:.87rem;font-weight:600;font-family:var(--font-body);cursor:pointer;">
+        Sim, cancelar
+      </button>
+    </div>
+  </div>
+</div>
 
 <script src="script.js"></script>
 </body>

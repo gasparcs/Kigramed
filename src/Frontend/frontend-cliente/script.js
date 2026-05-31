@@ -485,6 +485,10 @@ function renderEstado(num, d) {
   }
 
   document.getElementById('er-instrucao').textContent = instrucoes[estado] || instrucoes['Pendente'];
+  const cancelarSection = document.getElementById('cancelar-section');
+  if (cancelarSection) {
+    cancelarSection.style.display = estado === 'Confirmada' ? 'flex' : 'none';
+  }
   const compSection = document.getElementById('comp-section');
   if (compSection) compSection.style.display = estado === 'Aguarda Pagamento' ? 'block' : 'none';
   window._numeroPedidoActivo = d.numeroPedido || num;
@@ -492,6 +496,38 @@ function renderEstado(num, d) {
 }
 
 function irParaConsulta() { switchTab('estado'); consultarEstado(); }
+
+function cancelarConsultaCliente(numeroPedido) {
+  const overlay = document.getElementById('modal-cancelar-overlay');
+  overlay.style.display = 'flex';
+  document.getElementById('btn-confirmar-cancelar').onclick = async () => {
+    fecharModalCancelar();
+    try {
+      const res = await fetch(`${API}/Cliente/consulta/${encodeURIComponent(numeroPedido)}/cancelar`, { method: 'PUT' });
+      if (res.ok) {
+        toast('✓', 'Consulta cancelada com sucesso.');
+        consultarEstado();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        toast('⚠️', data.mensagem || 'Não foi possível cancelar a consulta.');
+      }
+    } catch {
+      toast('⚠️', 'Erro de ligação. Tente novamente.');
+    }
+  };
+  overlay.onclick = (e) => { if (e.target === overlay) fecharModalCancelar(); };
+}
+
+function fecharModalCancelar() {
+  document.getElementById('modal-cancelar-overlay').style.display = 'none';
+}
+
+async function consultarEstadoPedido(numeroPedido) {
+  if (!numeroPedido) return;
+  const input = document.getElementById('estado-num');
+  if (input) input.value = numeroPedido;
+  await consultarEstado();
+}
 
 /* ─── UPLOAD COMPROVATIVO ─── */
 async function enviarComprovatioEstado() {

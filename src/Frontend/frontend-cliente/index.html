@@ -567,7 +567,7 @@
               </div>
               <div class="ag-field-group">
                 <label class="ag-label">Data e hora pretendida <span class="ag-req">*</span></label>
-                <input type="datetime-local" class="ag-input" id="f-data">
+                <input type="datetime-local" class="ag-input" id="f-data" step="1800" onchange="validarHorario(this)">
                 <span class="ag-hint">Sujeito a disponibilidade — confirmação via SMS</span>
               </div>
               <div class="ag-field-group">

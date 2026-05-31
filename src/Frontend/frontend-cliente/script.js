@@ -117,6 +117,38 @@ function handlePhoneMask(input) {
   input.value = input.value.replace(/\D/g, '').slice(0, 9).replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
 }
 
+function formatarValorDataHoraLocal(data, horas, minutos) {
+  const ano = data.getFullYear();
+  const mes = String(data.getMonth() + 1).padStart(2, '0');
+  const dia = String(data.getDate()).padStart(2, '0');
+  const hh = String(horas).padStart(2, '0');
+  const mm = String(minutos).padStart(2, '0');
+  return `${ano}-${mes}-${dia}T${hh}:${mm}`;
+}
+
+function validarHorario(input) {
+  if (!input) return false;
+
+  const valor = String(input.value || '').trim();
+  if (!valor) return false;
+
+  const partes = valor.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/);
+  if (!partes) {
+    return false;
+  }
+
+  const horas = Number(partes[4]);
+  const minutos = Number(partes[5]);
+  const minutosTotais = horas * 60 + minutos;
+
+  if (minutosTotais < 8 * 60 || minutosTotais > 19 * 60) {
+    toast('⚠️', 'Seleccione um horário entre 08:00 e 19:00.');
+    return false;
+  }
+
+  return true;
+}
+
 /* ─── TABS ─── */
 function switchTab(t) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -310,12 +342,18 @@ async function submeterPedido() {
   const relacao     = parseInt(document.getElementById('f-relacao-select').value);
   const idEsp       = parseInt(document.getElementById('f-esp').value);
   const idSrv       = parseInt(document.getElementById('f-srv').value);
-  const data        = document.getElementById('f-data').value;
+  const inputData   = document.getElementById('f-data');
+  const data        = inputData.value;
   const obs         = document.getElementById('f-obs').value.trim();
   const alerta      = document.getElementById('s3-alert');
 
   if (!nif || !nomeCliente || !nome || !nasc || !genero || !relacao || !idEsp || !idSrv || !data) {
     alerta.innerHTML = '<div class="alert alert-danger">⚠️ Preencha todos os dados antes de enviar.</div>';
+    return;
+  }
+
+  if (!validarHorario(inputData, false)) {
+    alerta.innerHTML = '<div class="alert alert-danger">⚠️ O horário da consulta deve estar entre 08:00 e 19:00, em intervalos de 30 minutos.</div>';
     return;
   }
 
@@ -522,7 +560,9 @@ async function initAgendamento() {
     document.getElementById(id).innerHTML = ''
   );
   const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-  document.getElementById('f-data').min = now.toISOString().slice(0, 16);
+  const inputData = document.getElementById('f-data');
+  inputData.min = now.toISOString().slice(0, 16);
+  inputData.step = '1800';
   // Data de nascimento: não pode ser hoje nem no futuro
   const hoje = new Date().toISOString().slice(0, 10);
   document.getElementById('f-nascimento').max = hoje;
